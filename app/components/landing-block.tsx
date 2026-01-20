@@ -6,11 +6,11 @@ type LandingBlockProps = {
   badge: string,
   title: string
 }
-export const LandingBlock = ({ children, badge,title}: LandingBlockProps) => {
+export const LandingBlock = ({ children, badge, title }: LandingBlockProps) => {
   return (
-    <div className="space-y-8">
+    <div className="w-full py-16">
       <Badge variant="secondary">{badge}</Badge>
-      <Typography variant="h2">{title}</Typography>
+      <Typography variant="h2" >{title}</Typography>
       {children}
     </div>
   );

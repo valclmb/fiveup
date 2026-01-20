@@ -1,4 +1,4 @@
-import { StarIcon } from "@/app/components/hero/star-icon";
+import { StarIcon } from "@/app/components/star-icon";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Typography from "@/components/ui/typography";

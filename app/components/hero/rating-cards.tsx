@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { StarIcon } from "./star-icon";
+import { StarIcon } from "../star-icon";
 
 interface RatingCardProps {
   platform: "google" | "trustpilot";
