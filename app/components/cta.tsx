@@ -29,7 +29,7 @@ const Cta = () => {
       <div className="flex flex-col items-center justify-center">
         <Typography variant="h2" className="text-center text-[42px] mb-0">Ready to make reviews your unfair advantage?</Typography>
         <Typography variant="description" className="text-muted-foreground">Plug FiveUp into your stack and turn every customer into social proof – without adding more work to your team.</Typography>
-        <Button className="mt-5 z-10">Commencer maintenant</Button>
+        <Button className="mt-5 z-10 px-8">Commencer maintenant</Button>
       </div>
 
     </div>

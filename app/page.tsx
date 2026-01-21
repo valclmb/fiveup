@@ -4,6 +4,7 @@ import Cta from "./components/cta";
 import DashboardPreview from "./components/dashboard-preview";
 import Faq from "./components/faq";
 import { Features } from "./components/features/features";
+import Footer from "./components/footer";
 import Header from "./components/header";
 import Hero from "./components/hero/hero";
 import Impact from "./components/impact";
@@ -13,8 +14,7 @@ import Reviews from "./components/reviews";
 
 export default function Page() {
   return (
-    <div className=" flex min-h-screen items-center justify-center bg-background font-sans ">
-
+    <div className=" flex flex-col min-h-screen items-center justify-center bg-background font-sans ">
       <main className="flex min-h-screen w-full max-w-7xl flex-col items-center space-y-36 p-8 sm:items-start">
         <Header />
         <Hero />
@@ -42,12 +42,8 @@ export default function Page() {
         <Reviews />
         <Faq />
         <Cta />
-
-
-
-
-
       </main>
+      <Footer />
     </div>
   );
 }

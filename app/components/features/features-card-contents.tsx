@@ -11,7 +11,7 @@ export const Connect = () => {
       <div className="relative flex items-center justify-between">
         {/* Ligne de progression verte */}
         <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-primary z-0"></div>
-        
+
         {/* 4 cercles avec checkmarks */}
         {Array.from({ length: 4 }).map((_, index) => (
           <div key={index} className="relative z-10 bg-primary rounded-full p-2 flex items-center justify-center">
@@ -24,29 +24,29 @@ export const Connect = () => {
 }
 
 export const AutomaticConnection = () => {
-  return ( 
+  return (
     <div className="flex gap-4">
-       <Card className="bg-accent p-0 w-full">
+      <Card className="bg-accent p-0 w-full">
         <CardContent className="flex items-center justify-between gap-14 p-4">
           <Image src="/images/trustpilot-logo.svg" alt="Trustpilot" width={80} height={30} />
-        <Badge variant="secondary" className=" rounded-md">
-          <div className="size-2 bg-primary rounded-full"></div>
-          Connecté
-        </Badge>
+          <Badge variant="secondary" className=" rounded-md">
+            <div className="size-2 bg-primary rounded-full"></div>
+            Connecté
+          </Badge>
 
         </CardContent>
-      
+
       </Card>
       <Card className="bg-accent  p-0 w-full">
         <CardContent className="flex items-center justify-between gap-14 p-4">
           <Image src="/images/google-logo.svg" alt="Google Business" width={60} height={30} />
-        <Badge variant="secondary" className=" rounded-md">
-          <div className="size-2 bg-primary rounded-full"></div>
-          Connecté
-        </Badge>
+          <Badge variant="secondary" className=" rounded-md">
+            <div className="size-2 bg-primary rounded-full"></div>
+            Connecté
+          </Badge>
 
         </CardContent>
-      
+
       </Card>
 
     </div>
@@ -59,12 +59,12 @@ export const AutoReply = () => {
       {/* message incoming */}
       <div className="flex justify-start">
         <div className="flex items-center justify-between bg-card rounded-2xl rounded-bl-xs px-3 py-2 gap-8 max-w-[80%]">
-          <p  className="text-white">Amazing service</p>
+          <p className="text-white">Amazing service</p>
           <div className="flex gap-1">
-           <StarIcons/>
+            <StarIcons />
           </div>
         </div>
-      </div>   
+      </div>
       {/*  message outgoing */}
       <div className="flex justify-end">
         <div className="bg-primary  rounded-2xl rounded-br-xs px-3 py-2 gap-8 max-w-[80%] flex items-center ">
@@ -84,25 +84,25 @@ export const ProtectReputation = () => {
       <div className="relative flex items-center justify-between">
         {/* Dashed line */}
         <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-px border-t border-dashed border-muted-foreground z-0"></div>
-      
-      {/* 1st element with red bubble and star */}
-      <div className="relative z-10 bg-destructive rounded-lg px-3 py-2 flex items-center gap-2 shadow-lg">
-        <span className="text-white font-semibold">1</span>
-        <Star className="text-white fill-white" width={16} height={16} />
-        {/* Triangle pointing down */}
-        <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-8 border-l-transparent border-r-transparent border-t-destructive"></div>
-      </div>
-      
-      {/* 2nd element with arrow in the center */}
-      <div className="relative z-10 bg-card rounded-lg p-3 flex items-center justify-center">
-        <ArrowRight className="text-white" width={20} height={20} />
-      </div>
-      
-      {/* 3rd element with private support */}
-      <div className="relative z-10 bg-card rounded-lg px-4 py-3 flex items-center gap-2">
-        <Mail className="text-white" width={18} height={18} strokeWidth={2} />
-        <span className="text-white text-sm">Private support</span>
-      </div>
+
+        {/* 1st element with red bubble and star */}
+        <div className="relative z-10 bg-destructive rounded-lg px-3 py-2 flex items-center gap-2 shadow-lg">
+          <span className="text-white font-semibold">1</span>
+          <Star className="text-white fill-white" width={16} height={16} />
+          {/* Triangle pointing down */}
+          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-8 border-l-transparent border-r-transparent border-t-destructive"></div>
+        </div>
+
+        {/* 2nd element with arrow in the center */}
+        <div className="relative z-10 bg-card rounded-lg p-3 flex items-center justify-center">
+          <ArrowRight className="text-white" width={20} height={20} />
+        </div>
+
+        {/* 3rd element with private support */}
+        <div className="relative z-10 bg-card rounded-lg px-4 py-3 flex items-center gap-2">
+          <Mail className="text-white" width={18} height={18} strokeWidth={2} />
+          <span className="text-white text-sm">Private support</span>
+        </div>
       </div>
     </div>
   )
@@ -115,20 +115,20 @@ export const CustomFlows = () => {
       <div className="flex items-center justify-between gap-4 bg-accent rounded-lg p-4">
         <Switch checked={true} />
         <div className="flex gap-1">
-         <StarIcons />
+          <StarIcons />
         </div>
         <Image src="/images/trustpilot-logo.svg" alt="Trustpilot" width={80} height={30} />
       </div>
-      
+
       {/* Ligne 2 : Switch OFF avec 4 étoiles */}
       <div className="flex items-center justify-between gap-4 bg-accent rounded-lg p-4">
         <Switch checked={false} />
         <div className="flex gap-1">
           {Array.from({ length: 4 }).map((_, index) => (
-           <StarIcon key={index} />
+            <StarIcon key={index} className="text-amber-300" size={20} />
           ))}
-          <StarIcon outline={true} strokeWidth={4}/>
-           
+          <StarIcon outline={true} strokeWidth={4} className="text-amber-300 " size={20} />
+
         </div>
         <Image src="/images/trustpilot-logo.svg" alt="Trustpilot" width={80} height={30} />
       </div>
