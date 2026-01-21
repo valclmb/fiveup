@@ -44,7 +44,7 @@ const Benefit = ({ icon: Icon, iconProps = {}, title, description, index }: Bene
   const isEven = index % 2 !== 0;
   return (
     <div className={`border-dashed-long-left ${isEven ? 'border-dashed-long-right md:border-dashed-long-left' : ''} p-8 pb-0 space-y-8 flex flex-col`}>
-      <Card className="w-max p-4">
+      <Card className="w-max p-4 z-20 bg-background/50 backdrop-blur-sm box-shadow-lg">
         <Icon {...iconProps} />
       </Card>
 
@@ -56,7 +56,8 @@ const Benefit = ({ icon: Icon, iconProps = {}, title, description, index }: Bene
 
 const Benefits = () => {
   return (
-    <LandingBlock badge="Bénéfices clés" title="More reviews. Higher ratings. More revenue.">
+
+    <LandingBlock badge="Bénéfices clés" title="More reviews. Higher ratings. More revenue." bg>
       <div className="flex flex-col  md:flex-row gap-8 md:gap-4 ">
         {benefits.map((benefit, index) => (
           <Benefit key={index} index={index} icon={benefit.icon} iconProps={benefit.iconProps} title={benefit.title} description={benefit.description} />

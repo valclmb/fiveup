@@ -9,9 +9,9 @@ const Cta = () => {
   return (
     <div className="bg-card relative flex h-82 w-full items-center justify-center overflow-hidden rounded-lg border p-20">
       <AnimatedGridPattern
-        width={112}
-        height={112}
-        x={-5}
+        width={115}
+        height={115}
+        x={-1}
         y={-20}
         // strokeDasharray={5}
         numSquares={20}

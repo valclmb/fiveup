@@ -77,7 +77,7 @@ const Header = () => {
         // isSticky ? "bg-black/70" : "bg-black"
       )}
       initial={false}
-      animate={{ y: isSticky ? 5 : 0, scale: isSticky ? 0.98 : 1 }}
+      animate={{ y: isSticky ? 10 : 0, scale: isSticky ? 0.98 : 1 }}
       transition={{
         y: { type: "spring", stiffness: 520, damping: 42, mass: 0.7 },
         scale: { type: "spring", stiffness: 320, damping: 26, mass: 0.5 },
