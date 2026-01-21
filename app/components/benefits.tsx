@@ -21,12 +21,13 @@ const benefits = [{
   description: "Envoyez des demandes d'avis au bon moment, sans action manuelle, après chaque interaction client."
 
 }, {
-  icon: Settings,
+  icon: Google,
+  iconProps: { width: 24, height: 24 },
   title: "Google rating uplift",
   description: "Les avis positifs sont redirigés vers les plateformes publiques, tandis que les retours négatifs sont centralisés en interne."
 }, {
-  icon: Google,
-  iconProps: { width: 24, height: 24 },
+  icon: Settings,
+
   title: "Sales increase driven by social proof",
   description: "Tous vos avis, règles et automatisations sont regroupés dans une interface claire, personnalisée selon vos objectifs."
 }]
@@ -55,7 +56,7 @@ const Benefits = () => {
 
   return (
     <LandingBlock badge="Bénéfices clés" title="More reviews. Higher ratings. More revenue.">
-      <div className="flex gap-4 ">
+      <div className="flex flex-col  md:flex-row gap-8 md:gap-4 ">
         {benefits.map((benefit, index) => (
           <Benefit key={index} icon={benefit.icon} iconProps={benefit.iconProps} title={benefit.title} description={benefit.description} />
         ))}

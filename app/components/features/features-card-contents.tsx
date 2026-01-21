@@ -11,7 +11,6 @@ export const Connect = () => {
       <div className="relative flex items-center justify-between">
         {/* Ligne de progression verte */}
         <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-1 bg-primary z-0"></div>
-
         {/* 4 cercles avec checkmarks */}
         {Array.from({ length: 4 }).map((_, index) => (
           <div key={index} className="relative z-10 bg-primary rounded-full p-2 flex items-center justify-center">

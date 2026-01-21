@@ -20,13 +20,13 @@ export default function Page() {
         <Hero />
 
         {/* Presentation video */}
-        <div className="w-2/3 mx-auto space-y-16">
+        <div className="md:w-2/3 mx-auto space-y-8 md:space-y-16">
           <Image src="/images/preview-video.jpg" alt='preview-video' width={1000} height={1000} className="mx-auto rounded-[48px]" />
-          <div className="flex justify-between">
-            <Image src="/images/partner-logo.svg" alt="partner-logo" width={150} height={40} />
-            <Image src="/images/partner-logo.svg" alt="partner-logo" width={150} height={40} />
-            <Image src="/images/partner-logo.svg" alt="partner-logo" width={150} height={40} />
-            <Image src="/images/partner-logo.svg" alt="partner-logo" width={150} height={40} />
+          <div className="flex flew-wrap justify-between">
+            <Image src="/images/partner-logo.svg" alt="partner-logo" width={150} height={40} className="size-20 md:size-auto" />
+            <Image src="/images/partner-logo.svg" alt="partner-logo" width={150} height={40} className="size-20 md:size-auto" />
+            <Image src="/images/partner-logo.svg" alt="partner-logo" width={150} height={40} className="size-20 md:size-auto" />
+            <Image src="/images/partner-logo.svg" alt="partner-logo" width={150} height={40} className="size-20 md:size-auto" />
           </div>
         </div>
 

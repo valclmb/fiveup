@@ -10,8 +10,8 @@ export const typographyVariants = cva(`text-xl ${poppins.className}`, {
   variants: {
     variant: {
       h1: "scroll-m-20 text-6xl font-semibold tracking-tight lg: text-5xl",
-      h2: "scroll-m-20  pb-2 text-5xl/16 mt-6 mb-10 font-semibold tracking-tight first:mt-0",
-      h3: "scroll-m-20 text-2xl font-bold tracking-tight",
+      h2: "scroll-m-20 pb-2 text-[clamp(2rem,5vw,3rem)] leading-[clamp(2.5rem,5vw,4rem)]  lg:text-left mt-6 mb-10 font-semibold tracking-tight first:mt-0 ",
+      h3: "scroll-m-20 text-[clamp(1rem,3vw,1.5rem)]  lg:text-left font-bold tracking-tight",
       h4: "scroll-m-20 text-xl font-semibold tracking-tight",
       p: `text-base leading-7 ${inter.className}`,
       blockquote: `text-base leading-7 ${inter.className}`,
