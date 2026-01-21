@@ -54,9 +54,9 @@ const secondRow = reviews.slice(reviews.length / 2)
 
 const Reviews = () => {
   return (
-    <section className="max-w-full">
+    <section className="w-full max-w-full">
       <Typography variant="h2" className="text-center">Ce que pensent nos clients</Typography>
-      <div className="relative flex w-full flex-col items-center justify-center gap-4 overflow-hidden py-5">
+      <div className=" relative w-full flex flex-col items-center justify-center gap-4 overflow-hidden py-5">
         <Marquee pauseOnHover className="[--duration:50s] [--gap:2rem]" >
           {firstRow.map((review) => (
             <ReviewCard key={review.username} {...review} />
@@ -67,10 +67,10 @@ const Reviews = () => {
             <ReviewCard key={review.username} {...review} />
           ))}
         </Marquee>
-        <div className="from-background pointer-events-none absolute inset-y-0 left-0 w-1/4 bg-linear-to-r"></div>
-        <div className="from-background pointer-events-none absolute inset-y-0 right-0 w-1/4 bg-linear-to-l"></div>
+        {/* -left/right-px évite un éventuel "hairline" 1px aux bords (arrondis/sub-pixels) */}
+        <div className="from-background pointer-events-none absolute inset-y-0 -left-px w-1/4 bg-linear-to-r"></div>
+        <div className="from-background pointer-events-none absolute inset-y-0 -right-px w-1/4 bg-linear-to-l"></div>
       </div>
-
     </section>
   )
 }

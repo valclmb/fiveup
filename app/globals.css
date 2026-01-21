@@ -147,7 +147,7 @@
 }
 
 @layer utilities {
-  .border-dashed-long {
+  .border-dashed-long-left {
     border-style: none;
     background-image: repeating-linear-gradient(
       to bottom,
@@ -159,6 +159,40 @@
     background-size: 1px 100%;
     background-position: left;
     background-repeat: repeat-y;
+  }
+
+  .border-dashed-long-left {
+    border-style: none;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      #50545B 0,
+      #50545B 8px,
+      transparent 8px,
+      transparent 13px
+    );
+    background-size: 1px 100%;
+    background-position: left;
+    background-repeat: repeat-y;
+  }
+
+  .border-dashed-long-right {
+    border-style: none;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      #50545B 0,
+      #50545B 8px,
+      transparent 8px,
+      transparent 13px
+    );
+    background-size: 1px 100%;
+    background-position: right;
+    background-repeat: repeat-y;
+  }
+
+  @media (min-width: 768px) {
+    .border-dashed-long-right {
+      background-position: left !important;
+    }
   }
 
    

@@ -1,44 +1,42 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
-import { StarIcon } from "../star-icon";
+import { StarIcons } from "../star-icon";
 
 interface RatingCardProps {
   platform: "google" | "trustpilot";
   className?: string;
 }
 
-const RatingCard = ({ platform,className }: RatingCardProps) => {
-const logos= {
-  google: {
-    path: "/images/google-logo.svg",
-    width: 50,
-    height: 20,
-  },
-  trustpilot: {
-    path: "/images/trustpilot-logo.svg",
-    width: 80,
-    height: 20,
-  },
-}
+const RatingCard = ({ platform, className }: RatingCardProps) => {
+  const logos = {
+    google: {
+      path: "/images/google-logo.svg",
+      width: 50,
+      height: 20,
+    },
+    trustpilot: {
+      path: "/images/trustpilot-logo.svg",
+      width: 80,
+      height: 20,
+    },
+  }
 
- 
+
   return (
-    <Card className={cn("absolute p-2", className)}>
-      <CardContent className="p-0 space-y-2">
+    <Card className={cn("absolute p-2 bg-background/60 backdrop-blur-md rounded-xl shadow-2xl shadow-black", className)}>
+      <CardContent className="p-0 space-y-2 ">
 
         <div className="flex gap-1">
-          {Array.from({length: 5}).map((_, index) => (
-            <StarIcon key={index} width={20} height={20} className="text-amber-300" />
-          ))}
+          <StarIcons size={20} className="size-4 lg:size-auto" />
         </div>
-      
-      
-      <Image 
-          src={logos[platform].path} 
-          alt={`${platform} logo`} 
-          width={logos[platform].width} 
-          height={logos[platform].height} 
+
+
+        <Image
+          src={logos[platform].path}
+          alt={`${platform} logo`}
+          width={logos[platform].width}
+          height={logos[platform].height}
         />   </CardContent>
     </Card>
   );
@@ -46,12 +44,14 @@ const logos= {
 
 const RatingCards = () => {
   return (
-   <>
-      <RatingCard platform="trustpilot" className="left-10 top-72" />
-      <RatingCard platform="google" className="left-24 bottom-32"  />
-      <RatingCard platform="trustpilot" className="-right-10 top-74" />
-      <RatingCard platform="google" className="right-24 bottom-42"  />
-      </>
+    <>
+      {/* Left cards */}
+      <RatingCard platform="trustpilot" className="left-0 -bottom-22 sm:top-32 sm:bottom-auto lg:left-4" />
+      <RatingCard platform="google" className="left-40 -bottom-16 sm:bottom-12 sm:left-8 md:left-24 " />
+      {/* Right cards */}
+      <RatingCard platform="trustpilot" className="right-2 -bottom-14 sm:right-12 sm:bottom-18" />
+      <RatingCard platform="google" className="-bottom-28 right-34 sm:bottom-auto sm:top-34 sm:right-0" />
+    </>
   )
 }
 export default RatingCards;

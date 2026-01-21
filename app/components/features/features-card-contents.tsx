@@ -24,9 +24,9 @@ export const Connect = () => {
 
 export const AutomaticConnection = () => {
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-col lg:flex-row gap-4 ">
       <Card className="bg-accent p-0 w-full">
-        <CardContent className="flex items-center justify-between gap-14 p-4">
+        <CardContent className="flex items-center justify-between gap-2  p-4">
           <Image src="/images/trustpilot-logo.svg" alt="Trustpilot" width={80} height={30} />
           <Badge variant="secondary" className=" rounded-md">
             <div className="size-2 bg-primary rounded-full"></div>
@@ -37,7 +37,7 @@ export const AutomaticConnection = () => {
 
       </Card>
       <Card className="bg-accent  p-0 w-full">
-        <CardContent className="flex items-center justify-between gap-14 p-4">
+        <CardContent className="flex items-center justify-between p-4">
           <Image src="/images/google-logo.svg" alt="Google Business" width={60} height={30} />
           <Badge variant="secondary" className=" rounded-md">
             <div className="size-2 bg-primary rounded-full"></div>
@@ -54,19 +54,19 @@ export const AutomaticConnection = () => {
 
 export const AutoReply = () => {
   return (
-    <div className="space-y-3 bg-accent rounded-xl p-3">
+    <div className="space-y-3 bg-accent rounded-xl p-3 ">
       {/* message incoming */}
       <div className="flex justify-start">
-        <div className="flex items-center justify-between bg-card rounded-2xl rounded-bl-xs px-3 py-2 gap-8 max-w-[80%]">
+        <div className="flex justify-between bg-card rounded-2xl rounded-bl-xs px-3 py-2 gap-2 flex-col sm:gap-4 sm:flex-row items-start sm:items-center max-w-[80%]">
           <p className="text-white">Amazing service</p>
           <div className="flex gap-1">
-            <StarIcons />
+            <StarIcons className="size-4 xl:size-auto" />
           </div>
         </div>
       </div>
       {/*  message outgoing */}
       <div className="flex justify-end">
-        <div className="bg-primary  rounded-2xl rounded-br-xs px-3 py-2 gap-8 max-w-[80%] flex items-center ">
+        <div className="bg-primary  rounded-2xl rounded-br-xs px-3 py-2 gap-2 max-w-[80%] flex flex-col sm:gap-4 sm:flex-row items-end sm:items-center ">
           <p className="text-primary-foreground">Glad to hear that!</p>
           <Badge variant="default" className="bg-white">
             Auto Reply
@@ -85,22 +85,22 @@ export const ProtectReputation = () => {
         <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-px border-t border-dashed border-muted-foreground z-0"></div>
 
         {/* 1st element with red bubble and star */}
-        <div className="relative z-10 bg-destructive rounded-lg px-3 py-2 flex items-center gap-2 shadow-lg">
+        <div className="relative z-10 bg-destructive rounded-lg px-3 py-2 flex items-center gap-1 shadow-lg">
           <span className="text-white font-semibold">1</span>
-          <Star className="text-white fill-white" width={16} height={16} />
+          <Star className="fill-white" size={16} />
           {/* Triangle pointing down */}
           <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-r-[6px] border-t-8 border-l-transparent border-r-transparent border-t-destructive"></div>
         </div>
 
         {/* 2nd element with arrow in the center */}
-        <div className="relative z-10 bg-card rounded-lg p-3 flex items-center justify-center">
-          <ArrowRight className="text-white" width={20} height={20} />
+        <div className="relative z-10 bg-card rounded-lg p-2  flex items-center justify-center">
+          <ArrowRight size={20} />
         </div>
 
         {/* 3rd element with private support */}
-        <div className="relative z-10 bg-card rounded-lg px-4 py-3 flex items-center gap-2">
+        <div className="relative z-10 bg-card rounded-lg p-3  flex items-center gap-2">
           <Mail className="text-white" width={18} height={18} strokeWidth={2} />
-          <span className="text-white text-sm">Private support</span>
+          <span className="text-white text-sm hidden xl:inline">Private support</span>
         </div>
       </div>
     </div>
@@ -111,22 +111,22 @@ export const CustomFlows = () => {
   return (
     <div className="space-y-4">
       {/* Ligne 1 : Switch ON avec 5 étoiles */}
-      <div className="flex items-center justify-between gap-4 bg-accent rounded-lg p-4">
+      <div className="flex items-center justify-between gap-3 bg-accent rounded-lg p-4">
         <Switch checked={true} />
         <div className="flex gap-1">
-          <StarIcons />
+          <StarIcons className="size-4 xl:size-auto" />
         </div>
         <Image src="/images/trustpilot-logo.svg" alt="Trustpilot" width={80} height={30} />
       </div>
 
       {/* Ligne 2 : Switch OFF avec 4 étoiles */}
-      <div className="flex items-center justify-between gap-4 bg-accent rounded-lg p-4">
+      <div className="flex items-center justify-between gap-3 bg-accent rounded-lg p-4">
         <Switch checked={false} />
         <div className="flex gap-1">
           {Array.from({ length: 4 }).map((_, index) => (
-            <StarIcon key={index} className="text-amber-300" size={20} />
+            <StarIcon key={index} className="text-amber-300 size-4 xl:size-auto" size={20} />
           ))}
-          <StarIcon outline={true} strokeWidth={4} className="text-amber-300 " size={20} />
+          <StarIcon outline={true} strokeWidth={4} className="text-amber-300 size-4 xl:size-auto" size={20} />
 
         </div>
         <Image src="/images/trustpilot-logo.svg" alt="Trustpilot" width={80} height={30} />

@@ -9,14 +9,14 @@ import Typography from "@/components/ui/typography";
 
 const Faq = () => {
   return (
-    <section className="space-y-6 w-full py-16 flex gap-10">
-      <div className="w-1/2">
+    <section className="space-y-6 w-full py-16 flex flex-col md:flex-row gap-10">
+      <div className="w-full md:w-1/2">
         <Badge variant="secondary">FAQ</Badge>
         <Typography variant="h2" className="mb-4">Question fréquemments posées</Typography>
         <Typography variant="p">Avant FiveUp, on subissait les avis. Aujourd’hui, tout est automatisé : les clients satisfaits laissent des avis publics, les autres nous contactent en privé. Notre note Google a clairement progressé.</Typography>
       </div>
 
-      <Accordion type="single" collapsible className="mb-4 w-1/2">
+      <Accordion type="single" collapsible className="mb-4 w-full md:w-1/2">
         {Array.from({ length: 5 }).map((_, index) => (
 
           <AccordionItem key={index} value={`item-${index}`} className="mb-4">

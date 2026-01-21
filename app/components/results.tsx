@@ -31,10 +31,10 @@ const results = [{
 const Results = () => {
   return (
     <LandingBlock badge="Résultats" title="Des avis qui parlent pour vous.">
-      <div className="space-y-6">
+      <div className="space-y-14 sm:space-y-6">
         {results.map((result, index) => (
-          <div key={index} className="flex gap-6 even:flex-row-reverse items-stretch">
-            <Card className="w-1/4 flex">
+          <div key={index} className="flex flex-col sm:flex-row gap-6 sm:even:flex-row-reverse  items-stretch">
+            <Card className="w-full sm:w-1/4 flex">
               <CardContent className="flex flex-col items-center justify-center h-full w-full">
                 <Typography variant="p" className="text-4xl font-bold">{result.title}</Typography>
                 <Typography variant="p" className="text-md text-white/80">{result.description}</Typography>

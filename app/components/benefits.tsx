@@ -37,28 +37,29 @@ type BenefitProps = {
   icon: ComponentType<any>,
   iconProps?: any,
   title: string,
-  description: string
+  description: string,
+  index: number
 }
-const Benefit = ({ icon: Icon, iconProps = {}, title, description }: BenefitProps) => {
+const Benefit = ({ icon: Icon, iconProps = {}, title, description, index }: BenefitProps) => {
+  const isEven = index % 2 !== 0;
   return (
-    <div className="border-l border-dashed-long p-8 pb-0  space-y-8">
-      <Card className="w-max p-4 ">
+    <div className={`border-dashed-long-left ${isEven ? 'border-dashed-long-right md:border-dashed-long-left' : ''} p-8 pb-0 space-y-8 flex flex-col`}>
+      <Card className="w-max p-4">
         <Icon {...iconProps} />
       </Card>
 
-      <Typography variant="h4" className="relative after:absolute after:content-[''] after:top-0 after:-left-[34px] after:w-1 after:h-[38px]  after:bg-primary after:rounded-md">{title}</Typography>
+      <Typography variant="h4" className={`relative after:absolute after:content-[''] after:top-0 after:w-1 after:h-[38px] after:bg-primary after:rounded-md ${isEven ? 'after:-right-[34px] md:after:-left-[34px]' : 'after:-left-[34px]'}`}>{title}</Typography>
       <Typography variant="description" className="text-muted-foreground">{description}</Typography>
     </div>
   )
 }
 
 const Benefits = () => {
-
   return (
     <LandingBlock badge="Bénéfices clés" title="More reviews. Higher ratings. More revenue.">
       <div className="flex flex-col  md:flex-row gap-8 md:gap-4 ">
         {benefits.map((benefit, index) => (
-          <Benefit key={index} icon={benefit.icon} iconProps={benefit.iconProps} title={benefit.title} description={benefit.description} />
+          <Benefit key={index} index={index} icon={benefit.icon} iconProps={benefit.iconProps} title={benefit.title} description={benefit.description} />
         ))}
       </div>
     </LandingBlock>

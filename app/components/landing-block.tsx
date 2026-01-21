@@ -8,7 +8,7 @@ type LandingBlockProps = {
 }
 export const LandingBlock = ({ children, badge, title }: LandingBlockProps) => {
   return (
-    <div className="w-full py-16">
+    <div className="w-full py-10">
       <Badge variant="secondary">{badge}</Badge>
       <Typography variant="h2" >{title}</Typography>
       {children}

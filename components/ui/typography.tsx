@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 export const typographyVariants = cva(`text-xl ${poppins.className}`, {
   variants: {
     variant: {
-      h1: "scroll-m-20 text-6xl font-semibold tracking-tight lg: text-5xl",
+      h1: "scroll-m-20 text-[clamp(1.75rem,5vw,3.75rem)] font-semibold tracking-tight ",
       h2: "scroll-m-20 pb-2 text-[clamp(2rem,5vw,3rem)] leading-[clamp(2.5rem,5vw,4rem)]  lg:text-left mt-6 mb-10 font-semibold tracking-tight first:mt-0 ",
       h3: "scroll-m-20 text-[clamp(1rem,3vw,1.5rem)]  lg:text-left font-bold tracking-tight",
       h4: "scroll-m-20 text-xl font-semibold tracking-tight",

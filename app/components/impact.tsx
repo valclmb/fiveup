@@ -27,7 +27,7 @@ const Impact = () => {
             <ThumbsUp size={24} />
           </Card>
           <div className="space-y-2">
-            <Typography variant="h3" className="flex items-center gap-2"> 4 <StarIcon className="size-5 md:size-auto" />  <ArrowRight />5  <StarIcon className="size-5 md:size-auto" /> average rating uplift</Typography>
+            <Typography variant="h3" className="flex flex-wrap items-center gap-2"> 4 <StarIcon className="size-5 md:size-auto" />  <ArrowRight />5  <StarIcon className="size-5 md:size-auto" /> average rating uplift</Typography>
             <Typography variant="description" className="text-muted-foreground">Les clients mécontents s'expriment souvent en ligne, sans que vous ayez eu l'occasion d'intervenir en amont.</Typography>
           </div>
 
@@ -39,7 +39,7 @@ const Impact = () => {
             <Typography variant="description" className="text-muted-foreground">Les avis sont dispersés, sans suivi clair, sans automatisation et sans vision d'ensemble pour agir efficacement.</Typography>
           </div>
 
-          <Button className="col-span-2 md:col-span-1 md:col-start-2 w-full">Commencer à récolter des avis maintenant</Button>
+          <Button className="col-span-2 md:col-span-1 md:col-start-2 w-full">Commencer maintenant</Button>
 
         </aside>
         {/* <ul className="space-y-12">
