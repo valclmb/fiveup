@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import AnimatedBackground from "./components/animated-background";
 import "./globals.css";
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -23,7 +22,6 @@ export default function RootLayout({
       <body
         className="antialiased relative"
       >
-        <AnimatedBackground />
         {children}
       </body>
     </html>
