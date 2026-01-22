@@ -15,9 +15,9 @@ const Impact = () => {
           <Typography variant="h2">Finally understand the real impact <br className="hidden sm:block" />of your reviews</Typography>
         </AnimatedLandingItem>
       </AnimatedLandingHeader>
-      <div className="flex flex-col items-center lg:flex-row lg:items-start gap-16 md:gap-24">
-        <AnimatedImpactItem fromLeft={true} delay={0.1} className="w-full flex justify-center lg:justify-start">
-          <Image src="/images/impact-illustration.svg" alt="impact-illustration" width={460} height={400} className="w-full max-w-[460px] min-w-[200px] h-auto" />
+      <div className="flex flex-col items-center lg:flex-row lg:items-start gap-16">
+        <AnimatedImpactItem fromLeft={true} delay={0.1} className="flex justify-center lg:justify-start shrink-0">
+          <Image src="/images/impact-illustration.svg" alt="impact-illustration" width={460} height={400} className="w-full max-w-[460px] h-auto" />
         </AnimatedImpactItem>
 
         <aside className="flex-1 grid grid-cols-[auto_1fr] gap-8 items-start max-w-2xl">
