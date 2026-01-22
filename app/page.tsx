@@ -15,8 +15,8 @@ import { VideoPreview } from "./components/video-preview";
 export default function Page() {
   return (
     <div className=" flex flex-col min-h-screen items-center justify-center bg-background font-sans ">
-      <main className="flex min-h-screen w-full max-w-7xl flex-col items-center space-y-8 md:space-y-36 p-4  md:p-4  sm:items-start">
-        <Header />
+      <Header />
+      <main className="overflow-hidden md:overflow-visible flex min-h-screen w-full max-w-7xl flex-col items-center space-y-8 md:space-y-36 p-4  md:p-4  sm:items-start">
         <Hero />
 
         {/* Presentation video */}

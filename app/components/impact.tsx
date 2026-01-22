@@ -16,8 +16,8 @@ const Impact = () => {
         </AnimatedLandingItem>
       </AnimatedLandingHeader>
       <div className="flex flex-col items-center lg:flex-row lg:items-start gap-16 md:gap-24">
-        <AnimatedImpactItem fromLeft={true} delay={0.1}>
-          <Image src="/images/impact-illustration.svg" alt="impact-illustration" width={460} height={400} className="w-[clamp(200px,30vw,460px)]" />
+        <AnimatedImpactItem fromLeft={true} delay={0.1} className="w-full flex justify-center lg:justify-start">
+          <Image src="/images/impact-illustration.svg" alt="impact-illustration" width={460} height={400} className="w-full max-w-[460px] min-w-[200px] h-auto" />
         </AnimatedImpactItem>
 
         <aside className="flex-1 grid grid-cols-[auto_1fr] gap-8 items-start max-w-2xl">

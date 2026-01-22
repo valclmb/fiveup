@@ -10,10 +10,10 @@ import {
 } from "@/components/ui/drawer";
 import { cn } from '@/lib/utils';
 import { Menu } from 'lucide-react';
-import { motion } from "motion/react";
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { AnimatedHeaderWrapper } from './animated-wrapper';
 
 const Nav = ({ className, linkClassName }: { className?: string, linkClassName?: string }) => {
 
@@ -70,63 +70,49 @@ const Header = () => {
   }, []);
 
   return (
-    <motion.header
-      className={cn(
-        "sticky top-0 z-50 w-full origin-top border-[0.1px] border-black/40 p-4 bg-black/70 backdrop-blur-2xl flex items-center justify-between mx-auto rounded-2xl",
-        "transition-colors duration-300",
-        // isSticky ? "bg-black/70" : "bg-black"
-      )}
-      initial={{ y: -100, opacity: 0 }}
-      animate={{
-        y: isSticky ? 10 : 0,
-        scale: isSticky ? 0.98 : 1,
-        opacity: 1
-      }}
-      transition={{
-        y: { type: "spring", stiffness: 520, damping: 42, mass: 0.7 },
-        scale: { type: "spring", stiffness: 320, damping: 26, mass: 0.5 },
-        opacity: { duration: 0.5, ease: "easeOut" }
-      }}
+    <header className="sticky top-0 z-50 max-w-6xl 2 w-full mx-auto">
+      <AnimatedHeaderWrapper
+        className={cn(
+          "origin-top border-[0.1px] m-1 border-black/40 p-4 bg-black/70 backdrop-blur-2xl flex items-center justify-between rounded-2xl",
+          "transition-colors duration-300",
+        )}
+        isSticky={isSticky}
+      >
+        <div className="flex items-center">
+          <Link href="/">
+            <Image
+              src="/logo.svg"
+              alt="Logo"
+              width={110}
+              height={29}
+              priority
+              className='translate-y-0.5 translate-x-1'
+            />
+          </Link>
+        </div>
+        <Nav className='hidden md:flex' />
+        <div className='flex items-center gap-2 md:gap-0'>
+          <Button >Commencer</Button>
 
-      style={{ willChange: "transform" }}
-    >
-      <div className="flex items-center">
-        <Link href="/">
-          <Image
-            src="/logo.svg"
-            alt="Logo"
-            width={110}
-            height={29}
-            priority
-            className='translate-y-0.5 translate-x-1'
-          />
-        </Link>
-      </div>
-      <Nav className='hidden md:flex' />
-      <div className='flex items-center gap-2 md:gap-0'>
-        <Button >Commencer</Button>
-
-        <Drawer direction='top' open={isOpen} onOpenChange={handleOpenChange}>
-          <DrawerClose>
-            <Button size="icon" variant="outline" className="md:hidden cursor-pointer" onClick={handleToggle}><Menu /></Button>
-          </DrawerClose>
+          <Drawer direction='top' open={isOpen} onOpenChange={handleOpenChange}>
+            <DrawerClose>
+              <Button size="icon" variant="outline" className="md:hidden cursor-pointer" onClick={handleToggle}><Menu /></Button>
+            </DrawerClose>
 
 
-          <DrawerContent>
-            <DrawerHeader>
-              <DrawerTitle className='text-2xl font-bold text-primary pt-2'>Menu</DrawerTitle>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle className='text-2xl font-bold text-primary pt-2'>Menu</DrawerTitle>
 
-            </DrawerHeader>
-            <div className='pt-2 pb-8'>
-              <Nav className='flex flex-col md:hidden gap-2' linkClassName="w-11/12 mx-auto text-center py-3 " />
-            </div>
-          </DrawerContent>
-        </Drawer>
-      </div>
-
-
-
-    </motion.header >
+              </DrawerHeader>
+              <div className='pt-2 pb-8'>
+                <Nav className='flex flex-col md:hidden gap-2' linkClassName="w-11/12 mx-auto text-center py-3 " />
+              </div>
+            </DrawerContent>
+          </Drawer>
+        </div>
+      </AnimatedHeaderWrapper>
+    </header>
   );
 };
 

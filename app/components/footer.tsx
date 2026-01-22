@@ -32,10 +32,10 @@ const Footer = () => {
                 <Link href="/" className="font-bold">Contact</Link>
               </li>
               <li >
-                <Link href="mailto:contact@fiveup.com" className="hover:underline" >contact@fiveup.com</Link>
+                <Link href="mailto:contact@fiveup.com" className="hover:underline text-white" >contact@fiveup.com</Link>
               </li>
               <li>
-                <Link href="tel:+33664292232" className="hover:underline" >+33 6 64 29 22 32</Link>
+                <Link href="tel:+33664292232" className="hover:underline text-white" >+33 6 64 29 22 32</Link>
               </li>
             </ul>
 

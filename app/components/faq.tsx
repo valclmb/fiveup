@@ -19,21 +19,21 @@ const Faq = () => {
 
       <AnimatedSection fromLeft={false} delay={0.15} className="mb-4 w-full md:w-1/2">
         <Accordion type="single" collapsible className="w-full">
-        {Array.from({ length: 5 }).map((_, index) => (
+          {Array.from({ length: 5 }).map((_, index) => (
 
-          <AccordionItem key={index} value={`item-${index}`} className="mb-4">
-            <AccordionTrigger className="font-bold text-md">Titre de la question ici</AccordionTrigger>
-            <AccordionContent>
-              <Typography variant="description">
-                Use Jambo for analysing and engaging with customer feedback, unlocking valuable insights, and revealing new releases.
-              </Typography>
-              <Typography variant="description">
-                Lorem ipsum aliquam vel justo fringillas enigma.
-              </Typography>
-            </AccordionContent>
-          </AccordionItem>
+            <AccordionItem key={index} value={`item-${index}`} className="mb-4">
+              <AccordionTrigger className="font-bold text-md">Titre de la question ici</AccordionTrigger>
+              <AccordionContent>
+                <Typography variant="description">
+                  Use Jambo for analysing and engaging with customer feedback, unlocking valuable insights, and revealing new releases.
+                </Typography>
+                <Typography variant="description">
+                  Lorem ipsum aliquam vel justo fringillas enigma.
+                </Typography>
+              </AccordionContent>
+            </AccordionItem>
 
-        ))}
+          ))}
 
         </Accordion>
       </AnimatedSection>

@@ -1,10 +1,41 @@
 "use client"
 
+import { useIsMobile } from "@/lib/use-is-mobile";
 import { motion, useScroll, useTransform } from "motion/react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
-export const VideoPreview = () => {
+const VideoPreviewMobile = () => {
+  return (
+    <div className="relative w-full md:w-2/3 mx-auto md:mt-0 space-y-8 md:space-y-16 pt-24 px-4 md:px-0">
+      <div className="w-full relative">
+        <video
+          src="/postcss.config.mp4"
+          autoPlay
+          muted
+          loop
+          className="mx-auto rounded-lg shadow-[20px_20px_60px_0px] md:shadow-[40px_40px_120px_0px] shadow-tertiary w-full h-auto"
+        />
+
+        <div className="flex flex-wrap justify-center md:justify-between gap-4 md:gap-0 mt-8 w-full">
+          {[0, 1, 2, 3].map((index) => (
+            <div key={index} className="flex-shrink-0">
+              <Image
+                src="/images/partner-logo.svg"
+                alt="partner-logo"
+                width={150}
+                height={40}
+                className="w-24 h-6 md:w-[150px] md:h-10"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const VideoPreviewDesktop = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [initialAnimationDone, setInitialAnimationDone] = useState(false);
 
@@ -24,11 +55,8 @@ export const VideoPreview = () => {
   // Scale : commence à 1, s'agrandit au milieu, puis rapetisse à la fin
   const scale = useTransform(scrollYProgress, [0, 0.2, 0.6, 1], [1, 1.3, 1.2, 0.8]);
 
-
-
   // Y position : commence en haut pour voir le haut, puis se centre au milieu
   // Ne s'applique qu'après l'animation initiale
-  // On utilise une valeur moins négative pour ne pas trop décaler le centrage
   const scrollY = useTransform(scrollYProgress, [0, 0.2, 0.6, 1], [-250, 0, 0, 0]);
   const y = initialAnimationDone ? scrollY : undefined;
 
@@ -92,4 +120,14 @@ export const VideoPreview = () => {
       </div>
     </div>
   );
+};
+
+export const VideoPreview = () => {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return <VideoPreviewMobile />;
+  }
+
+  return <VideoPreviewDesktop />;
 };

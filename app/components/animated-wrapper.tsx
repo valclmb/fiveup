@@ -1,4 +1,5 @@
 "use client";
+import { useIsMobile } from "@/lib/use-is-mobile";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ReactNode, useRef } from "react";
 
@@ -86,6 +87,8 @@ interface AnimatedImpactItemProps {
 }
 
 export const AnimatedImpactItem = ({ children, delay = 0, fromLeft = false, className = "" }: AnimatedImpactItemProps) => {
+  const isMobile = useIsMobile();
+
   return (
     <motion.div
       className={className}
@@ -99,7 +102,7 @@ export const AnimatedImpactItem = ({ children, delay = 0, fromLeft = false, clas
         y: 0,
         x: 0
       }}
-      viewport={{ once: false, margin: "-100px" }}
+      viewport={{ once: false, margin: isMobile ? "0px" : "-100px" }}
       transition={{
         delay,
         duration: 0.5,
@@ -120,6 +123,8 @@ interface AnimatedSectionProps {
 
 export const AnimatedSection = ({ children, fromLeft, delay = 0, className = "" }: AnimatedSectionProps) => {
   const ref = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
@@ -134,6 +139,23 @@ export const AnimatedSection = ({ children, fromLeft, delay = 0, className = "" 
     [start, end],
     [fromLeft ? -300 : 300, 0]
   );
+
+  // Sur mobile, utiliser whileInView au lieu de scroll progress
+  // Utiliser once: true et margin plus permissif pour s'assurer que ça fonctionne
+  if (isMobile) {
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, x: fromLeft ? -30 : 30 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: false, margin: "0px" }}
+        transition={{ delay, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        className={className}
+      >
+        {children}
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
@@ -155,6 +177,8 @@ interface AnimatedCardProps {
 
 export const AnimatedCard = ({ children, fromLeft, delay = 0, className = "" }: AnimatedCardProps) => {
   const ref = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start end", "end start"]
@@ -169,6 +193,22 @@ export const AnimatedCard = ({ children, fromLeft, delay = 0, className = "" }: 
     [start, end],
     [fromLeft ? -300 : 300, 0]
   );
+
+  // Sur mobile, utiliser whileInView au lieu de scroll progress
+  if (isMobile) {
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, x: fromLeft ? -30 : 30 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: false, margin: "0px" }}
+        transition={{ delay, duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+        className={className}
+      >
+        {children}
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
@@ -215,6 +255,34 @@ export const AnimatedFade = ({ children, className = "", as = "div", once = fals
       viewport={{ once, margin: "-100px" }}
       transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
       className={className}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+interface AnimatedHeaderWrapperProps {
+  children: ReactNode;
+  className?: string;
+  isSticky?: boolean;
+}
+
+export const AnimatedHeaderWrapper = ({ children, className = "", isSticky = false }: AnimatedHeaderWrapperProps) => {
+  return (
+    <motion.div
+      className={className}
+      initial={{ y: -100, opacity: 0 }}
+      animate={{
+        y: isSticky ? 5 : 0,
+        scale: isSticky ? 0.98 : 1,
+        opacity: 1
+      }}
+      transition={{
+        y: { type: "spring", stiffness: 520, damping: 42, mass: 0.7 },
+        scale: { type: "spring", stiffness: 320, damping: 26, mass: 0.5 },
+        opacity: { duration: 0.5, ease: "easeOut" }
+      }}
+      style={{ willChange: "transform" }}
     >
       {children}
     </motion.div>
