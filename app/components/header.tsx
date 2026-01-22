@@ -76,12 +76,18 @@ const Header = () => {
         "transition-colors duration-300",
         // isSticky ? "bg-black/70" : "bg-black"
       )}
-      initial={false}
-      animate={{ y: isSticky ? 10 : 0, scale: isSticky ? 0.98 : 1 }}
+      initial={{ y: -100, opacity: 0 }}
+      animate={{
+        y: isSticky ? 10 : 0,
+        scale: isSticky ? 0.98 : 1,
+        opacity: 1
+      }}
       transition={{
         y: { type: "spring", stiffness: 520, damping: 42, mass: 0.7 },
         scale: { type: "spring", stiffness: 320, damping: 26, mass: 0.5 },
+        opacity: { duration: 0.5, ease: "easeOut" }
       }}
+
       style={{ willChange: "transform" }}
     >
       <div className="flex items-center">

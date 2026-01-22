@@ -1,0 +1,96 @@
+"use client"
+
+import { motion, useScroll, useTransform } from "motion/react";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+
+export const VideoPreview = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [initialAnimationDone, setInitialAnimationDone] = useState(false);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Marquer l'animation initiale comme terminée après le delay + duration
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setInitialAnimationDone(true);
+    }, 1300); // 1000ms delay + 300ms duration
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Scale : commence à 1, s'agrandit au milieu, puis rapetisse à la fin
+  const scale = useTransform(scrollYProgress, [0, 0.2, 0.6, 1], [1, 1.3, 1.2, 0.8]);
+
+  // Opacity
+  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1, 0.8]);
+
+  // Y position : commence en haut pour voir le haut, puis se centre au milieu
+  // Ne s'applique qu'après l'animation initiale
+  // On utilise une valeur moins négative pour ne pas trop décaler le centrage
+  const scrollY = useTransform(scrollYProgress, [0, 0.2, 0.6, 1], [-100, 0, 0, 0]);
+  const y = initialAnimationDone ? scrollY : undefined;
+
+  // Animation des logos : apparaissent plus tôt dans le scroll
+  // Chaque logo a un délai progressif
+  const getLogoAnimation = (index: number) => {
+    const start = 0.2 + (index * 0.05); // Délai progressif pour chaque logo
+    const end = 0.3 + (index * 0.1);
+    return {
+      opacity: useTransform(scrollYProgress, [start, end], [0, 1]),
+      y: useTransform(scrollYProgress, [-10, 0], [50, 0]),
+      scale: useTransform(scrollYProgress, [start, end], [0.8, 1])
+    };
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className="relative md:w-2/3 mx-auto md:mt-0 space-y-8 md:space-y-16 h-[300vh]"
+    >
+      <div className="sticky top-0 flex items-center justify-center h-screen">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1, duration: 0.3 }}
+          style={{ scale, y }}
+          className="w-full relative"
+        >
+          <video
+            src="/postcss.config.mp4"
+            autoPlay
+            muted
+            loop
+            className="mx-auto rounded-lg shadow-[40px_40px_120px_0px] shadow-tertiary w-full"
+          />
+
+          <motion.div className="flex flew-wrap justify-between mt-8 w-full">
+            {[0, 1, 2, 3].map((index) => {
+              const logoAnim = getLogoAnimation(index);
+              return (
+                <motion.div
+                  key={index}
+                  style={{
+                    opacity: logoAnim.opacity,
+                    y: logoAnim.y,
+                    scale: logoAnim.scale
+                  }}
+                >
+                  <Image
+                    src="/images/partner-logo.svg"
+                    alt="partner-logo"
+                    width={150}
+                    height={40}
+                    className="size-18 md:size-auto"
+                  />
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </motion.div>
+      </div>
+    </div>
+  );
+};

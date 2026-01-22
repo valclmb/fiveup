@@ -18,11 +18,10 @@ export const LandingBlock = ({ children, badge, title, bg = false }: LandingBloc
         height={112}
         x={-5}
         y={20}
-        // strokeDasharray={5}
         numSquares={20}
         maxOpacity={0.1}
-        duration={3}
-        repeatDelay={1}
+        duration={2}
+        repeatDelay={0.5}
         className={cn(
           // Fade radial pour masquer les bords (inclut le préfixe WebKit)
           "mask-[radial-gradient(ellipse_700px_260px_at_50%_40%,white_55%,transparent_85%)]",
