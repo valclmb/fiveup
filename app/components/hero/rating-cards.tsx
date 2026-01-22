@@ -9,9 +9,10 @@ interface RatingCardProps {
   platform: "google" | "trustpilot";
   className?: string;
   delay?: number;
+  floatOffset?: number;
 }
 
-const RatingCard = ({ platform, className, delay }: RatingCardProps) => {
+const RatingCard = ({ platform, className, delay, floatOffset = 0 }: RatingCardProps) => {
   const logos = {
     google: {
       path: "/images/google-logo.svg",
@@ -26,13 +27,16 @@ const RatingCard = ({ platform, className, delay }: RatingCardProps) => {
   }
 
 
+  // Pour les cartes avec floatOffset, on inverse la séquence pour créer l'opposition de phase
+  const ySequence = floatOffset > 0 ? [-8, 0, -8] : [0, -8, 0];
+
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.5 }}
+      initial={{ opacity: 0, scale: 0.5, y: floatOffset > 0 ? -8 : 0 }}
       animate={{
         opacity: 1,
         scale: [0.5, 1.2, 1],
-        y: [0, -8, 0]
+        y: ySequence
       }}
       transition={{
         duration: 0.5,
@@ -86,12 +90,14 @@ const RatingCards = () => {
         platform="google"
         className="left-40 -bottom-16 sm:bottom-12 sm:left-8 md:left-24"
         delay={1.1}
+        floatOffset={1.1}
       />
       {/* Right cards */}
       <RatingCard
         platform="trustpilot"
         className="right-2 -bottom-14 sm:right-12 sm:bottom-18"
         delay={1.2}
+        floatOffset={1.1}
       />
       <RatingCard
         platform="google"
