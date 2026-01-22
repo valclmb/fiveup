@@ -10,7 +10,7 @@ type FeaturesCardProps = {
 }
 const FeaturesCard = ({ icon, title, description, className, content }: FeaturesCardProps) => {
   return (
-    <Card className={className}>
+    <Card className={`flex flex-col h-full ${className || ""}`}>
       <CardHeader className="flex items-center gap-2">
         <CardTitle className="flex items-center gap-3">
           <div className="bg-accent rounded-xl p-3">{icon}</div>
@@ -18,9 +18,9 @@ const FeaturesCard = ({ icon, title, description, className, content }: Features
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="space-y-4 ">
-        {content && <div>{content}</div>}
-        {description && <Typography variant="description">{description}</Typography>}
+      <CardContent className="flex flex-col flex-grow space-y-4">
+        {content && <div className="flex-grow">{content}</div>}
+        {description && <Typography variant="description" className="mt-auto">{description}</Typography>}
       </CardContent>
     </Card>
   )

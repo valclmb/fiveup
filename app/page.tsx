@@ -1,4 +1,4 @@
-import Benefits from "@/app/components/benefits";
+import Benefits from "./components/benefits";
 import Cta from "./components/cta";
 import DashboardPreview from "./components/dashboard-preview";
 import Faq from "./components/faq";

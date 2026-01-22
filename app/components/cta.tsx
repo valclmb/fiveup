@@ -2,12 +2,13 @@ import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern";
 import { Button } from "@/components/ui/button";
 import Typography from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
+import { AnimatedFadeUp } from "./animated-wrapper";
 
 
 
 const Cta = () => {
   return (
-    <div className="bg-card relative flex h-82 w-full items-center justify-center overflow-hidden rounded-lg border p-20">
+    <AnimatedFadeUp className="bg-card relative flex h-82 w-full items-center justify-center overflow-hidden rounded-lg border p-20">
       <AnimatedGridPattern
         width={115}
         height={115}
@@ -32,7 +33,7 @@ const Cta = () => {
         <Button className="mt-5 z-10 px-8">Commencer maintenant</Button>
       </div>
 
-    </div>
+    </AnimatedFadeUp>
   )
 }
 

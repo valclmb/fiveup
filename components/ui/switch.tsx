@@ -8,10 +8,14 @@ import { cn } from "@/lib/utils"
 function Switch({
   className,
   size = "default",
+  transitionDuration,
   ...props
 }: React.ComponentProps<typeof SwitchPrimitive.Root> & {
   size?: "sm" | "default"
+  transitionDuration?: number
 }) {
+  const transitionStyle = transitionDuration ? { transitionDuration: `${transitionDuration}s` } : {};
+
   return (
     <SwitchPrimitive.Root
       data-slot="switch"
@@ -21,11 +25,13 @@ function Switch({
         "data-checked:bg-primary data-unchecked:bg-primary-foreground dark:data-unchecked:bg-primary-foreground",
         className
       )}
+      style={transitionStyle}
       {...props}
     >
       <SwitchPrimitive.Thumb
         data-slot="switch-thumb"
         className="bg-background dark:data-unchecked:bg-foreground dark:data-checked:bg-primary-foreground rounded-full group-data-[size=default]/switch:size-4 group-data-[size=sm]/switch:size-3 group-data-[size=default]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=sm]/switch:data-checked:translate-x-[calc(100%-2px)] group-data-[size=default]/switch:data-unchecked:translate-x-0 group-data-[size=sm]/switch:data-unchecked:translate-x-0 pointer-events-none block ring-0 transition-transform"
+        style={transitionStyle}
       />
     </SwitchPrimitive.Root>
   )

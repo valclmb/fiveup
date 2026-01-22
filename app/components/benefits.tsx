@@ -2,8 +2,8 @@ import { Card } from "@/components/ui/card";
 import Typography from "@/components/ui/typography";
 import { BarChart, Settings } from "lucide-react";
 import { ComponentProps, ComponentType } from "react";
+import { AnimatedBenefitItem } from "./animated-wrapper";
 import { LandingBlock } from "./landing-block";
-
 
 const Google = (props: ComponentProps<"svg">) => {
 
@@ -56,11 +56,12 @@ const Benefit = ({ icon: Icon, iconProps = {}, title, description, index }: Bene
 
 const Benefits = () => {
   return (
-
     <LandingBlock badge="Bénéfices clés" title="More reviews. Higher ratings. More revenue." bg>
       <div className="flex flex-col  md:flex-row gap-8 md:gap-4 ">
         {benefits.map((benefit, index) => (
-          <Benefit key={index} index={index} icon={benefit.icon} iconProps={benefit.iconProps} title={benefit.title} description={benefit.description} />
+          <AnimatedBenefitItem key={index} delay={0.2 * index}>
+            <Benefit index={index} icon={benefit.icon} iconProps={benefit.iconProps} title={benefit.title} description={benefit.description} />
+          </AnimatedBenefitItem>
         ))}
       </div>
     </LandingBlock>

@@ -2,6 +2,7 @@ import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern";
 import { Badge } from "@/components/ui/badge";
 import Typography from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
+import { AnimatedLandingHeader, AnimatedLandingItem } from "./animated-wrapper";
 
 type LandingBlockProps = {
   children: React.ReactNode,
@@ -11,7 +12,7 @@ type LandingBlockProps = {
 }
 export const LandingBlock = ({ children, badge, title, bg = false }: LandingBlockProps) => {
   return (
-    <div className="w-full  relative overflow-hidden px-5 py-10 ">
+    <div className="w-full  relative px-5 py-10 ">
 
       {bg && <AnimatedGridPattern
         width={112}
@@ -32,8 +33,14 @@ export const LandingBlock = ({ children, badge, title, bg = false }: LandingBloc
         )}
       />}
 
-      <Badge variant="secondary">{badge}</Badge>
-      <Typography variant="h2" >{title}</Typography>
+      <AnimatedLandingHeader>
+        <AnimatedLandingItem>
+          <Badge variant="secondary">{badge}</Badge>
+        </AnimatedLandingItem>
+        <AnimatedLandingItem>
+          <Typography variant="h2">{title}</Typography>
+        </AnimatedLandingItem>
+      </AnimatedLandingHeader>
       {children}
     </div>
   );

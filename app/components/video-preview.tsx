@@ -24,13 +24,12 @@ export const VideoPreview = () => {
   // Scale : commence à 1, s'agrandit au milieu, puis rapetisse à la fin
   const scale = useTransform(scrollYProgress, [0, 0.2, 0.6, 1], [1, 1.3, 1.2, 0.8]);
 
-  // Opacity
-  const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [1, 1, 0.8]);
+
 
   // Y position : commence en haut pour voir le haut, puis se centre au milieu
   // Ne s'applique qu'après l'animation initiale
   // On utilise une valeur moins négative pour ne pas trop décaler le centrage
-  const scrollY = useTransform(scrollYProgress, [0, 0.2, 0.6, 1], [-100, 0, 0, 0]);
+  const scrollY = useTransform(scrollYProgress, [0, 0.2, 0.6, 1], [-250, 0, 0, 0]);
   const y = initialAnimationDone ? scrollY : undefined;
 
   // Animation des logos : apparaissent plus tôt dans le scroll
@@ -52,7 +51,7 @@ export const VideoPreview = () => {
     >
       <div className="sticky top-0 flex items-center justify-center h-screen">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 250 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1, duration: 0.3 }}
           style={{ scale, y }}

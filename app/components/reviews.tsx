@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Marquee } from "@/components/ui/marquee";
 import Typography from "@/components/ui/typography";
 import Image from "next/image";
+import { AnimatedFade } from "./animated-wrapper";
 import { StarIcons } from "./star-icon";
 
 const reviews = [
@@ -54,7 +55,7 @@ const secondRow = reviews.slice(reviews.length / 2)
 
 const Reviews = () => {
   return (
-    <section className="w-full max-w-full">
+    <AnimatedFade as="section" className="w-full max-w-full">
       <Typography variant="h2" className="text-center">Ce que pensent nos clients</Typography>
       <div className=" relative w-full flex flex-col items-center justify-center gap-4 overflow-hidden py-5">
         <Marquee pauseOnHover className="[--duration:50s] [--gap:2rem]" >
@@ -71,7 +72,7 @@ const Reviews = () => {
         <div className="from-background pointer-events-none absolute inset-y-0 -left-px w-1/4 bg-linear-to-r"></div>
         <div className="from-background pointer-events-none absolute inset-y-0 -right-px w-1/4 bg-linear-to-l"></div>
       </div>
-    </section>
+    </AnimatedFade>
   )
 }
 

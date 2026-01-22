@@ -6,17 +6,19 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import Typography from "@/components/ui/typography";
+import { AnimatedSection } from "./animated-wrapper";
 
 const Faq = () => {
   return (
     <section className="space-y-6 w-full py-16 flex flex-col md:flex-row gap-10">
-      <div className="w-full md:w-1/2">
+      <AnimatedSection fromLeft={true} className="w-full md:w-1/2">
         <Badge variant="secondary">FAQ</Badge>
         <Typography variant="h2" className="mb-4">Question fréquemments posées</Typography>
         <Typography variant="p">Avant FiveUp, on subissait les avis. Aujourd’hui, tout est automatisé : les clients satisfaits laissent des avis publics, les autres nous contactent en privé. Notre note Google a clairement progressé.</Typography>
-      </div>
+      </AnimatedSection>
 
-      <Accordion type="single" collapsible className="mb-4 w-full md:w-1/2">
+      <AnimatedSection fromLeft={false} delay={0.15} className="mb-4 w-full md:w-1/2">
+        <Accordion type="single" collapsible className="w-full">
         {Array.from({ length: 5 }).map((_, index) => (
 
           <AccordionItem key={index} value={`item-${index}`} className="mb-4">
@@ -33,7 +35,8 @@ const Faq = () => {
 
         ))}
 
-      </Accordion>
+        </Accordion>
+      </AnimatedSection>
 
     </section>
   )
