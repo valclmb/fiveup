@@ -32,7 +32,7 @@ const Hero = () => {
       >
         <Typography variant="p" className="text-center max-w-sm md:max-w-lg mx-auto text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sed mauris a ex posuere luctus sit amet ac mi.</Typography>
       </motion.div>
-      <div className="flex flex-col md:flew-row items-center gap-4 mt-2">
+      <div className="flex flex-col lg:flex-row items-center gap-4 mt-2">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
