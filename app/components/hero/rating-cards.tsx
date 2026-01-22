@@ -29,14 +29,14 @@ const RatingCard = ({ platform, className, delay, floatOffset = 0 }: RatingCardP
 
   // Pour les cartes avec floatOffset, on inverse la séquence pour créer l'opposition de phase
   const ySequence = floatOffset > 0 ? [-8, 0, -8] : [0, -8, 0];
+  const initialY = floatOffset > 0 ? -8 : 0;
 
   return (
     <motion.div
-      initial={{ opacity: 0, scale: 0.5, y: floatOffset > 0 ? -8 : 0 }}
+      initial={{ opacity: 0, scale: 0.5 }}
       animate={{
         opacity: 1,
-        scale: [0.5, 1.2, 1],
-        y: ySequence
+        scale: [0.5, 1.2, 1]
       }}
       transition={{
         duration: 0.5,
@@ -47,32 +47,39 @@ const RatingCard = ({ platform, className, delay, floatOffset = 0 }: RatingCardP
           duration: 0.5,
           delay: delay || 0,
           ease: "easeOut"
-        },
-        y: {
-          duration: 3,
-          delay: (delay || 0) + 0.5,
-          repeat: Infinity,
-          repeatType: "reverse",
-          ease: "easeInOut"
         }
       }}
       className={cn("absolute ", className)}
     >
-      <Card className={cn("p-2 bg-background/60 backdrop-blur-md rounded-xl shadow-2xl shadow-black")}>
-        <CardContent className="p-0 space-y-2 ">
+      <motion.div
+        initial={{ y: initialY }}
+        animate={{
+          y: ySequence
+        }}
+        transition={{
+          duration: 3,
+          delay: delay || 0,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "easeInOut"
+        }}
+      >
+        <Card className={cn("p-2 bg-background/60 backdrop-blur-md rounded-xl shadow-2xl shadow-black")}>
+          <CardContent className="p-0 space-y-2 ">
 
-          <div className="flex gap-1">
-            <StarIcons size={20} className="size-4 lg:size-auto" />
-          </div>
+            <div className="flex gap-1">
+              <StarIcons size={20} className="size-4 lg:size-auto" />
+            </div>
 
 
-          <Image
-            src={logos[platform].path}
-            alt={`${platform} logo`}
-            width={logos[platform].width}
-            height={logos[platform].height}
-          />   </CardContent>
-      </Card>
+            <Image
+              src={logos[platform].path}
+              alt={`${platform} logo`}
+              width={logos[platform].width}
+              height={logos[platform].height}
+            />   </CardContent>
+        </Card>
+      </motion.div>
     </motion.div>
   );
 }
@@ -97,7 +104,7 @@ const RatingCards = () => {
         platform="trustpilot"
         className="right-2 -bottom-14 sm:right-12 sm:bottom-18"
         delay={1.2}
-        floatOffset={1.1}
+        floatOffset={0.9}
       />
       <RatingCard
         platform="google"
