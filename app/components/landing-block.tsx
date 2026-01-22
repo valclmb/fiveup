@@ -12,7 +12,7 @@ type LandingBlockProps = {
 }
 export const LandingBlock = ({ children, badge, title, bg = false }: LandingBlockProps) => {
   return (
-    <div className="w-full  relative px-5 py-10 ">
+    <div className="w-full  relative py-10 ">
 
       {bg && <AnimatedGridPattern
         width={112}
