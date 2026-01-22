@@ -31,7 +31,8 @@ const RatingCard = ({ platform, className, delay }: RatingCardProps) => {
       initial={{ opacity: 0, scale: 0.5 }}
       animate={{
         opacity: 1,
-        scale: [0.5, 1.2, 1]
+        scale: [0.5, 1.2, 1],
+        y: [0, -8, 0]
       }}
       transition={{
         duration: 0.5,
@@ -42,6 +43,13 @@ const RatingCard = ({ platform, className, delay }: RatingCardProps) => {
           duration: 0.5,
           delay: delay || 0,
           ease: "easeOut"
+        },
+        y: {
+          duration: 3,
+          delay: (delay || 0) + 0.5,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "easeInOut"
         }
       }}
       className={cn("absolute ", className)}

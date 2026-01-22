@@ -8,7 +8,7 @@ import RatingCards from "./rating-cards";
 
 const Hero = () => {
   return (
-    <div className='relative w-full flex flex-col items-center gap-6 mb-28 sm:mb-24 md:mb-32 '>
+    <div className='relative w-full flex flex-col items-center gap-8 mb-28 sm:mb-24 md:mb-32 '>
       <motion.div initial={{ opacity: 0, y: -20, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}>
