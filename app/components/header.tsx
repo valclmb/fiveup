@@ -11,7 +11,7 @@ const Header = async () => {
   const session = await auth();
 
   return (
-    <header className="sticky top-0 z-50 max-w-7xl w-full mx-auto">
+    <header className="sticky top-0 z-50 pt-1 max-w-7xl w-full mx-auto">
       <AnimatedHeaderWrapper
         className={cn(
           "origin-top border-[0.1px] m-1 border-black/40 p-4 bg-black/70 backdrop-blur-2xl flex items-center justify-between rounded-2xl",
