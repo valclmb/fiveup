@@ -1,7 +1,7 @@
 "use client";
 import { useIsMobile } from "@/lib/use-is-mobile";
 import { motion, useScroll, useTransform } from "motion/react";
-import { ReactNode, useRef } from "react";
+import { ReactNode, useEffect, useRef, useState } from "react";
 
 interface AnimatedLandingHeaderProps {
   children: ReactNode;
@@ -264,10 +264,19 @@ export const AnimatedFade = ({ children, className = "", as = "div", once = fals
 interface AnimatedHeaderWrapperProps {
   children: ReactNode;
   className?: string;
-  isSticky?: boolean;
 }
 
-export const AnimatedHeaderWrapper = ({ children, className = "", isSticky = false }: AnimatedHeaderWrapperProps) => {
+export const AnimatedHeaderWrapper = ({ children, className = "" }: AnimatedHeaderWrapperProps) => {
+  const [isSticky, setIsSticky] = useState(false);
+
+  useEffect(() => {
+    const threshold = 8; // ~ top-2
+    const onScroll = () => setIsSticky(window.scrollY > threshold);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <motion.div
       className={className}
