@@ -5,8 +5,11 @@ import Link from 'next/link';
 import { AnimatedHeaderWrapper } from './animated-wrapper';
 import { HeaderDrawer } from './header-drawer';
 import { Nav } from './header-nav';
+import { auth } from "@/auth";
 
-const Header = () => {
+const Header = async () => {
+ const session = await auth();
+
   return (
     <header className="sticky top-0 z-50 max-w-6xl w-full mx-auto">
       <AnimatedHeaderWrapper
@@ -29,7 +32,9 @@ const Header = () => {
         </div>
         <Nav className='hidden md:flex' />
         <div className='flex items-center gap-2 md:gap-0'>
+         <Link href={session ? "/dashboard" : "/auth/signup"}>
           <Button>Commencer</Button>
+        </Link>
           <HeaderDrawer />
         </div>
       </AnimatedHeaderWrapper>
