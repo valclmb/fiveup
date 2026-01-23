@@ -58,7 +58,7 @@ const Impact = () => {
           </AnimatedImpactItem>
 
           <AnimatedImpactItem delay={0.5} className="col-span-2 md:col-span-1 md:col-start-2">
-            <Button className="w-full">Commencer maintenant</Button>
+            <Button variant="landing" className="w-full">Commencer maintenant</Button>
           </AnimatedImpactItem>
 
         </aside>

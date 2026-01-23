@@ -1,13 +1,29 @@
 'use client'
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { signIn } from 'next-auth/react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import Link from 'next/link'
+import Typography from '@/components/ui/typography'
+import SignUpForm from './signup-form'
 
 export default function SignUpPage() {
+  return (
+    <>
+      <Typography variant="h2" className="text-2xl md:text-[42px] mb-0">Sign up</Typography>
+      <SignUpForm />
+    </>
+  )
+}
+
+// ============================================
+// ANCIEN CODE (conservé pour référence)
+// ============================================
+/*
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { signIn } from 'next-auth/react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+
+function SignUpFormOld() {
   const router = useRouter()
   const [formData, setFormData] = useState({
     name: '',
@@ -35,7 +51,6 @@ export default function SignUpPage() {
     setErrors([])
     setIsLoading(true)
 
-    // Validation côté client
     if (formData.password !== formData.confirmPassword) {
       setErrors(['Les mots de passe ne correspondent pas'])
       setIsLoading(false)
@@ -147,57 +162,45 @@ export default function SignUpPage() {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <Input
-                id="name"
-                type="text"
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                placeholder="Nom complet"
-              />
-            </div>
-
-            <div>
-              <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                placeholder="Email"
-                required
-              />
-            </div>
-
-            <div>
-              <Input
-                id="password"
-                type="password"
-                value={formData.password}
-                onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                placeholder="Mot de passe"
-                required
-              />
-            </div>
-
-            <div>
-              <Input
-                id="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={(e) =>
-                  setFormData({ ...formData, confirmPassword: e.target.value })
-                }
-                placeholder="Confirmer le mot de passe"
-                required
-              />
-            </div>
-
+            <Input
+              id="name"
+              type="text"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              placeholder="Nom complet"
+            />
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              placeholder="Email"
+              required
+            />
+            <Input
+              id="password"
+              type="password"
+              value={formData.password}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              placeholder="Mot de passe"
+              required
+            />
+            <Input
+              id="confirmPassword"
+              type="password"
+              value={formData.confirmPassword}
+              onChange={(e) =>
+                setFormData({ ...formData, confirmPassword: e.target.value })
+              }
+              placeholder="Confirmer le mot de passe"
+              required
+            />
             <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
               {isLoading ? 'Création...' : 'Créer mon compte'}
             </Button>
@@ -213,3 +216,4 @@ export default function SignUpPage() {
     </div>
   )
 }
+*/

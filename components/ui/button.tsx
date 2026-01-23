@@ -9,15 +9,15 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Fond via ::after (pratique pour animer le background sans impacter le contenu)
-        default:
-
-          " relative isolate overflow-hidden bg-transparent text-primary-foreground " +
+        landing: " relative isolate overflow-hidden bg-transparent text-primary-foreground " +
           "after:content-[''] after:absolute after:inset-0 after:-z-10 after:rounded-[inherit] " +
           "after:bg-linear-to-r after:from-primary-gradient after:via-primary after:to-primary-gradient " +
           "after:[background-size:200%_100%] after:[background-position:0%_50%] " +
           "after:transition-[background-position] after:duration-500 after:ease-in-out " +
           "hover:after:[background-position:100%_50%] ",
+        // Fond via ::after (pratique pour animer le background sans impacter le contenu)
+        default:
+          "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
         outline: "border-border bg-background hover:bg-muted hover:text-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50 aria-expanded:bg-muted aria-expanded:text-foreground shadow-xs",
         secondary: "relative isolate overflow-hidden bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         ghost: "hover:bg-muted hover:text-foreground dark:hover:bg-muted/50 aria-expanded:bg-muted aria-expanded:text-foreground",

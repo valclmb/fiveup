@@ -82,7 +82,7 @@ export const Features = () => {
   };
 
   return (
-    <LandingBlock badge="Features" title="Tout pour gérer vos avis, en un seul endroit" >
+    <LandingBlock id="features" badge="Features" title="Tout pour gérer vos avis, en un seul endroit" className="scroll-mt-24" >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 w-full items-stretch">
         {featuresData.map((feature, index) => {
           const animation = getAnimation(index);

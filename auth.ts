@@ -1,8 +1,8 @@
-import NextAuth from "next-auth"
-import Google from "next-auth/providers/google"
-import Credentials from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@auth/prisma-adapter"
 import { verifyPassword } from "@/lib/auth/password"
+import { PrismaAdapter } from "@auth/prisma-adapter"
+import NextAuth from "next-auth"
+import Credentials from "next-auth/providers/credentials"
+import Google from "next-auth/providers/google"
 
 // Fonction helper pour obtenir Prisma (utilisé dans les callbacks)
 // Ce fichier n'est utilisé que dans Node.js runtime, donc Prisma est toujours disponible
@@ -41,13 +41,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       async authorize(credentials) {
         // 1. Vérifier que les champs sont remplis
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Email et mot de passe requis")
+          return null
         }
 
         // 2. Chercher l'utilisateur dans la BDD
         const prismaClient = await getPrisma()
         if (!prismaClient) {
-          throw new Error("Database not available in Edge Runtime")
+          console.error("[auth] Database not available")
+          return null
         }
         const user = await prismaClient.user.findUnique({
           where: { email: (credentials.email as string).toLowerCase().trim() },
@@ -65,7 +66,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         // 3. Vérifier que l'utilisateur existe et a un mot de passe
         // Protection contre l'énumération : même message d'erreur si utilisateur inexistant ou pas de mot de passe
         if (!user || !user.password) {
-          throw new Error("Email ou mot de passe incorrect")
+          return null
         }
 
         // 4. Vérifier le mot de passe
@@ -75,13 +76,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         )
 
         if (!isPasswordValid) {
-          throw new Error("Email ou mot de passe incorrect")
+          return null
         }
 
         // 5. ⚠️ IMPORTANT : Vérifier que l'email est confirmé
         // Protection contre l'énumération : même message générique
         if (!user.emailVerified) {
-          throw new Error("Email ou mot de passe incorrect")
+          return null
         }
 
         // 6. Retourner l'utilisateur (SANS le mot de passe!)

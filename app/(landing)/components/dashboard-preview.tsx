@@ -1,5 +1,5 @@
 "use client"
-
+import { AnimatedFade } from "@/components/custom-ui/animated-fade";
 import {
   Card,
   CardContent,
@@ -12,7 +12,6 @@ import Typography from "@/components/ui/typography";
 import { Bell, Clock, LayoutDashboard, Link, Megaphone, Menu, MessageCircle, PanelsTopLeft, Percent, Settings, Star } from "lucide-react";
 import Image from "next/image";
 import { Area, AreaChart, CartesianGrid } from "recharts";
-import { AnimatedFade } from "./animated-wrapper";
 import { StarIcons } from "./star-icon";
 
 const chartData1 = [

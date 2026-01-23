@@ -1,12 +1,28 @@
 "use client"
-import { StarIcon } from "@/app/components/star-icon";
+import { StarIcon } from "@/app/(landing)/components/star-icon";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import Typography from "@/components/ui/typography";
 import { motion } from "motion/react";
-import RatingCards from "./rating-cards";
+import Link from "next/link";
+import RatingCard from "../../../../components/rating-card";
 
 const Hero = () => {
+  const scrollToFeatures = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    const featuresElement = document.getElementById('features')
+    if (featuresElement) {
+      const headerOffset = 100 // Offset pour le header sticky
+      const elementPosition = featuresElement.getBoundingClientRect().top
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      })
+    }
+  }
+
   return (
     <div className='relative w-full flex flex-col items-center gap-10 mb-28 sm:mb-24 md:mb-32 '>
       <motion.div initial={{ opacity: 0, y: -20, scale: 0.9 }}
@@ -46,7 +62,7 @@ const Hero = () => {
             transition={{ duration: 0.3, delay: 0.8, ease: "easeOut" }}
 
           >
-            <Button>Commencer maintenant</Button>
+            <Link href="/auth/signup" className={buttonVariants({ variant: "landing" })}>Commencer maintenant</Link>
 
           </motion.div>
           <motion.div
@@ -55,7 +71,7 @@ const Hero = () => {
             transition={{ duration: 0.3, delay: 0.9, ease: "easeOut" }}
 
           >
-            <Button variant="secondary">Découvrir les fonctionnalités</Button>
+            <button onClick={scrollToFeatures} className={buttonVariants({ variant: "secondary" })}>Découvrir les fonctionnalités</button>
 
           </motion.div>
 
@@ -75,7 +91,29 @@ const Hero = () => {
 
 
 
-      <RatingCards />
+      <RatingCard
+        platform="trustpilot"
+        className="left-0 -bottom-22 sm:top-32 sm:bottom-auto lg:left-4"
+        delay={1}
+      />
+      <RatingCard
+        platform="google"
+        className="left-40 -bottom-16 sm:bottom-12 sm:left-8 md:left-24"
+        delay={1.1}
+        floatOffset={1.1}
+      />
+      {/* Right cards */}
+      <RatingCard
+        platform="trustpilot"
+        className="right-2 -bottom-14 sm:right-12 sm:bottom-18"
+        delay={1.2}
+        floatOffset={0.9}
+      />
+      <RatingCard
+        platform="google"
+        className="-bottom-28 right-34 sm:bottom-auto sm:top-34 sm:right-0"
+        delay={1.3}
+      />
 
     </div>
   )

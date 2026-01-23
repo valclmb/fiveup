@@ -1,7 +1,8 @@
 import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import Typography from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 import { AnimatedFadeUp } from "./animated-wrapper";
 
 
@@ -30,7 +31,9 @@ const Cta = () => {
       <div className="flex flex-col items-center justify-center text-center">
         <Typography variant="h2" className="text-2xl lg:text-center md:text-[42px] mb-0">Ready to make reviews your unfair advantage?</Typography>
         <Typography variant="description" className="text-sm  md:text-base text-muted-foreground">Plug FiveUp into your stack and turn every customer into social proof – without adding more work to your team.</Typography>
-        <Button className="mt-5 z-10 px-8">Commencer maintenant</Button>
+        <Link href="/auth/signup" className={buttonVariants({ variant: "landing", className: "mt-5 z-10 px-8" })}>
+          Commencer maintenant
+        </Link>
       </div>
 
     </AnimatedFadeUp>

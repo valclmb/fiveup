@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { Button } from '@/components/ui/button';
+import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -11,7 +11,7 @@ const Header = async () => {
   const session = await auth();
 
   return (
-    <header className="sticky top-0 z-50 pt-1 max-w-7xl w-full mx-auto">
+    <header className="sticky top-0 z-40 pt-1 max-w-7xl w-full mx-auto">
       <AnimatedHeaderWrapper
         className={cn(
           "origin-top border-[0.1px] m-1 border-black/40 p-4 bg-black/70 backdrop-blur-2xl flex items-center justify-between rounded-2xl",
@@ -31,9 +31,12 @@ const Header = async () => {
           </Link>
         </div>
         <Nav className='hidden md:flex' />
-        <div className='flex items-center gap-2 md:gap-0'>
-          <Link href={session ? "/dashboard" : "/auth/signup"}>
-            <Button>Commencer</Button>
+        <div className='space-x-2 md:gap-0'>
+          <Link href={session ? "/dashboard" : "/auth/signin"} className={buttonVariants({ variant: "secondary" })}>
+            Sign in
+          </Link>
+          <Link href={session ? "/dashboard" : "/auth/signup"} className={buttonVariants({ variant: "landing" })}>
+            Start now!
           </Link>
           <HeaderDrawer />
         </div>

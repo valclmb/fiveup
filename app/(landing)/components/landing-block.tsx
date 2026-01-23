@@ -9,10 +9,10 @@ type LandingBlockProps = {
   badge: string,
   title: string,
   bg?: boolean
-}
-export const LandingBlock = ({ children, badge, title, bg = false }: LandingBlockProps) => {
+} & React.ComponentProps<"div">
+export const LandingBlock = ({ children, badge, title, bg = false, className, ...props }: LandingBlockProps) => {
   return (
-    <div className="w-full  relative py-10 ">
+    <div className={cn("w-full  relative py-10 ", className)} {...props}>
 
       {bg && <AnimatedGridPattern
         width={112}

@@ -1,8 +1,8 @@
+import { AnimatedFade } from "@/components/custom-ui/animated-fade";
 import { Card, CardContent } from "@/components/ui/card";
 import { Marquee } from "@/components/ui/marquee";
 import Typography from "@/components/ui/typography";
 import Image from "next/image";
-import { AnimatedFade } from "./animated-wrapper";
 import { StarIcons } from "./star-icon";
 
 const reviews = [
