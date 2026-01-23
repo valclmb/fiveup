@@ -7,13 +7,13 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import Typography from "@/components/ui/typography";
+import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod/v3";
 
 const formSchema = z.object({
@@ -24,48 +24,37 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 const SignInForm = () => {
-  const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "matteo@fiveup-review.com",
-      password: "Cinqetoiles69",
+      email: "valclmb.dev@gmail.com",
+      password: "Test1234",
     },
   })
 
   const login = useMutation({
-    mutationFn: async (data: FormSchema) => await signIn('credentials', {
+    mutationFn: async (data: FormSchema) => await authClient.signIn.email({
       email: data.email,
       password: data.password,
-
+      callbackURL: '/dashboard',
     }),
     onSuccess: (data) => {
-      console.log(data);
-      // console.log("data", data)
-      // if (data?.error) {
-      //   setFormError(result.error)
-      // } else if (result?.ok) {
-      //   window.location.href = callbackUrl
-      // }
+      if (data.error) {
+        toast.error(data.error.message)
+      } else {
+        toast.success('Connexion réussie. Vous êtes maintenant connecté.')
+      }
+
     },
     onError: (error) => {
       console.log("error", error)
     }
-
-    // onSuccess: (data) => {
-    //   if (data?.error) {
-    //     console.log(data.error)
-    //   } else {
-    //     console.log(data)
-    //     console.log("success")
-    //   }
-    // },
   })
 
   const loginGoogle = useMutation({
-    mutationFn: () => signIn('google', { callbackUrl }),
+    mutationFn: async () => await authClient.signIn.social({ provider: 'google', callbackURL: '/dashboard', errorCallbackURL: "/error" }),
 
   })
 

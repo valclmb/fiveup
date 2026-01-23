@@ -7,14 +7,14 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import Typography from "@/components/ui/typography";
-import { post } from "@/lib/fetch";
+import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { signIn } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod/v3";
 
 const formSchema = z.object({
@@ -32,6 +32,7 @@ type FormSchema = z.infer<typeof formSchema>;
 const SignUpForm = () => {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
+  const selectedPlan = searchParams.get('plan') || 'pro' // Plan choisi depuis /pricing
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -44,26 +45,42 @@ const SignUpForm = () => {
   })
 
   const signup = useMutation({
-    mutationFn: async (data: FormSchema) => post("/auth/signup", data),
-    onSuccess: (data) => {
+    mutationFn: async (data: FormSchema) => authClient.signUp.email({
+      email: data.email,
+      password: data.password,
+      name: data.fullName,
+    }),
+    onSuccess: async (data) => {
       console.log(data);
-      // if (data.signIn?.ok) {
-      //   // Connexion réussie → redirect
-      //   window.location.href = callbackUrl
-      // } else {
-      //   // Compte créé mais email non vérifié → rediriger vers page de vérification
-      //   // ou afficher un message
-      //   console.log('Compte créé. Vérifiez votre email pour vous connecter.')
-      // }
+      if (data.error) {
+        toast.error(data.error.message)
+        return
+      }
+
+      // Compte créé → rediriger vers Stripe Checkout pour le paiement
+      toast.success('Compte créé ! Redirection vers le paiement...')
+
+      const { error } = await authClient.subscription.upgrade({
+        plan: "pro",
+        successUrl: `${window.location.origin}/dashboard?success=true`,
+        cancelUrl: `${window.location.origin}/pricing`,
+      })
+
+      if (error) {
+        toast.error(error.message)
+        // Fallback : rediriger vers le dashboard
+        // window.location.href = callbackUrl
+      }
     },
     onError: (error) => {
       console.log("error", error)
-      // Afficher l'erreur dans le formulaire si besoin
+      toast.error("Une erreur est survenue")
     },
   })
 
   const signupGoogle = useMutation({
-    mutationFn: () => signIn('google', { callbackUrl }),
+    mutationFn: async () => await authClient.signIn.social({ provider: 'google', callbackURL: '/dashboard', errorCallbackURL: "/error" }),
+
   })
 
   const onSubmit = (data: FormSchema) => {

@@ -1,5 +1,5 @@
-import { auth } from "@/auth";
 import { buttonVariants } from '@/components/ui/button';
+import { authClient } from '@/lib/auth-client';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -8,7 +8,8 @@ import { HeaderDrawer } from './header-drawer';
 import { Nav } from './header-nav';
 
 const Header = async () => {
-  const session = await auth();
+  const { data: session } = await authClient.getSession();
+
 
   return (
     <header className="sticky top-0 z-40 pt-1 max-w-7xl w-full mx-auto">

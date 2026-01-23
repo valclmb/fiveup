@@ -8,21 +8,6 @@ import Link from "next/link";
 import RatingCard from "../../../../components/rating-card";
 
 const Hero = () => {
-  const scrollToFeatures = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault()
-    const featuresElement = document.getElementById('features')
-    if (featuresElement) {
-      const headerOffset = 100 // Offset pour le header sticky
-      const elementPosition = featuresElement.getBoundingClientRect().top
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
-
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      })
-    }
-  }
-
   return (
     <div className='relative w-full flex flex-col items-center gap-10 mb-28 sm:mb-24 md:mb-32 '>
       <motion.div initial={{ opacity: 0, y: -20, scale: 0.9 }}
@@ -71,7 +56,7 @@ const Hero = () => {
             transition={{ duration: 0.3, delay: 0.9, ease: "easeOut" }}
 
           >
-            <button onClick={scrollToFeatures} className={buttonVariants({ variant: "secondary" })}>Découvrir les fonctionnalités</button>
+            <a href="#features" className={buttonVariants({ variant: "secondary" })}>Découvrir les fonctionnalités</a>
 
           </motion.div>
 

@@ -1,24 +1,18 @@
 import { auth } from "@/auth"
-import { redirect } from "next/navigation"
-import { signOut } from "@/auth"
 import { Button } from "@/components/ui/button"
+import { authClient } from "@/lib/auth-client"
+import { headers } from "next/headers"
+import { redirect } from "next/navigation"
 
 export default async function DashboardPage() {
-  const session = await auth()
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
 
-  // Vérification basique
-  if (!session?.user) {
+  const user = session?.user;
+
+  if (!user) {
     redirect('/auth/signin')
-  }
-
-  // Utiliser les données de la session (cache dans JWT) au lieu de faire une requête BDD
-  // Les données sont mises à jour lors de la connexion et rafraîchies toutes les 24h
-  const user = {
-    id: session.user.id,
-    email: session.user.email!,
-    name: session.user.name,
-    emailVerified: session.user.emailVerified,
-    subscription: session.user.subscription || 'free',
   }
 
   return (
@@ -33,12 +27,12 @@ export default async function DashboardPage() {
               Bienvenue, {user.name || user.email} !
             </p>
           </div>
-          
+
           {/* ✅ Version corrigée */}
           <form
             action={async () => {
               "use server"
-              await signOut({ redirectTo: '/' })
+              await authClient.signOut({ fetchOptions: { onSuccess: () => redirect('/') } })
             }}
           >
             <Button variant="outline" type="submit">
@@ -67,7 +61,7 @@ export default async function DashboardPage() {
             </div>
             <div>
               <dt className="text-sm font-medium text-gray-500">Abonnement</dt>
-              <dd className="text-sm text-gray-900">{user.subscription}</dd>
+              <dd className="text-sm text-gray-900">"subscription"</dd>
             </div>
           </dl>
         </div>
