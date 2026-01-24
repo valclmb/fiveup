@@ -187,7 +187,7 @@ const SignUpForm = () => {
       </form>
       <div className="flex items-center justify-center gap-4 py-6">
         <Separator className="flex-1" />
-        OU
+        OR
         <Separator className="flex-1" />
       </div>
       <Button

@@ -1,6 +1,6 @@
 import AnimatedBackground from "./components/animated-background";
 import Footer from "./components/footer";
-import Header from "./components/header";
+import Header from "./components/header/header";
 
 export default function LandingLayout({
   children,

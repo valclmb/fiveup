@@ -1,4 +1,5 @@
 import { auth } from "@/auth"
+import ShopifyIntegrationCard from "@/components/connect-shopify"
 import { Button } from "@/components/ui/button"
 import { authClient } from "@/lib/auth-client"
 import { headers } from "next/headers"
@@ -65,6 +66,8 @@ export default async function DashboardPage() {
             </div>
           </dl>
         </div>
+        <ShopifyIntegrationCard />
+
       </div>
     </div>
   )
