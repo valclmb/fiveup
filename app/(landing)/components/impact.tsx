@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Typography from "@/components/ui/typography";
-import { ArrowRight, ChartNoAxesColumnIncreasing, Star, ThumbsUp } from "lucide-react";
+import { ChartNoAxesColumnIncreasing, Star, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import { AnimatedImpactItem, AnimatedLandingHeader, AnimatedLandingItem } from "./animated-wrapper";
 import { StarIcon } from "./star-icon";
@@ -28,8 +28,8 @@ const Impact = () => {
           </AnimatedImpactItem>
           <AnimatedImpactItem delay={0.2}>
             <div className="space-y-2">
-              <Typography variant="h3">100% of reviews are displayed</Typography>
-              <Typography variant="description" className="text-muted-foreground">Lorem Ipsum</Typography>
+              <Typography variant="h3">Turn bad reviews into real conversations</Typography>
+              <Typography variant="description" className="text-muted-foreground">When someone leaves a low rating, FiveUp lets you start a WhatsApp conversation with them to understand what went wrong, fix it fast, and turn a bad experience into a better relationship.</Typography>
             </div>
           </AnimatedImpactItem>
 
@@ -40,8 +40,8 @@ const Impact = () => {
           </AnimatedImpactItem>
           <AnimatedImpactItem delay={0.3}>
             <div className="space-y-2">
-              <Typography variant="h3" className="flex flex-wrap items-center gap-2"> 4 <StarIcon className="size-5 md:size-auto" />  <ArrowRight />5  <StarIcon className="size-5 md:size-auto" /> average rating uplift</Typography>
-              <Typography variant="description" className="text-muted-foreground">Les clients mécontents s'expriment souvent en ligne, sans que vous ayez eu l'occasion d'intervenir en amont.</Typography>
+              <Typography variant="h3" className="flex flex-wrap items-center gap-2">Find the real reasons behind 1–3<StarIcon className="size-5 md:size-auto" /> reviews</Typography>
+              <Typography variant="description" className="text-muted-foreground">Group low ratings by product, carrier or issue so you instantly see what’s broken and fix it before it tanks satisfaction.</Typography>
             </div>
           </AnimatedImpactItem>
 
@@ -52,8 +52,8 @@ const Impact = () => {
           </AnimatedImpactItem>
           <AnimatedImpactItem delay={0.4}>
             <div className="space-y-2">
-              <Typography variant="h3">70% of low ratings resolved before going public</Typography>
-              <Typography variant="description" className="text-muted-foreground">Les avis sont dispersés, sans suivi clair, sans automatisation et sans vision d'ensemble pour agir efficacement.</Typography>
+              <Typography variant="h3">Fix issues once — benefit on every order</Typography>
+              <Typography variant="description" className="text-muted-foreground">By treating negative feedback internally first, you spot recurring problems and improve your product, shipping and support. The experience gets better, reviews improve, and over time that stronger reputation turns into more orders and more revenue.</Typography>
             </div>
           </AnimatedImpactItem>
 

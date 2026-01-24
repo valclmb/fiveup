@@ -14,22 +14,22 @@ const Footer = () => {
           <section className="flex flex-col sm:flex-row justify-between pt-10 ">
             <div className="max-w-48">
               <Image src="/logo.svg" alt="logo" width={115} height={40} className="mb-6" />
-              <Typography variant="description" className="leading-5">Transformez chaque client en avis 5 étoiles</Typography>
+              <Typography variant="description" className="leading-5">Turn every customer into a 5-star review</Typography>
             </div>
             <ul className="space-y-2">
               <li className="mb-6">
-                <Link href="/" className="font-bold" >Lien utiles</Link>
+                <Link href="/" className="font-bold" >Useful links</Link>
               </li>
               <li>
-                <Link href="/">Condition générales de ventes</Link>
+                <Link href="/">Sales terms and conditions</Link>
               </li>
               <li>
-                <Link href="/">Politique de confidentialité</Link>
+                <Link href="/">Privacy policy</Link>
               </li>
             </ul>
             <ul className="space-y-2">
               <li className="mb-6">
-                <Link href="/" className="font-bold">Contact</Link>
+                <Link href="/" className="font-bold">Contact us</Link>
               </li>
               <li >
                 <Link href="mailto:contact@fiveup.com" className="hover:underline text-white" >contact@fiveup.com</Link>
@@ -41,7 +41,7 @@ const Footer = () => {
 
           </section>
           <Typography variant="p" className="text-muted-foreground mt-7">
-            fiveup 2026 - Tous droits réservés
+            fiveup 2026 - All rights reserved
           </Typography>
         </div>
       </footer>

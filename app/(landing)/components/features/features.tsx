@@ -16,15 +16,15 @@ type FeaturesCardData = {
 const featuresData: FeaturesCardData[] = [
   {
     icon: <Clock />,
-    title: "10-minute setup, then it runs itself",
-    description: "Connect your store, choose when to send requests, and you're done.FiveUp pulls orders automatically and starts collecting reviews.",
+    title: "4-minute setup, then it runs itself",
+    description: "Connect your store, choose when to send requests, and you're done. FiveUp pulls orders automatically and starts collecting reviews.",
     className: "md:col-span-2 lg:col-span-6",
     content: <Connect />,
   },
   {
     icon: <Star />,
-    title: "Automatic Trustpilot & Google Business",
-    description: "No account? We create and connect everything for you from day one.",
+    title: "Click setup with Shopify, Trustpilot & Google",
+    description: "Connect your Shopify store and FiveUp auto-creates or links your Trustpilot & Google profiles.",
     className: "md:col-span-1 lg:col-span-6 ",
     content: <AutomaticConnection />,
   },
@@ -82,7 +82,7 @@ export const Features = () => {
   };
 
   return (
-    <LandingBlock id="features" badge="Features" title="Tout pour gérer vos avis, en un seul endroit" className="scroll-mt-24" >
+    <LandingBlock id="features" badge="Features" title="Make reviews a growth channel, not a chore." className="scroll-mt-24" >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 w-full items-stretch">
         {featuresData.map((feature, index) => {
           const animation = getAnimation(index);

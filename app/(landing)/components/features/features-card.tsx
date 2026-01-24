@@ -18,8 +18,8 @@ const FeaturesCard = ({ icon, title, description, className, content }: Features
         </CardTitle>
       </CardHeader>
 
-      <CardContent className="flex flex-col flex-grow space-y-4">
-        {content && <div className="flex-grow">{content}</div>}
+      <CardContent className="flex flex-col grow space-y-4">
+        {content && <div className="grow">{content}</div>}
         {description && <Typography variant="description" className="mt-auto">{description}</Typography>}
       </CardContent>
     </Card>

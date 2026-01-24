@@ -1,75 +1,50 @@
-"use client"
 import { StarIcon } from "@/app/(landing)/components/star-icon";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import Typography from "@/components/ui/typography";
-import { motion } from "motion/react";
 import Link from "next/link";
 import RatingCard from "../../../../components/rating-card";
+import { AnimatedHeroItem, AnimatedHeroSpan } from "../animated-wrapper";
 
 const Hero = () => {
   return (
     <div className='relative w-full flex flex-col items-center gap-10 mb-28 sm:mb-24 md:mb-32 '>
-      <motion.div initial={{ opacity: 0, y: -20, scale: 0.9 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.3, ease: "easeOut" }}>
-        <Badge variant="secondary">Gestion des avis</Badge>
-      </motion.div>
+      <AnimatedHeroItem variant="scaleUp">
+        <Badge variant="secondary" >Review management </Badge>
+      </AnimatedHeroItem>
       <div className="space-y-2">
 
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut", delay: 0.3 }}
-        >
+        <AnimatedHeroItem delay={0.3}>
           <Typography variant="h1" className="text-center">
-            Transformez chaque client
-            <div className="inline ml-2 xs:ml-0 sm:flex items-center justify-center gap-2">en <span className="text-primary">avis 5 </span><StarIcon size={42} className="inline xs:block xs:-translate-y-1 size-5 md:size-auto" /></div>
+            Turn every customer
+            <div className="inline ml-2 xs:ml-0 sm:flex items-center justify-center gap-2">into a <span className="text-primary">5 </span><StarIcon size={42} className="inline xs:block xs:-translate-y-1 size-5 md:size-auto" /> <span className="text-primary">review</span></div>
           </Typography>
+        </AnimatedHeroItem>
 
-        </motion.div>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
-        >
-          <Typography variant="p" className="text-center max-w-sm md:max-w-lg mx-auto text-sm">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum sed mauris a ex posuere luctus sit amet ac mi.</Typography>
-        </motion.div>
+        <AnimatedHeroItem delay={0.4}>
+          <Typography variant="p" className="text-center max-w-sm md:max-w-lg mx-auto text-sm">FiveUp runs itself: it collects reviews, quietly filters low ratings to private support, and keeps your public scores climbing every day.</Typography>
+        </AnimatedHeroItem>
       </div>
 
       <div className="flex flex-col items-center mt-7">
 
         <div className="flex flex-col lg:flex-row items-center gap-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.8, ease: "easeOut" }}
-
-          >
+          <AnimatedHeroItem delay={0.8}>
             <Link href="/auth/signup" className={buttonVariants({ variant: "landing" })}>Commencer maintenant</Link>
+          </AnimatedHeroItem>
 
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 0.9, ease: "easeOut" }}
-
-          >
+          <AnimatedHeroItem delay={0.9}>
             <a href="#features" className={buttonVariants({ variant: "secondary" })}>Découvrir les fonctionnalités</a>
-
-          </motion.div>
-
-
+          </AnimatedHeroItem>
         </div>
 
         <Typography variant="p" className="text-sm sm:text-base my-4 md:mt-8 flex gap-2 items-center">
-          <motion.span initial={{ opacity: 0, scale: 0 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.3, delay: 1, ease: "easeOut" }}><StarIcon className="text-background bg-primary p-1 rounded-full" size={24} /></motion.span>
-          <motion.span initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: 1.1, ease: "easeOut" }}> Rated <span className="font-bold"> 4.9/5</span> from over <span className="font-bold">600</span> reviews.</motion.span>
+          <AnimatedHeroSpan delay={1} variant="scaleIn">
+            <StarIcon className="text-background bg-primary p-1 rounded-full" size={24} />
+          </AnimatedHeroSpan>
+          <AnimatedHeroSpan delay={1.1}>
+            Rated <span className="font-bold"> 4.9/5</span> from over <span className="font-bold">600</span> reviews.
+          </AnimatedHeroSpan>
         </Typography>
       </div>
 

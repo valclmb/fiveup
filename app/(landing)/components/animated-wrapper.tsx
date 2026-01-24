@@ -3,6 +3,96 @@ import { useIsMobile } from "@/lib/use-is-mobile";
 import { motion, useScroll, useTransform } from "motion/react";
 import { ReactNode, useEffect, useRef, useState } from "react";
 
+// Hero animations
+interface AnimatedHeroItemProps {
+  children: ReactNode;
+  delay?: number;
+  className?: string;
+  variant?: "fadeUp" | "fadeDown" | "scaleUp";
+}
+
+export const AnimatedHeroItem = ({
+  children,
+  delay = 0,
+  className = "",
+  variant = "fadeUp"
+}: AnimatedHeroItemProps) => {
+  if (variant === "scaleUp") {
+    return (
+      <motion.div
+        className={className}
+        initial={{ opacity: 0, y: -20, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut", delay }}
+      >
+        {children}
+      </motion.div>
+    );
+  }
+
+  if (variant === "fadeDown") {
+    return (
+      <motion.div
+        className={className}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut", delay }}
+      >
+        {children}
+      </motion.div>
+    );
+  }
+
+  return (
+    <motion.div
+      className={className}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut", delay }}
+    >
+      {children}
+    </motion.div>
+  );
+};
+
+interface AnimatedHeroSpanProps {
+  children: ReactNode;
+  delay?: number;
+  className?: string;
+  variant?: "fadeUp" | "scaleIn";
+}
+
+export const AnimatedHeroSpan = ({
+  children,
+  delay = 0,
+  className = "",
+  variant = "fadeUp"
+}: AnimatedHeroSpanProps) => {
+  if (variant === "scaleIn") {
+    return (
+      <motion.span
+        className={className}
+        initial={{ opacity: 0, scale: 0 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, ease: "easeOut", delay }}
+      >
+        {children}
+      </motion.span>
+    );
+  }
+
+  return (
+    <motion.span
+      className={className}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: "easeOut", delay }}
+    >
+      {children}
+    </motion.span>
+  );
+};
+
 interface AnimatedLandingHeaderProps {
   children: ReactNode;
 }
@@ -73,6 +163,7 @@ export const AnimatedBenefitItem = ({ children, delay = 0 }: AnimatedBenefitItem
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: false, margin: "-100px" }}
       transition={{ delay, duration: 0.3 }}
+      className="w-full lg:w-1/3"
     >
       {children}
     </motion.div>

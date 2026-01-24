@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
-import { ArrowRight, Check, Star } from "lucide-react"
+import { ArrowRight, Check, CirclePlus, Star } from "lucide-react"
 import { motion, useInView } from "motion/react"
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
@@ -169,7 +169,28 @@ export const AutomaticConnection = () => {
   const isInView = useInView(containerRef, { once: true, margin: "-50px" });
 
   return (
-    <div ref={containerRef} className="flex flex-col lg:flex-row gap-4 ">
+    <div ref={containerRef} className="flex items-center flex-col lg:flex-row gap-4 ">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.4, delay: 0.2, ease: "easeOut" }}
+        className="w-full"
+      >
+        <Card className="bg-accent p-0 w-full">
+          <CardContent className="flex items-center justify-between gap-2  p-4">
+            <Image src="/images/shopify-logo.svg" alt="Trustpilot" width={80} height={30} />
+            <Badge variant="secondary" className="lg:hidden rounded-md flex items-center gap-2">
+              <div className=" size-2 bg-primary rounded-full after:content-[''] after:absolute after:size-2 after:bg-primary after:rounded-full after:animate-ping  after:duration-[3s] " />
+
+              Connecté
+            </Badge>
+            <div className="hidden lg:block size-3 bg-primary rounded-full after:content-[''] after:absolute after:size-3 after:bg-primary after:rounded-full after:animate-ping  after:duration-[3s] " />
+
+
+
+          </CardContent>
+        </Card>
+      </motion.div>
       <motion.div
         initial={{ opacity: 0 }}
         animate={isInView ? { opacity: 1 } : { opacity: 0 }}
@@ -178,11 +199,16 @@ export const AutomaticConnection = () => {
       >
         <Card className="bg-accent p-0 w-full">
           <CardContent className="flex items-center justify-between gap-2  p-4">
-            <Image src="/images/trustpilot-logo.svg" alt="Trustpilot" width={80} height={30} />
-            <Badge variant="secondary" className=" rounded-md">
-              <div className="size-2 bg-primary rounded-full"></div>
+            <Image src="/images/trustpilot-logo.svg" alt="Trustpilot" width={85} height={30} />
+            <Badge variant="secondary" className="lg:hidden rounded-md flex items-center gap-2">
+              <div className=" size-2 bg-primary rounded-full after:content-[''] after:absolute after:size-2 after:bg-primary after:rounded-full after:animate-ping  after:duration-[3s] " />
+
               Connecté
             </Badge>
+            <div className="hidden lg:block size-3 bg-primary rounded-full after:content-[''] after:absolute after:size-3 after:bg-primary after:rounded-full after:animate-ping  after:duration-[3s] " />
+
+
+
           </CardContent>
         </Card>
       </motion.div>
@@ -195,14 +221,16 @@ export const AutomaticConnection = () => {
         <Card className="bg-accent  p-0 w-full">
           <CardContent className="flex items-center justify-between p-4">
             <Image src="/images/google-logo.svg" alt="Google Business" width={60} height={30} />
-            <Badge variant="secondary" className=" rounded-md">
+            {/* <Badge variant="secondary" className=" rounded-md">
               <div className="size-2 bg-primary rounded-full"></div>
               Connecté
-            </Badge>
+            </Badge> */}
+            <CirclePlus className="text-muted-foreground size-5" />
           </CardContent>
         </Card>
       </motion.div>
-    </div>
+
+    </div >
   )
 }
 
@@ -432,7 +460,7 @@ export const CustomFlows = () => {
     <div ref={containerRef} className="space-y-4">
       {/* Ligne 1 : Switch ON avec 5 étoiles */}
       <div
-        className="flex items-center justify-between gap-3 bg-accent rounded-lg p-4 cursor-pointer"
+        className="w-full flex items-center justify-between gap-3 bg-accent rounded-lg p-4 cursor-pointer"
         onMouseEnter={handleMouseEnterLine1}
         onMouseLeave={handleMouseLeaveLine1}
       >
@@ -469,6 +497,8 @@ export const CustomFlows = () => {
             delay: firstLineLogoDelay, // Après les étoiles
             ease: "easeOut"
           }}
+          className="w-22"
+
         >
           <Image src="/images/trustpilot-logo.svg" alt="Trustpilot" width={80} height={30} />
         </motion.div>
@@ -528,8 +558,9 @@ export const CustomFlows = () => {
             delay: shouldAnimateLine2 ? (0.5 + (4 * 0.1)) : secondLineLogoDelay,
             ease: "easeOut"
           }}
+          className="w-22"
         >
-          <Image src="/images/trustpilot-logo.svg" alt="Trustpilot" width={80} height={30} />
+          <Image src="/images/google-logo.svg" alt="Google " width={60} height={30} />
         </motion.div>
       </div>
     </div>

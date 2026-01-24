@@ -188,7 +188,7 @@ import SignInForm from './signin-form'
 export default function SignInPage() {
   return (
     <>
-      <Typography variant="h2" className="text-2xl md:text-[42px] mb-0">Sign in</Typography>
+      <Typography variant="h2" className="mb-2">Sign in</Typography>
       <SignInForm />
     </>
   )

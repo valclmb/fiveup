@@ -37,7 +37,7 @@ const Header = async () => {
             Sign in
           </Link>
           <Link href={session ? "/dashboard" : "/auth/signup"} className={buttonVariants({ variant: "landing" })}>
-            Start now!
+            Start now
           </Link>
           <HeaderDrawer />
         </div>

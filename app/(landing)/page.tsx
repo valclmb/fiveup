@@ -23,7 +23,7 @@ export default function LandingPage() {
       <DashboardPreview />
       <Impact />
       <Results />
-      <LandingBlock title="Tarifs simples et transparents" badge="Tarifs">
+      <LandingBlock title="Simple and transparent pricing" badge="Pricing">
         <div>Construction en cours...</div>
       </LandingBlock>
       <Reviews />

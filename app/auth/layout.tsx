@@ -4,12 +4,13 @@ import { Card } from "@/components/ui/card"
 import Typography from "@/components/ui/typography"
 import { cn } from "@/lib/utils"
 import Image from "next/image"
+import Link from "next/link"
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
 
-    <div className="flex min-h-screen  bg-background  p-4 py-12 sm:px-6 lg:px-8">
-      <Card className=" bg-[#10CEA5]  relative flex w-1/2 overflow-hidden rounded-3xl border p-14">
+    <div className="flex min-h-screen bg-background p-4 py-12 sm:px-6 lg:px-8">
+      <Card className="hidden lg:flex bg-[#10CEA5]  relative  w-1/2 overflow-hidden rounded-3xl border p-14">
         <AnimatedGridPattern
           width={120}
           height={120}
@@ -29,8 +30,10 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
           )}
         />
         <div className='z-50 flex flex-col justify-between gap-32'>
-          <Image width={250} height={50} src="/logo-white.svg" alt="logo" />
-          <Typography variant="h2" className="text-2xl md:text-[42px] mb-0">Welcome to FiveUp</Typography>
+          <Link href="/" className="hover:scale-105 transition-all duration-300 origin-left">
+            <Image width={250} height={50} src="/logo-white.svg" alt="logo" />
+          </Link>
+          <Typography variant="h1" className="mb-0 text-2xl lg:text-4xl">Welcome to FiveUp</Typography>
 
         </div>
         <RatingCard platform="trustpilot" whiteMode={true} className=" left-32 bottom-82" delay={1} />
@@ -39,7 +42,9 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
 
 
       </Card>
-      <div className="max-w-96 w-full flex flex-col justify-center mx-auto">
+      <div className="relative max-w-96  w-full flex flex-col justify-center mx-auto">
+        <Image width={200} height={50} src="/logo-white.svg" alt="logo" className=" lg:hidden mx-auto mb-14" />
+        <div className="absolute blur-3xl  -top-32 left-1/2 -translate-x-1/2  size-30 bg-primary" />
         {children}
       </div>
     </div>

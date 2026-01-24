@@ -9,43 +9,43 @@ const reviews = [
   {
     name: "Veona Watson",
     username: "@hi.veona",
-    title: "On a enfin repris le contrôle de nos avis.",
-    body: "Avant FiveUp, on subissait les avis. Aujourd’hui, tout est automatisé : les clients satisfaits laissent des avis publics, les autres nous contactent en privé. Notre note Google a clairement progressé.",
+    title: "We finally took control of our reviews.",
+    body: "Before FiveUp, we suffered from reviews. Today, everything is automated: satisfied customers leave public reviews, others contact us privately. Our Google rating has clearly improved.",
     img: "https://avatar.vercel.sh/jack",
   },
   {
     name: "Jill",
     username: "@jill",
-    title: "Simple à mettre en place.",
-    body: "Après chaque prestation, le message part automatiquement. Les bons avis vont sur Google, les retours négatifs arrivent directement chez nous. Notre réputation reflète enfin la qualité de notre travail.",
+    title: "Easy to set up.",
+    body: "After each service, the message is automatically sent. Good reviews go to Google, negative feedback comes directly to us. Our reputation finally reflects the quality of our work.",
     img: "https://avatar.vercel.sh/jill",
   },
   {
     name: "John",
     username: "@john",
-    title: "Un vrai gain de temps",
+    title: "A real time saver",
     body: "On gère plusieurs établissements et FiveUp nous permet de tout centraliser dans un seul dashboard. C’est clair, fluide, et les résultats sont mesurables.",
     img: "https://avatar.vercel.sh/john",
   },
   {
     name: "Veona Watson",
     username: "@hi.veona",
-    title: "On a enfin repris le contrôle de nos avis.",
-    body: "Avant FiveUp, on subissait les avis. Aujourd’hui, tout est automatisé : les clients satisfaits laissent des avis publics, les autres nous contactent en privé. Notre note Google a clairement progressé.",
+    title: "We finally took control of our reviews.",
+    body: "Before FiveUp, we suffered from reviews. Today, everything is automated: satisfied customers leave public reviews, others contact us privately. Our Google rating has clearly improved.",
     img: "https://avatar.vercel.sh/jack",
   },
   {
     name: "Jill",
     username: "@jill",
-    title: "Simple à mettre en place.",
-    body: "Après chaque prestation, le message part automatiquement. Les bons avis vont sur Google, les retours négatifs arrivent directement chez nous. Notre réputation reflète enfin la qualité de notre travail.",
+    title: "Easy to set up.",
+    body: "After each service, the message is automatically sent. Good reviews go to Google, negative feedback comes directly to us. Our reputation finally reflects the quality of our work.",
     img: "https://avatar.vercel.sh/jill",
   },
   {
     name: "John",
     username: "@john",
-    title: "Un vrai gain de temps",
-    body: "On gère plusieurs établissements et FiveUp nous permet de tout centraliser dans un seul dashboard. C’est clair, fluide, et les résultats sont mesurables.",
+    title: "A real time saver",
+    body: "We manage several establishments and FiveUp allows us to centralize everything in a single dashboard. It’s clear, fluid, and the results are measurable.",
     img: "https://avatar.vercel.sh/john",
   },
 ]
@@ -56,7 +56,7 @@ const secondRow = reviews.slice(reviews.length / 2)
 const Reviews = () => {
   return (
     <AnimatedFade as="section" className="w-full max-w-full">
-      <Typography variant="h2" className="text-center">Ce que pensent nos clients</Typography>
+      <Typography variant="h2" className="text-center">What our clients say</Typography>
       <div className=" relative w-full flex flex-col items-center justify-center gap-4 overflow-hidden py-5">
         <Marquee pauseOnHover className="[--duration:50s] [--gap:2rem]" >
           {firstRow.map((review) => (

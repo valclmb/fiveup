@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import Typography from "@/components/ui/typography";
-import { BarChart, Settings } from "lucide-react";
+import { DollarSign, Handbag } from "lucide-react";
 import { ComponentProps, ComponentType } from "react";
 import { AnimatedBenefitItem } from "./animated-wrapper";
 import { LandingBlock } from "./landing-block";
@@ -16,20 +16,20 @@ const Google = (props: ComponentProps<"svg">) => {
 }
 
 const benefits = [{
-  icon: BarChart,
-  title: "Trustpilot reviews growth",
-  description: "Envoyez des demandes d'avis au bon moment, sans action manuelle, après chaque interaction client."
+  icon: Handbag,
+  title: "Plugged into your store in minutes",
+  description: "Connect Shopify , WooCommerce or Wix in a few clicks. FiveUp imports your orders automatically and starts sending review requests right after purchase. No developer, no custom scripts."
 
 }, {
   icon: Google,
   iconProps: { width: 24, height: 24 },
-  title: "Google rating uplift",
-  description: "Les avis positifs sont redirigés vers les plateformes publiques, tandis que les retours négatifs sont centralisés en interne."
+  title: "Smart routing for Google & Trustpilot",
+  description: "FiveUp sends happy customers to Google & Trustpilot and routes low ratings to private feedback or WhatsApp — you hear every complaint, while your public profiles stay clean."
 }, {
-  icon: Settings,
+  icon: DollarSign,
 
-  title: "Sales increase driven by social proof",
-  description: "Tous vos avis, règles et automatisations sont regroupés dans une interface claire, personnalisée selon vos objectifs."
+  title: "Turn reputation into measurable revenue",
+  description: "Higher scores and fresh reviews lift conversion on product pages, landing pages and ads. FiveUp turns your review flow into a real growth lever."
 }]
 
 
@@ -43,12 +43,12 @@ type BenefitProps = {
 const Benefit = ({ icon: Icon, iconProps = {}, title, description, index }: BenefitProps) => {
   const isEven = index % 2 !== 0;
   return (
-    <div className={`border-dashed-long-left ${isEven ? 'border-dashed-long-right md:border-dashed-long-left' : ''} p-8 pb-0 space-y-8 flex flex-col`}>
+    <div className={`border-dashed-long-left ${isEven ? 'border-dashed-long-right lg:border-dashed-long-left' : ''}  p-8 pb-0 space-y-8 flex flex-col`}>
       <Card className="w-max p-4 z-20 bg-background/50 backdrop-blur-sm box-shadow-lg">
         <Icon {...iconProps} />
       </Card>
 
-      <Typography variant="h4" className={`relative after:absolute after:content-[''] after:top-0 after:w-1 after:h-[38px] after:bg-primary after:rounded-md ${isEven ? 'after:-right-[34px] md:after:-left-[34px]' : 'after:-left-[34px]'}`}>{title}</Typography>
+      <Typography variant="h4" className={`relative after:absolute after:content-[''] after:top-0 after:w-1 after:h-[38px] after:bg-primary after:rounded-md ${isEven ? 'after:-right-[34px] lg:after:-left-[34px]' : 'after:-left-[34px]'}`}>{title}</Typography>
       <Typography variant="description" className="text-muted-foreground">{description}</Typography>
     </div>
   )
@@ -56,10 +56,10 @@ const Benefit = ({ icon: Icon, iconProps = {}, title, description, index }: Bene
 
 const Benefits = () => {
   return (
-    <LandingBlock badge="Bénéfices clés" title="More reviews. Higher ratings. More revenue." bg>
-      <div className="flex flex-col  md:flex-row gap-8 md:gap-4 ">
+    <LandingBlock badge="Key benefits" title="More reviews. Higher ratings. More revenue." bg>
+      <div className="flex flex-col  lg:flex-row lg:items-center gap-8 lg:gap-4 ">
         {benefits.map((benefit, index) => (
-          <AnimatedBenefitItem key={index} delay={0.2 * index}>
+          <AnimatedBenefitItem key={index} delay={0.2 * index} >
             <Benefit index={index} icon={benefit.icon} iconProps={benefit.iconProps} title={benefit.title} description={benefit.description} />
           </AnimatedBenefitItem>
         ))}

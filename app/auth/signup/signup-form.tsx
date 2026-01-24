@@ -39,8 +39,8 @@ const SignUpForm = () => {
     defaultValues: {
       fullName: "Matteo",
       email: "matteo@fiveup-review.com",
-      password: "Cinqetoiles69@",
-      confirmPassword: "Cinqetoiles69@",
+      password: "",
+      confirmPassword: "",
     },
   })
 
@@ -155,7 +155,7 @@ const SignUpForm = () => {
               </Field>
             )}
           />
-          <Controller
+          {form.watch("password") && <Controller
             name="confirmPassword"
             control={form.control}
             render={({ field, fieldState }) => (
@@ -176,7 +176,7 @@ const SignUpForm = () => {
                 )}
               </Field>
             )}
-          />
+          />}
         </FieldGroup>
 
         <Field orientation="horizontal">

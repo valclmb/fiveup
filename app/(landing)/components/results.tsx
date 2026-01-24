@@ -1,8 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Typography from "@/components/ui/typography";
+import { AnimatedCard } from "./animated-wrapper";
 import { LandingBlock } from "./landing-block";
 import { StarIcons } from "./star-icon";
-import { AnimatedCard } from "./animated-wrapper";
 
 const results = [{
   title: "2x more",
@@ -13,7 +13,7 @@ const results = [{
   }
 },
 {
-  title: "60% fewer",
+  title: "92% fewer",
   description: "bad surprises on public pages",
   review: {
     content: "After each appointment, clients get a quick message. Happy ones go to Google, others talk to us directly. Our rating finally reflects our real work.",
@@ -32,7 +32,7 @@ const results = [{
 
 const Results = () => {
   return (
-    <LandingBlock badge="Résultats" title="Des avis qui parlent pour vous.">
+    <LandingBlock badge="Results" title="Reviews that speak for you.">
       <div className="space-y-14 sm:space-y-6">
         {results.map((result, index) => {
           // Sur desktop : index pair = flex-row (titre gauche, review droite)
