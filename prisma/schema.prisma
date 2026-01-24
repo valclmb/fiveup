@@ -8,16 +8,17 @@ datasource db {
 }
 
 model User {
-  id               String    @id
+  id               String         @id
   name             String
-  email            String    @unique
+  email            String         @unique
   emailVerified    Boolean
   image            String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
   stripeCustomerId String?
   sessions         Session[]
   accounts         Account[]
+  shopifyStores    ShopifyStore[]
 
   @@map("user")
 }
@@ -91,4 +92,18 @@ model Verification {
 
   @@index([identifier])
   @@map("verification")
+}
+
+model ShopifyStore {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shop        String   @unique // "ma-boutique.myshopify.com"
+  accessToken String   // Token d'accès Shopify
+  scope       String   // Scopes accordés
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId])
+  @@map("shopify_store")
 }
