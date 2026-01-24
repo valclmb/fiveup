@@ -14,7 +14,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+import { useState } from "react";
 import { toast } from "sonner";
+import { Mail } from "lucide-react";
 import { z } from "zod/v3";
 
 const formSchema = z.object({
@@ -29,10 +31,17 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>;
 
-const SignUpForm = () => {
+interface SignUpFormProps {
+  onSignupSuccess?: (success: boolean) => void;
+}
+
+const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
   const selectedPlan = searchParams.get('plan') || 'pro' // Plan choisi depuis /pricing
+  
+  const [signupSuccess, setSignupSuccess] = useState(false);
+  const [userEmail, setUserEmail] = useState<string>('');
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -51,30 +60,28 @@ const SignUpForm = () => {
       name: data.fullName,
     }),
     onSuccess: async (data) => {
-      console.log(data);
+      console.log('Signup response:', data);
+      
       if (data.error) {
-        toast.error(data.error.message)
-        return
+        toast.error(data.error.message || 'Une erreur est survenue lors de la création du compte');
+        return;
       }
 
-      // Compte créé → rediriger vers Stripe Checkout pour le paiement
-      toast.success('Compte créé ! Redirection vers le paiement...')
-
-      const { error } = await authClient.subscription.upgrade({
-        plan: "pro",
-        successUrl: `${window.location.origin}/dashboard?success=true`,
-        cancelUrl: `${window.location.origin}/pricing`,
-      })
-
-      if (error) {
-        toast.error(error.message)
-        // Fallback : rediriger vers le dashboard
-        // window.location.href = callbackUrl
-      }
+      // Compte créé avec succès - afficher le message de confirmation
+      const email = data.data?.user?.email || form.getValues('email');
+      setUserEmail(email);
+      setSignupSuccess(true);
+      onSignupSuccess?.(true); // Informer la page parent
+      
+      toast.success('Compte créé !', {
+        description: 'Un email de vérification a été envoyé.',
+        duration: 3000,
+      });
     },
-    onError: (error) => {
-      console.log("error", error)
-      toast.error("Une erreur est survenue")
+    onError: (error: any) => {
+      console.error('Signup error:', error);
+      const errorMessage = error?.message || error?.error?.message || 'Une erreur est survenue lors de la création du compte';
+      toast.error(errorMessage);
     },
   })
 
@@ -87,8 +94,66 @@ const SignUpForm = () => {
     signup.mutate(data)
   }
 
+  // Afficher le message de confirmation si l'inscription a réussi
+  if (signupSuccess) {
+    return (
+      <AnimatedFade as="section">
+        <div className="space-y-8 text-center">
+          {/* Icône email */}
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
+            <Mail className="h-8 w-8 text-primary" />
+          </div>
+
+          {/* Titre et message */}
+          <div className="space-y-4">
+            <Typography variant="h2" className="text-2xl md:text-3xl">
+              Confirmez votre email
+            </Typography>
+            <Typography variant="description" className="text-base">
+              Nous venons de vous envoyer un email à
+            </Typography>
+            {userEmail && (
+              <Typography variant="p" className="text-lg font-semibold text-primary break-all">
+                {userEmail}
+              </Typography>
+            )}
+            <Typography variant="description" className="text-sm">
+              Cliquez sur le lien dans l'email pour activer votre compte.
+            </Typography>
+          </div>
+
+          {/* Boutons d'action */}
+          <div className="space-y-3">
+            <Link href="/auth/signin" className="block">
+              <Button className="w-full">
+                Aller à la page de connexion
+              </Button>
+            </Link>
+            <Link href="/" className="block">
+              <Button variant="outline" className="w-full">
+                Retour à l'accueil
+              </Button>
+            </Link>
+          </div>
+
+          {/* Message d'aide */}
+          <div className="pt-4 border-t border-border">
+            <Typography variant="description" className="text-xs">
+              Vous n'avez pas reçu l'email ? Vérifiez votre dossier spam ou{' '}
+              <Link href="/auth/signin" className="text-primary hover:underline font-medium">
+                connectez-vous
+              </Link>{' '}
+              pour en demander un nouveau.
+            </Typography>
+          </div>
+        </div>
+      </AnimatedFade>
+    );
+  }
+
+  // Afficher le formulaire d'inscription normal
   return (
-    <AnimatedFade as="section"   >
+    <AnimatedFade as="section">
       <form id="form-signup" className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>
         <FieldGroup className="gap-4">
           <Controller
@@ -147,7 +212,6 @@ const SignUpForm = () => {
                   aria-invalid={fieldState.invalid}
                   placeholder="Enter your password"
                   autoComplete="new-password"
-
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
@@ -169,7 +233,6 @@ const SignUpForm = () => {
                   aria-invalid={fieldState.invalid}
                   placeholder="Confirm your password"
                   autoComplete="new-password"
-
                 />
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
