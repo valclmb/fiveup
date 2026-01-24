@@ -1,6 +1,6 @@
 "use client"
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerClose,
@@ -8,8 +8,9 @@ import {
   DrawerHeader,
   DrawerTitle
 } from "@/components/ui/drawer";
-import { Menu } from 'lucide-react';
+import { Menu } from "lucide-react";
 import { useState } from 'react';
+import { HeaderCta } from "./header-cta";
 import { Nav } from './header-nav';
 
 export const HeaderDrawer = () => {
@@ -35,10 +36,14 @@ export const HeaderDrawer = () => {
         <DrawerHeader>
           <DrawerTitle className='text-2xl font-bold text-primary pt-2'>Menu</DrawerTitle>
         </DrawerHeader>
-        <div className='pt-2 pb-8'>
-          <Nav className='flex flex-col md:hidden gap-2' linkClassName="w-11/12 mx-auto text-center py-3 " />
-        </div>
+
+        <Nav className='flex flex-col md:hidden gap-2 py-4' linkClassName="w-11/12 mx-auto text-center py-3 " />
+
+        <HeaderCta className='w-full flex items-center justify-center p-5 pt-2' />
+
       </DrawerContent>
+
+
     </Drawer>
   );
 };

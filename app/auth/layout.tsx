@@ -8,7 +8,6 @@ import Link from "next/link"
 
 const AuthLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-
     <div className="flex min-h-screen bg-background p-4 py-12 sm:px-6 lg:px-8">
       <Card className="hidden lg:flex bg-[#10CEA5]  relative  w-1/2 overflow-hidden rounded-3xl border p-14">
         <AnimatedGridPattern

@@ -13,7 +13,7 @@ const Footer = () => {
 
           <section className="flex flex-col sm:flex-row justify-between pt-10 ">
             <div className="max-w-48">
-              <Image src="/logo.svg" alt="logo" width={115} height={40} className="mb-6" />
+              <Image src="/logo-white-baseline.svg" alt="logo" width={115} height={40} className="mb-6" />
               <Typography variant="description" className="leading-5">Turn every customer into a 5-star review</Typography>
             </div>
             <ul className="space-y-2">

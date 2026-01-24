@@ -1,6 +1,5 @@
 import Benefits from "./components/benefits";
 import Cta from "./components/cta";
-import DashboardPreview from "./components/dashboard-preview";
 import Faq from "./components/faq";
 import { Features } from "./components/features/features";
 import Hero from "./components/hero/hero";
@@ -20,7 +19,7 @@ export default function LandingPage() {
 
       <Benefits />
       <Features />
-      <DashboardPreview />
+      {/* <DashboardPreview /> */}
       <Impact />
       <Results />
       <LandingBlock title="Simple and transparent pricing" badge="Pricing">

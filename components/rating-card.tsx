@@ -50,7 +50,7 @@ const RatingCard = ({ platform, className = "", delay, floatOffset = 0, whiteMod
           ease: "easeOut"
         }
       }}
-      className={cn("absolute z-50", className)}
+      className={cn("absolute z-40", className)}
     >
       <motion.div
         initial={{ y: initialY }}

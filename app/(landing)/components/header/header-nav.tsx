@@ -30,6 +30,7 @@ export const Nav = ({ className, linkClassName }: { className?: string, linkClas
           </li>
         ))}
       </ul>
+
     </nav>
   );
 };
