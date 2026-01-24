@@ -3,18 +3,45 @@ import { stripe } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import Stripe from "stripe";
+import { sendVerificationEmail } from "./lib/email";
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-12-15.clover", // Latest API version as of Stripe SDK v20.0.0
+  apiVersion: "2025-12-15.clover",
 })
-
 
 export const auth = betterAuth({
     database: prismaAdapter(prisma, {
         provider: "postgresql",
     }),
+    rateLimit: {
+        enabled: process.env.NODE_ENV === "production",
+        window: 60, // 60 secondes
+        max: 100, // 100 requêtes max par fenêtre
+        customRules: {
+            "/sign-in/email": { window: 10, max: 5 },
+            "/sign-up/email": { window: 60, max: 3 },
+        },
+        storage: "database",
+        modelName: "rateLimit",
+    },
     emailAndPassword: {
         enabled: true,
+        requireEmailVerification: true, 
+        autoSignIn: false, 
+    },
+    emailVerification: {
+      sendOnSignUp: true, // Envoie automatiquement à l'inscription
+      autoSignInAfterVerification: true, // Auto-connecte après vérification
+      sendVerificationEmail: async ({ user, url, token }) => {
+        sendVerificationEmail({
+          to: user.email,
+          userName: user.name || user.email.split('@')[0],
+          verificationUrl: url,
+        }).catch((error) => {
+          console.error('❌ Erreur lors de l\'envoi de l\'email de vérification:', error);
+          // Ne pas throw pour ne pas bloquer le processus d'inscription
+        });
+      },
     },
     baseURL: process.env.BETTER_AUTH_URL,
     socialProviders:{
@@ -22,6 +49,7 @@ export const auth = betterAuth({
         clientId: process.env.GOOGLE_CLIENT_ID!,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       }
+      // Les OAuth comme Google vérifient automatiquement l'email via SSO
     },
     plugins: [
       stripe({
@@ -32,20 +60,16 @@ export const auth = betterAuth({
             enabled: true,
             plans: [
                 {
-                    name: "pro", // the name of the plan, it'll be automatically lower cased when stored in the database
-                    priceId: process.env.STRIPE_PRICE_ID_MONTHLY!, // the price ID from stripe
-                    annualDiscountPriceId: process.env.STRIPE_PRICE_ID_YEARLY!, // (optional) the price ID for annual billing with a discount
+                    name: "pro",
+                    priceId: process.env.STRIPE_PRICE_ID_MONTHLY!,
+                    annualDiscountPriceId: process.env.STRIPE_PRICE_ID_YEARLY!,
                     limits: {
                         projects: 5,
                         storage: 10
                     }
                 },
-                
             ]
         }
-        
-
-        
       })
   ]
 });
