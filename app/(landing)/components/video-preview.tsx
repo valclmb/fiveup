@@ -1,6 +1,6 @@
 "use client"
 
-import { useIsMobile } from "@/lib/use-is-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { motion, useScroll, useTransform } from "motion/react";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
