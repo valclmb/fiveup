@@ -1,57 +1,39 @@
+"use client";
 import { toast } from "sonner";
 
-
-const token = localStorage.getItem("token");
-
-// Fonction helper pour gérer les erreurs 422 (déconnexion automatique)
-const handleApiError = async (response: Response) => {
-  if (response.status === 422 || response.status === 403) {
-    // Déconnexion automatique
-    localStorage.removeItem("token");
-    localStorage.removeItem("refresh_token");
-
-    toast.error("Session expirée. Redirection vers la page de connexion...");
-
-    setTimeout(() => {
-      // Redirection vers la page de login
-      window.location.href = "/login";
-    }, 1500);
-
-    throw new Error("Session expirée"); // ← Lancer une erreur
-  }
-
-  return response;
+const getToken = () => {
+  if (typeof window === "undefined") return null;
+  return window.localStorage.getItem("better-auth.session_token");
 };
 
-const config: RequestInit = {
+const getConfig = (): RequestInit => ({
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
+    Authorization: `Bearer ${getToken()}`,
   },
-};
+});
 
-const postConfig: RequestInit = {
+const getPostConfig = (): RequestInit => ({
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    Authorization: token ? `Bearer ${token}` : "",
+    Authorization: getToken() ? `Bearer ${getToken()}` : "",
   },
-};
+});
 
-const postFormDataConfig: RequestInit = {
+const getPostFormDataConfig = (): RequestInit => ({
   method: "POST",
   headers: {
-    Authorization: token ? `Bearer ${token}` : "",
+    Authorization: getToken() ? `Bearer ${getToken()}` : "",
   },
-};
+});
 
 //LOGIN
 export const login = <T extends object>(content: T) => {
   return fetch("/api/login", {
     body: JSON.stringify(content),
-    ...postConfig,
+    ...getPostConfig(),
   })
-    .then(handleApiError)
     .then((res) => res?.json())
     .catch((err) => console.log(err));
 };
@@ -70,14 +52,14 @@ const buildParam = (param?: string | Record<string, unknown>) => {
           (v) =>
             (acc[key] = acc[key]
               ? `${acc[key]}&${key}=${encodeURIComponent(String(v))}`
-              : String(v))
+              : String(v)),
         );
         return acc;
       }
       acc[key] = String(value);
       return acc;
     },
-    {}
+    {},
   );
   const qs = new URLSearchParams(entries).toString();
   return qs ? `?${qs}` : "";
@@ -87,15 +69,14 @@ const buildParam = (param?: string | Record<string, unknown>) => {
 export const getAll = async <T = any>(
   link: string,
   param?: string | Record<string, unknown>,
-  customConfig?: RequestInit
+  customConfig?: RequestInit,
 ): Promise<T> => {
   const query = buildParam(param);
 
   return fetch(`/api/${link}${query}`, {
-    ...config,
+    ...getConfig(),
     ...customConfig,
   })
-    .then(handleApiError)
     .then((res) => res?.json())
     .then((res) => {
       if (res.detail) {
@@ -110,11 +91,10 @@ export const getAll = async <T = any>(
 export const getOne = async <T = any>(
   link: string,
   id: number | string,
-  param?: string | Record<string, unknown>
+  param?: string | Record<string, unknown>,
 ): Promise<T> => {
   const query = buildParam(param);
-  return fetch(`/api/${link}/${id}${query}`, config)
-    .then(handleApiError)
+  return fetch(`/api/${link}/${id}${query}`, getConfig())
     .then((res) => res?.json())
     .catch((err) => console.log(err));
 };
@@ -140,13 +120,12 @@ export const getBlob = async (endpoint: string) => {
 export const post = <T extends object>(
   link: string,
   content: T,
-  formData?: boolean
+  formData?: boolean,
 ) => {
   return fetch(`/api/${link}`, {
     body: formData ? (content as FormData) : JSON.stringify(content),
-    ...(formData ? postFormDataConfig : postConfig),
+    ...(formData ? getPostFormDataConfig() : getPostConfig()),
   })
-    .then(handleApiError)
     .then((res) => res?.json())
     .then((res) => {
       if (res.error || res.detail) {
@@ -161,14 +140,13 @@ export const post = <T extends object>(
 export const editOne = <T extends object>(
   link: string,
   content: T,
-  id?: number | string
+  id?: number | string,
 ) => {
   return fetch(`/api/${link}${id ?? ""}`, {
     method: "PUT",
     body: JSON.stringify(content),
-    ...config,
+    ...getConfig(),
   })
-    .then(handleApiError)
     .then((res) => res?.json())
     .then((res) => {
       if (res.error) {
@@ -183,9 +161,8 @@ export const patch = <T extends object>(link: string, content: T) => {
   return fetch(`/api/${link}`, {
     method: "PATCH",
     body: JSON.stringify(content),
-    ...config,
+    ...getConfig(),
   })
-    .then(handleApiError)
     .then((res) => res?.json())
     .then((res) => {
       if (res.error) {
@@ -197,11 +174,10 @@ export const patch = <T extends object>(link: string, content: T) => {
 
 // DELETE
 export const deleteOne = (link: string, id: number | string) => {
-    return fetch(`/api/${link}${id}`, {
+  return fetch(`/api/${link}${id}`, {
     method: "DELETE",
-    ...config,
+    ...getConfig(),
   })
-    .then(handleApiError)
     .then(async (res) => {
       if (!res) return null;
       // DELETE renvoie souvent 204 No Content → ne pas parser JSON
