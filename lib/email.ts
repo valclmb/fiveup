@@ -24,8 +24,45 @@ export async function sendVerificationEmail({
     const result = await resend.emails.send({
       from: FROM_EMAIL,
       to,
-      subject: `Vérifiez votre adresse email - ${APP_NAME}`,
+      subject: `Verify your email address - ${APP_NAME}`,
       html: getEmailTemplate(userName, verificationUrl),
+    });
+
+    if (result.error) {
+      console.error('❌ Erreur Resend:', result.error);
+      console.error('❌ Détails de l\'erreur:', JSON.stringify(result.error, null, 2));
+      throw new Error(`Erreur Resend: ${JSON.stringify(result.error)}`);
+    }
+
+    return result;
+  } catch (error) {
+    console.error('❌ Erreur envoi email:', error);
+    // Re-throw pour que Better Auth puisse gérer l'erreur
+    throw error;
+  }
+}
+
+interface SendResetPasswordEmailParams {
+  to: string;
+  userName: string;
+  resetUrl: string;
+}
+
+export async function sendResetPasswordEmail({
+  to,
+  userName,
+  resetUrl,
+}: SendResetPasswordEmailParams) {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error('RESEND_API_KEY is not configured');
+  }
+
+  try {
+    const result = await resend.emails.send({
+      from: FROM_EMAIL,
+      to,
+      subject: `Reset your password - ${APP_NAME}`,
+      html: getResetPasswordEmailTemplate(userName, resetUrl),
     });
 
     if (result.error) {
@@ -50,49 +87,164 @@ function getEmailTemplate(userName: string, verificationUrl: string) {
         <meta charset="utf-8">
         <style>
           body {
-            font-family: Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #1a1a1a;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #ffffff;
           }
           .container {
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 40px;
+            border: 1px solid #e5e7eb;
           }
           .button {
             display: inline-block;
-            padding: 12px 30px;
-            background-color: #0070f3;
-            color: white;
+            padding: 14px 32px;
+            background-color: #10CEA5;
+            color: #ffffff;
             text-decoration: none;
-            border-radius: 5px;
-            margin: 20px 0;
+            border-radius: 8px;
+            margin: 24px 0;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background-color 0.2s;
+          }
+          .button:hover {
+            background-color: #0db892;
+          }
+          .link {
+            word-break: break-all;
+            color: #10CEA5;
+            text-decoration: none;
           }
           .footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #666;
+            margin-top: 32px;
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.5;
+          }
+          h2 {
+            color: #1a1a1a;
+            margin: 0 0 16px 0;
+            font-size: 24px;
+            font-weight: 600;
+          }
+          p {
+            margin: 12px 0;
+            color: #374151;
           }
         </style>
       </head>
       <body>
         <div class="container">
-          <h2>Bienvenue ${userName} !</h2>
-          <p>Merci de vous être inscrit. Pour finaliser votre inscription, veuillez vérifier votre adresse email.</p>
+          <h2>Welcome ${userName}!</h2>
+          <p>Thank you for signing up. To complete your registration, please verify your email address.</p>
           
-          <a href="${verificationUrl}" class="button">
-            Vérifier mon email
-          </a>
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="${verificationUrl}" class="button">
+              Verify my email
+            </a>
+          </div>
           
-          <p>Ou copiez ce lien dans votre navigateur :</p>
-          <p style="word-break: break-all; color: #0070f3;">${verificationUrl}</p>
+          <p style="text-align: center; color: #6b7280; font-size: 14px;">Or copy this link into your browser:</p>
+          <p style="text-align: center; word-break: break-all;">
+            <a href="${verificationUrl}" class="link">${verificationUrl}</a>
+          </p>
           
           <div class="footer">
-            <p>Si vous n'avez pas créé de compte, ignorez cet email.</p>
-            <p>Ce lien expirera dans 1 heure.</p>
+            <p>If you didn't create an account, please ignore this email.</p>
+            <p>This link will expire in 1 hour.</p>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
+function getResetPasswordEmailTemplate(userName: string, resetUrl: string) {
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+          }
+          .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 40px;
+            border: 1px solid #e5e7eb;
+          }
+          .button {
+            display: inline-block;
+            padding: 14px 32px;
+            background-color: #10CEA5;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 24px 0;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background-color 0.2s;
+          }
+          .button:hover {
+            background-color: #0db892;
+          }
+          .link {
+            word-break: break-all;
+            color: #10CEA5;
+            text-decoration: none;
+          }
+          .footer {
+            margin-top: 32px;
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.5;
+          }
+          h2 {
+            color: #1a1a1a;
+            margin: 0 0 16px 0;
+            font-size: 24px;
+            font-weight: 600;
+          }
+          p {
+            margin: 12px 0;
+            color: #374151;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h2>Reset your password</h2>
+          <p>Hello ${userName},</p>
+          <p>You requested to reset your password. Click the button below to create a new password.</p>
+          
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="${resetUrl}" class="button">
+              Reset my password
+            </a>
+          </div>
+          
+          <p style="text-align: center; color: #6b7280; font-size: 14px;">Or copy this link into your browser:</p>
+          <p style="text-align: center; word-break: break-all;">
+            <a href="${resetUrl}" class="link">${resetUrl}</a>
+          </p>
+          
+          <div class="footer">
+            <p>If you didn't request this password reset, please ignore this email.</p>
+            <p>This link will expire in 1 hour.</p>
           </div>
         </div>
       </body>
