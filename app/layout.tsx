@@ -25,6 +25,7 @@ export default function RootLayout({
         className="antialiased relative"
       >
         <Providers>
+
           {children}
         </Providers>
       </body>

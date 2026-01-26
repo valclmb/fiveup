@@ -6,7 +6,7 @@ import Typography from "@/components/ui/typography";
 
 export default function Page() {
   return (
-    <Card>
+    <Card className="bg-background">
       <CardContent>
         <Typography variant="p">Votre boutique</Typography>
         <Typography variant="description" className="text-muted-foreground">Connectez-vous à votre compte Google business, Trustpilot, avis vérifiés et Shopify</Typography>

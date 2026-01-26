@@ -39,7 +39,7 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
         />
         <div className='z-50 flex flex-col justify-between gap-32'>
           <Link href="/" className="hover:scale-105 transition-all duration-300 origin-left">
-            <Image width={250} height={50} src="/logo-white.svg" alt="logo" />
+            <Image width={250} height={50} src="/logos/logo-white.svg" alt="logo" />
           </Link>
           <Typography variant="h1" className="mb-0 text-2xl lg:text-4xl">Welcome to FiveUp</Typography>
 
@@ -51,7 +51,7 @@ const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
 
       </Card>
       <div className="relative max-w-96  w-full flex flex-col justify-center mx-auto">
-        <Image width={200} height={50} src="/logo-white.svg" alt="logo" className=" lg:hidden mx-auto mb-14" />
+        <Image width={200} height={50} src="/logos/logo-white.svg" alt="logo" className=" lg:hidden mx-auto mb-14" />
         <div className="absolute blur-3xl  -top-32 left-1/2 -translate-x-1/2  size-30 bg-primary" />
         {children}
       </div>

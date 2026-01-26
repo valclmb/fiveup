@@ -7,13 +7,13 @@ const Footer = () => {
 
   return (
     <AnimatedFadeUp className="w-full">
-      <footer className="bg-linear-to-t from-background to-black w-full py-10  border-t mt-20 ">
+      <footer className="bg-linear-to-t from-background to-black w-full py-10 border-t  mt-20 ">
         <div className="max-w-7xl mx-auto px-8">
 
 
           <section className="flex flex-col sm:flex-row justify-between pt-10 ">
             <div className="max-w-48">
-              <Image src="/logo-white-baseline.svg" alt="logo" width={115} height={40} className="mb-6" />
+              <Image src="/logos/logo-white-baseline.svg" alt="logo" width={200} height={40} className="mb-6" />
               <Typography variant="description" className="leading-5">Turn every customer into a 5-star review</Typography>
             </div>
             <ul className="space-y-2">

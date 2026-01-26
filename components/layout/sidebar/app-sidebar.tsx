@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
 import { LayoutDashboard, Link, Megaphone, PanelsTopLeft, Star } from "lucide-react"
+import { useTheme } from "next-themes"
 import Image from "next/image"
 import * as React from "react"
 import { NavMain } from "./nav-main"
@@ -55,6 +56,8 @@ export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
   const { data: session, isPending } = authClient.useSession()
   const user = session?.user
 
+  const { theme } = useTheme()
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -66,7 +69,7 @@ export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
             > */}
             <a href="#" >
               <Image
-                src="/logo-white-baseline.svg"
+                src={theme === "dark" || theme === "system" ? "/logos/logo-white-baseline.svg" : "/logos/logo-black-baseline.svg"}
                 alt="logo"
                 width={180}
                 height={100}
