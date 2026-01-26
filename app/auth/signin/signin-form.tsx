@@ -91,9 +91,17 @@ const SignInForm = () => {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="password">
-                  Password
-                </FieldLabel>
+                <div className="flex items-center justify-end w-full gap-2">
+                  <FieldLabel htmlFor="password" className="mr-auto">
+                    Password
+                  </FieldLabel>
+                  <Link
+                    href={`/auth/reset-password${form.watch("email") ? `?email=${encodeURIComponent(form.watch("email"))}` : ""}`}
+                    className={buttonVariants({ variant: "link", className: "text-xs px-0 h-auto" })}
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
                 <PasswordInput
                   {...field}
                   id="password"

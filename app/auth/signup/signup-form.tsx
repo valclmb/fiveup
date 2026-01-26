@@ -58,6 +58,7 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
       email: data.email,
       password: data.password,
       name: data.fullName,
+      callbackURL: '/dashboard', // Redirige vers le dashboard après vérification d'email
     }),
     onSuccess: async (data) => {
       console.log('Signup response:', data);
@@ -106,11 +107,11 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
 
           {/* Titre et message */}
           <div className="space-y-4">
-            <Typography variant="h2" className="text-2xl md:text-3xl">
-              Confirmez votre email
+            <Typography variant="h2" className="text-2xl md:text-3xl text-center">
+              Confirm your email
             </Typography>
             <Typography variant="description" className="text-base">
-              Nous venons de vous envoyer un email à
+              We just sent you an email to
             </Typography>
             {userEmail && (
               <Typography variant="p" className="text-lg font-semibold text-primary break-all">
@@ -118,7 +119,7 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
               </Typography>
             )}
             <Typography variant="description" className="text-sm">
-              Cliquez sur le lien dans l'email pour activer votre compte.
+              Click the link in the email to activate your account.
             </Typography>
           </div>
 
@@ -126,12 +127,12 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
           <div className="space-y-3">
             <Link href="/auth/signin" className="block">
               <Button className="w-full">
-                Aller à la page de connexion
+                Go to sign in page
               </Button>
             </Link>
             <Link href="/" className="block">
               <Button variant="outline" className="w-full">
-                Retour à l'accueil
+                Back to home
               </Button>
             </Link>
           </div>
@@ -139,11 +140,11 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
           {/* Message d'aide */}
           <div className="pt-4 border-t border-border">
             <Typography variant="description" className="text-xs">
-              Vous n'avez pas reçu l'email ? Vérifiez votre dossier spam ou{' '}
+              Didn't receive the email? Check your spam folder or{' '}
               <Link href="/auth/signin" className="text-primary hover:underline font-medium">
-                connectez-vous
+                sign in
               </Link>{' '}
-              pour en demander un nouveau.
+              to request a new one.
             </Typography>
           </div>
         </div>
