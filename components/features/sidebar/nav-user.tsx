@@ -32,14 +32,27 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { authClient } from "@/lib/auth-client"
 import { User } from "better-auth"
-import { redirect } from "next/navigation"
+import { useRouter } from "next/navigation"
 
 export function NavUser({ user, isPending }: { user: User | undefined, isPending: boolean }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
 
-  const handleSignOut = async () => {
-    await authClient.signOut()
-    redirect('/auth/signin')
+  const handleSignOut = () => {
+    authClient.signOut({
+      fetchOptions: {
+        onRequest: () => {
+          document.body.style.cursor = 'wait'
+        },
+        onSuccess: () => {
+          document.body.style.cursor = ''
+          router.push('/auth/signin')
+        },
+        onError: () => {
+          document.body.style.cursor = ''
+        }
+      }
+    })
   }
 
   if (isPending) return (<div className="flex gap-2">

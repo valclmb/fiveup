@@ -1,12 +1,21 @@
+import { auth } from "@/auth"
 import RatingCard from "@/components/rating-card"
 import { AnimatedGridPattern } from "@/components/ui/animated-grid-pattern"
 import { Card } from "@/components/ui/card"
 import Typography from "@/components/ui/typography"
 import { cn } from "@/lib/utils"
+import { headers } from "next/headers"
 import Image from "next/image"
 import Link from "next/link"
+import { redirect } from "next/navigation"
+const AuthLayout = async ({ children }: { children: React.ReactNode }) => {
 
-const AuthLayout = ({ children }: { children: React.ReactNode }) => {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (session?.user) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="flex min-h-screen bg-background p-4 py-12 sm:px-6 lg:px-8">
       <Card className="hidden lg:flex bg-[#10CEA5]  relative  w-1/2 overflow-hidden rounded-3xl border p-14">
