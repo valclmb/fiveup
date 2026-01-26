@@ -7,69 +7,72 @@ import { sendVerificationEmail } from "./lib/email";
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-12-15.clover",
-})
+});
 
 export const auth = betterAuth({
-    database: prismaAdapter(prisma, {
-        provider: "postgresql",
-    }),
-    rateLimit: {
-        enabled: process.env.NODE_ENV === "production",
-        window: 60, // 60 secondes
-        max: 100, // 100 requêtes max par fenêtre
-        customRules: {
-            "/sign-in/email": { window: 10, max: 5 },
-            "/sign-up/email": { window: 60, max: 3 },
-        },
-        storage: "database",
-        modelName: "rateLimit",
+  database: prismaAdapter(prisma, {
+    provider: "postgresql",
+  }),
+  rateLimit: {
+    enabled: process.env.NODE_ENV === "production",
+    window: 60, // 60 secondes
+    max: 100, // 100 requêtes max par fenêtre
+    customRules: {
+      "/sign-in/email": { window: 10, max: 5 },
+      "/sign-up/email": { window: 60, max: 3 },
     },
-    emailAndPassword: {
+    storage: "database",
+    modelName: "rateLimit",
+  },
+  emailAndPassword: {
+    enabled: true,
+    requireEmailVerification: true,
+    autoSignIn: false,
+  },
+  emailVerification: {
+    sendOnSignUp: true, // Envoie automatiquement à l'inscription
+    autoSignInAfterVerification: true, // Auto-connecte après vérification
+    sendVerificationEmail: async ({ user, url, token }) => {
+      sendVerificationEmail({
+        to: user.email,
+        userName: user.name || user.email.split("@")[0],
+        verificationUrl: url,
+      }).catch((error) => {
+        console.error(
+          "❌ Erreur lors de l'envoi de l'email de vérification:",
+          error,
+        );
+        // Ne pas throw pour ne pas bloquer le processus d'inscription
+      });
+    },
+  },
+  baseURL: process.env.BETTER_AUTH_URL,
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    },
+    // Les OAuth comme Google vérifient automatiquement l'email via SSO
+  },
+  plugins: [
+    stripe({
+      stripeClient,
+      stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
+      createCustomerOnSignUp: true,
+      subscription: {
         enabled: true,
-        requireEmailVerification: true, 
-        autoSignIn: false, 
-    },
-    emailVerification: {
-      sendOnSignUp: true, // Envoie automatiquement à l'inscription
-      autoSignInAfterVerification: true, // Auto-connecte après vérification
-      sendVerificationEmail: async ({ user, url, token }) => {
-        sendVerificationEmail({
-          to: user.email,
-          userName: user.name || user.email.split('@')[0],
-          verificationUrl: url,
-        }).catch((error) => {
-          console.error('❌ Erreur lors de l\'envoi de l\'email de vérification:', error);
-          // Ne pas throw pour ne pas bloquer le processus d'inscription
-        });
+        plans: [
+          {
+            name: "pro",
+            priceId: process.env.STRIPE_PRICE_ID_MONTHLY!,
+            annualDiscountPriceId: process.env.STRIPE_PRICE_ID_YEARLY!,
+            limits: {
+              projects: 5,
+              storage: 10,
+            },
+          },
+        ],
       },
-    },
-    baseURL: process.env.BETTER_AUTH_URL,
-    socialProviders:{
-      google: {
-        clientId: process.env.GOOGLE_CLIENT_ID!,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      }
-      // Les OAuth comme Google vérifient automatiquement l'email via SSO
-    },
-    plugins: [
-      stripe({
-          stripeClient,
-          stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,
-          createCustomerOnSignUp: true,
-          subscription: {
-            enabled: true,
-            plans: [
-                {
-                    name: "pro",
-                    priceId: process.env.STRIPE_PRICE_ID_MONTHLY!,
-                    annualDiscountPriceId: process.env.STRIPE_PRICE_ID_YEARLY!,
-                    limits: {
-                        projects: 5,
-                        storage: 10
-                    }
-                },
-            ]
-        }
-      })
-  ]
+    }),
+  ],
 });
