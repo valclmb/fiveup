@@ -8,18 +8,19 @@ datasource db {
 }
 
 model User {
-  id               String         @id
-  name             String
-  email            String         @unique
-  emailVerified    Boolean
-  image            String?
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  stripeCustomerId String?
-  sessions         Session[]
-  accounts         Account[]
-  shopifyStores    ShopifyStore[]
-  subscriptions    Subscription[]
+  id                    String                 @id
+  name                  String
+  email                 String                 @unique
+  emailVerified         Boolean
+  image                 String?
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  stripeCustomerId      String?
+  sessions              Session[]
+  accounts              Account[]
+  shopifyStores         ShopifyStore[]
+  subscriptions         Subscription[]
+  googleBusinessAccount GoogleBusinessAccount?
 
   @@map("user")
 }
@@ -117,4 +118,21 @@ model RateLimit {
   lastRequest BigInt
 
   @@map("rateLimit")
+}
+
+model GoogleBusinessAccount {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId    String   // "accounts/123456789"
+  accountName  String   // Nom du compte Business
+  locationId   String?  // "locations/123456789" (si une seule location)
+  locationName String?  // Nom de l'établissement
+  accessToken  String   // Token d'accès Google
+  refreshToken String?  // Token de rafraîchissement
+  expiresAt    DateTime // Expiration du token
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("google_business_account")
 }

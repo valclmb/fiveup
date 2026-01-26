@@ -18,7 +18,7 @@ const Header = async () => {
         <div className="flex items-center">
           <Link href="/">
             <Image
-              src="/logo-white.svg"
+              src="/logos/logo-white.svg"
               alt="Logo"
               width={110}
               height={29}

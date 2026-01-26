@@ -1,13 +1,12 @@
 import { auth } from "@/auth";
-import { cookies } from "next/headers";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   // Vérifier que l'utilisateur est connecté
   const session = await auth.api.getSession({ headers: await headers() });
-  
+
   if (!session?.user) {
     redirect("/auth/signin?callbackUrl=/dashboard/integrations");
   }
@@ -16,21 +15,24 @@ export async function GET(request: NextRequest) {
   const shop = searchParams.get("shop");
 
   if (!shop) {
-    return Response.json({ error: "Shop parameter is required" }, { status: 400 });
+    return Response.json(
+      { error: "Shop parameter is required" },
+      { status: 400 },
+    );
   }
 
   // Nettoyer le nom de la boutique (enlever .myshopify.com si présent)
   const shopName = shop.replace(".myshopify.com", "").trim();
-  
+
   if (!shopName || !/^[a-zA-Z0-9-]+$/.test(shopName)) {
     return Response.json({ error: "Invalid shop name" }, { status: 400 });
   }
 
   const shopDomain = `${shopName}.myshopify.com`;
-  
+
   // Générer un state pour la protection CSRF
   const state = crypto.randomUUID();
-  
+
   // Stocker le state dans un cookie pour vérification au callback
   const cookieStore = await cookies();
   cookieStore.set("shopify_oauth_state", state, {
@@ -42,8 +44,8 @@ export async function GET(request: NextRequest) {
   });
 
   // Construire l'URL d'autorisation Shopify
-  const scopes = process.env.SHOPIFY_SCOPES || "read_orders,read_customers";
-  const redirectUri = process.env.SHOPIFY_REDIRECT_URI || `${process.env.BETTER_AUTH_URL}/api/shopify/callback`;
+
+  const redirectUri = `${process.env.BETTER_AUTH_URL}/api/shopify/callback`;
   const clientId = process.env.SHOPIFY_CLIENT_ID;
 
   if (!clientId) {
@@ -52,7 +54,6 @@ export async function GET(request: NextRequest) {
 
   const authUrl = new URL(`https://${shopDomain}/admin/oauth/authorize`);
   authUrl.searchParams.set("client_id", clientId);
-  authUrl.searchParams.set("scope", scopes);
   authUrl.searchParams.set("redirect_uri", redirectUri);
   authUrl.searchParams.set("state", state);
 

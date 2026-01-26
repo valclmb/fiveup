@@ -179,5 +179,5 @@ export async function GET(request: NextRequest) {
   await registerWebhooks(shop, access_token);
 
   // Rediriger vers le dashboard avec succès
-  redirect("/dashboard?shopify=connected");
+  redirect("/connections?success=shopify:connected");
 }
