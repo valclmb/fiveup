@@ -35,7 +35,7 @@ export function NavMain({
                   <Link href={item.url}>
                     {item.icon && (
                       <item.icon
-                        fill={isActive ? "var(--color-primary)" : "none"}
+                        // fill={isActive ? "var(--color-primary)" : "none"}
                         color={isActive ? "var(--color-primary)" : "var(--color-sidebar-foreground)"}
                         strokeWidth={2}
                       />
