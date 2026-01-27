@@ -3,7 +3,7 @@ import { stripe } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import Stripe from "stripe";
-import { sendVerificationEmail, sendResetPasswordEmail } from "./lib/email";
+import { sendResetPasswordEmail, sendVerificationEmail } from "./lib/email";
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2025-12-15.clover",
@@ -28,7 +28,7 @@ export const auth = betterAuth({
     enabled: true,
     requireEmailVerification: true,
     autoSignIn: false,
-    resetPasswordTokenExpiresIn: 3600, 
+    resetPasswordTokenExpiresIn: 3600,
     sendResetPassword: async ({ user, url, token }, request) => {
       sendResetPasswordEmail({
         to: user.email,
@@ -43,7 +43,9 @@ export const auth = betterAuth({
       });
     },
     onPasswordReset: async ({ user }, request) => {
-      console.log(`✅ Mot de passe réinitialisé pour l'utilisateur ${user.email}`);
+      console.log(
+        `✅ Mot de passe réinitialisé pour l'utilisateur ${user.email}`,
+      );
     },
   },
   emailVerification: {

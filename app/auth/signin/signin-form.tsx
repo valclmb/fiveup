@@ -2,7 +2,7 @@
 import { AnimatedFade } from "@/components/custom-ui/animated-fade";
 import { PasswordInput } from "@/components/custom-ui/password-input";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
@@ -32,6 +32,8 @@ const SignInForm = () => {
       password: "Test1234",
     },
   })
+
+  const email = form.watch("email");
 
   const login = useMutation({
     mutationFn: async (data: FormSchema) => await authClient.signIn.email({
@@ -95,12 +97,7 @@ const SignInForm = () => {
                   <FieldLabel htmlFor="password" className="mr-auto">
                     Password
                   </FieldLabel>
-                  <Link
-                    href={`/auth/reset-password${form.watch("email") ? `?email=${encodeURIComponent(form.watch("email"))}` : ""}`}
-                    className={buttonVariants({ variant: "link", className: "text-xs px-0 h-auto" })}
-                  >
-                    Forgot password?
-                  </Link>
+
                 </div>
                 <PasswordInput
                   {...field}
@@ -112,6 +109,14 @@ const SignInForm = () => {
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
+                <FieldDescription className="text-right ">
+                  <Link
+                    href={`/auth/reset-password${email ? `?email=${encodeURIComponent(email)}` : ""}`}
+                    className={buttonVariants({ variant: "link", className: "text-xs px-0! h-auto no-underline! hover:underline!" })}
+                  >
+                    Forgot password?
+                  </Link>
+                </FieldDescription>
               </Field>
             )}
           />

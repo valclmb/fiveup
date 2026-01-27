@@ -1,12 +1,11 @@
 "use client"
 
 import {
-  BadgeCheck,
-  Bell,
   ChevronsUpDown,
   CreditCard,
   LogOut,
   Sparkles,
+  UserIcon,
 } from "lucide-react"
 
 import {
@@ -116,18 +115,15 @@ export function NavUser({ user, isPending }: { user: User | undefined, isPending
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
+              <DropdownMenuItem onClick={() => router.push('/profile')}>
+                <UserIcon />
+                Profile
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/profile?tab=billing')}>
                 <CreditCard />
                 Billing
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
+
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleSignOut}>

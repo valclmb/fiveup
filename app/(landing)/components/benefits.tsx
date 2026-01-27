@@ -57,7 +57,7 @@ const Benefit = ({ icon: Icon, iconProps = {}, title, description, index }: Bene
 const Benefits = () => {
   return (
     <LandingBlock badge="Key benefits" title="More reviews. Higher ratings. More revenue." bg>
-      <div className="flex flex-col  lg:flex-row lg:items-center gap-8 lg:gap-4 ">
+      <div className="flex flex-col  lg:flex-row lg:items-start gap-8 lg:gap-4 ">
         {benefits.map((benefit, index) => (
           <AnimatedBenefitItem key={index} delay={0.2 * index} >
             <Benefit index={index} icon={benefit.icon} iconProps={benefit.iconProps} title={benefit.title} description={benefit.description} />
