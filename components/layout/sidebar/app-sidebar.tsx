@@ -52,31 +52,29 @@ const data = {
 }
 
 export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
-
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => setMounted(true), [])
   const { data: session, isPending } = authClient.useSession()
   const user = session?.user
 
-  const { theme } = useTheme()
-
+  const { resolvedTheme } = useTheme()
+  const logoSrc = mounted && resolvedTheme === "dark"
+    ? "/logos/logo-white-baseline.svg"
+    : "/logos/logo-black-baseline.svg"
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            {/* <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!px-2 mt-6 mb-4"
-            > */}
             <a href="#" >
               <Image
-                src={theme === "dark" || theme === "system" ? "/logos/logo-white-baseline.svg" : "/logos/logo-black-baseline.svg"}
+                src={logoSrc}
                 alt="logo"
                 width={180}
                 height={100}
                 className="my-6 pl-2"
               />
             </a>
-            {/* </SidebarMenuButton> */}
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
