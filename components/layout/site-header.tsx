@@ -10,6 +10,7 @@ const routeTitles: Record<string, string> = {
   "/": "Dashboard",
   "/reviews": "Reviews",
   "/connections": "Connections",
+  "/pricing": "Pricing",
 }
 
 export const SiteHeader = () => {

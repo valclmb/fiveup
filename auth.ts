@@ -6,7 +6,7 @@ import Stripe from "stripe";
 import { sendVerificationEmail, sendResetPasswordEmail } from "./lib/email";
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-11-17.clover",
+  apiVersion: "2025-12-15.clover",
 });
 
 export const auth = betterAuth({
@@ -64,6 +64,13 @@ export const auth = betterAuth({
     },
   },
   baseURL: process.env.BETTER_AUTH_URL,
+  session: {
+    expiresIn: 60 * 60 * 24 * 7, // 7 jours
+    updateAge: 60 * 60 * 24, // Mettre à jour tous les jours
+    cookieCache: {
+      enabled: true, // Active le cache des cookies pour améliorer les performances
+    },
+  },
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
