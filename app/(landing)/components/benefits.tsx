@@ -23,8 +23,8 @@ const benefits = [{
 }, {
   icon: Google,
   iconProps: { width: 24, height: 24 },
-  title: "Smart routing for Google & Trustpilot",
-  description: "FiveUp sends happy customers to Google & Trustpilot and routes low ratings to private feedback or WhatsApp — you hear every complaint, while your public profiles stay clean."
+  title: "Turn feedback into Google & Trustpilot reviews",
+  description: "FiveUp gives customers a simple path to share their experience: they can post on Google or Trustpilot, or contact your team directly by email or WhatsApp — all from one flow."
 }, {
   icon: DollarSign,
 

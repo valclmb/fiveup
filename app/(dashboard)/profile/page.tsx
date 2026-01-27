@@ -4,6 +4,7 @@ import TabsBilling from "@/components/features/profile/tabs-billing";
 import TabsNotification from "@/components/features/profile/tabs-notification";
 import TabsSecurity from "@/components/features/profile/tabs-security";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useIsCredentialUser } from "@/hooks/use-auth-accounts";
 import { Bell, CreditCard, Lock, User } from "lucide-react";
@@ -11,7 +12,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 function ProfilePage() {
   const [tabValue, setTabValue] = useState("account")
-  const { isCredentialUser } = useIsCredentialUser();
+  const { isCredentialUser, isPending } = useIsCredentialUser();
 
 
   const searchParams = useSearchParams()
@@ -37,6 +38,7 @@ function ProfilePage() {
         <TabsTrigger value="notification">
           <Bell />
           Notification</TabsTrigger>
+        {isPending && <Skeleton className="w-full h-7" />}
         {isCredentialUser && <TabsTrigger value="security">
           <Lock />
           Security</TabsTrigger>}

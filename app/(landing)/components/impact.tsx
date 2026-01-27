@@ -53,7 +53,10 @@ const Impact = () => {
           <AnimatedImpactItem delay={0.4}>
             <div className="space-y-2">
               <Typography variant="h3">Fix issues once — benefit on every order</Typography>
-              <Typography variant="description" className="text-muted-foreground">By treating negative feedback internally first, you spot recurring problems and improve your product, shipping and support. The experience gets better, reviews improve, and over time that stronger reputation turns into more orders and more revenue.</Typography>
+              <Typography variant="description" className="text-muted-foreground">
+                Create simple flows between WhatsApp and your review pages, making it easy for customers to reach you and for your team to manage reputation in one place.
+
+              </Typography>
             </div>
           </AnimatedImpactItem>
 

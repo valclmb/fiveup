@@ -38,7 +38,7 @@ const featuresData: FeaturesCardData[] = [
   {
     icon: <Shield />,
     title: "Protect your reputation",
-    description: "Low ratings are routed to private support before they hit public pages.",
+    description: "Create simple flows between WhatsApp and your review pages, making it easy for customers to reach you.",
     className: "md:col-span-1 lg:col-span-4",
     content: <ProtectReputation />,
   },

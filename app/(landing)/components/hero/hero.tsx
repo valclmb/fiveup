@@ -22,7 +22,9 @@ const Hero = () => {
         </AnimatedHeroItem>
 
         <AnimatedHeroItem delay={0.4}>
-          <Typography variant="p" className="text-center max-w-sm md:max-w-lg mx-auto text-sm">FiveUp runs itself: it collects reviews, quietly filters low ratings to private support, and keeps your public scores climbing every day.</Typography>
+          <Typography variant="p" className="text-center max-w-sm md:max-w-lg mx-auto text-sm">
+            FiveUp runs itself : it sends review requests, centralizes feedback, and guides customers either to Google & Trustpilot or straight to your support team on WhatsApp.
+          </Typography>
         </AnimatedHeroItem>
       </div>
 
