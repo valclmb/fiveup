@@ -97,6 +97,15 @@ export const auth = betterAuth({
               storage: 10,
             },
           },
+          {
+            name: "ultra",
+            priceId: process.env.STRIPE_PRICE_ID_ULTRA_MONTHLY!,
+            annualDiscountPriceId: process.env.STRIPE_PRICE_ID_ULTRA_YEARLY!,
+            limits: {
+              projects: 20,
+              storage: 50,
+            },
+          },
         ],
       },
     }),
