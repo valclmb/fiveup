@@ -8,7 +8,7 @@ import {
   SidebarMenuItem
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
-import { LayoutDashboard, Link, Megaphone, PanelsTopLeft, Star } from "lucide-react"
+import { LayoutDashboard, Link, Megaphone, Paintbrush, Star } from "lucide-react"
 import { useTheme } from "next-themes"
 import Image from "next/image"
 import * as React from "react"
@@ -38,9 +38,9 @@ const data = {
       icon: Megaphone,
     },
     {
-      title: "Collect Page",
-      url: "#",
-      icon: PanelsTopLeft,
+      title: "Customization",
+      url: "/customization",
+      icon: Paintbrush,
     },
     {
       title: "Connections",

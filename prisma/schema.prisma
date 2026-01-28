@@ -21,8 +21,20 @@ model User {
   shopifyStores         ShopifyStore[]
   subscriptions         Subscription[]
   googleBusinessAccount GoogleBusinessAccount?
+  brandSettings         BrandSettings?
 
   @@map("user")
+}
+
+model BrandSettings {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  brandLogoUrl  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("brand_settings")
 }
 
 model Subscription {
