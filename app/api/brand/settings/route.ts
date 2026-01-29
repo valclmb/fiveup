@@ -11,7 +11,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const settings = await prisma.brandSettings.findUnique({
+  const settings = await prisma.globalStyles.findUnique({
     where: { userId: session.user.id },
     select: { brandLogoUrl: true },
   });

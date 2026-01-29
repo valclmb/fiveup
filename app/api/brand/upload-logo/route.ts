@@ -47,7 +47,7 @@ export async function POST(request: Request) {
     const key = brandLogoKey(session.user.id, file.name);
     await uploadToR2(buffer, key, file.type);
 
-    await prisma.brandSettings.upsert({
+    await prisma.globalStyles.upsert({
       where: { userId: session.user.id },
       create: {
         userId: session.user.id,

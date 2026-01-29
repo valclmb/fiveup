@@ -10,7 +10,7 @@ export async function DELETE() {
     return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
   }
 
-  await prisma.brandSettings.upsert({
+  await prisma.globalStyles.upsert({
     where: { userId: session.user.id },
     create: { userId: session.user.id, brandLogoUrl: null },
     update: { brandLogoUrl: null },

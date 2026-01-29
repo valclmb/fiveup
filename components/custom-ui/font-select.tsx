@@ -57,7 +57,7 @@ export type FontSelectProps = {
   placeholder?: string;
   triggerClassName?: string;
   className?: string;
-};
+} & React.ComponentProps<"select">;
 
 export function FontSelect({
   value,
@@ -65,6 +65,7 @@ export function FontSelect({
   placeholder = "Choisir une police",
   triggerClassName,
   className,
+  ...props
 }: FontSelectProps) {
   const selectedFontClass = getFontClassName(value);
 

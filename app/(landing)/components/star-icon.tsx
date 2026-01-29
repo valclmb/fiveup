@@ -10,9 +10,9 @@ interface StarIconProps {
   starsFilled?: number;
 }
 
-export const StarIcons = ({ className, size = 20, outline = false, strokeWidth = 2, color = "#23F4BD", starsCount = 5, starsFilled = 0 }: StarIconProps) => {
+export const StarIcons = ({ className, size = 20, outline = false, strokeWidth = 2, color = "#ffd230", starsCount = 5, starsFilled = 0 }: StarIconProps) => {
   return <div className="flex gap-1">{Array.from({ length: starsCount }).map((_, index) => (
-    <StarIcon key={index} className={cn("text-amber-300", className)} color={color} size={size} strokeWidth={strokeWidth} outline={starsFilled ? (index < starsFilled ? false : true) : outline} />
+    <StarIcon key={index} className={className} color={color} size={size} strokeWidth={strokeWidth} outline={starsFilled ? (index < starsFilled ? false : true) : outline} />
   ))}
   </div>
 };

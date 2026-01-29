@@ -41,6 +41,8 @@ export type ImageInputProps = Omit<
   onFileSelect?: (file: File) => void;
   /** Appelé quand l'utilisateur clique sur le bouton supprimer (croix). Permet de nettoyer côté parent (ex. supprimer le logo en DB). */
   onClear?: () => void;
+  /** Affiche un état de chargement sur le bouton supprimer (ex. pendant la suppression en DB). */
+  clearLoading?: boolean;
 };
 
 export function ImageInput({
@@ -55,6 +57,7 @@ export function ImageInput({
   defaultPreviewUrl,
   onFileSelect,
   onClear,
+  clearLoading,
   className,
   id,
   ...inputProps
@@ -130,7 +133,7 @@ export function ImageInput({
             "group relative flex items-center justify-center overflow-hidden rounded-lg border border-dashed border-input bg-muted/30 transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer",
             isAvatar && shape === "circle" && "rounded-full",
             variant === "avatar" && "w-24 h-24 shrink-0",
-            variant === "logo" && "w-full min-h-[40px] max-w-xs",
+            variant === "logo" && "w-full min-h-50 max-w-xs",
             aspectClass,
             previewClassName
           )}
@@ -139,53 +142,54 @@ export function ImageInput({
           {displayUrl ? (
             <>
               {isAvatar ? (
-              <Avatar
-                className={cn(
-                  "h-full w-full",
-                  shape === "square" && "rounded-lg"
-                )}
-              >
-                <AvatarImage
+                <Avatar
+                  className={cn(
+                    "h-full w-full",
+                    shape === "square" && "rounded-lg"
+                  )}
+                >
+                  <AvatarImage
+                    src={displayUrl}
+                    className={shape === "square" ? "rounded-lg" : undefined}
+                  />
+                  <AvatarFallback>{fallbackText ?? "?"}</AvatarFallback>
+                </Avatar>
+              ) : (
+                <img
                   src={displayUrl}
-                  className={shape === "square" ? "rounded-lg" : undefined}
+                  alt=""
+                  className={cn(
+                    "h-full w-full object-contain",
+                    aspectClass
+                  )}
+                  style={logoStyle}
                 />
-                <AvatarFallback>{fallbackText ?? "?"}</AvatarFallback>
-              </Avatar>
-            ) : (
-              <img
-                src={displayUrl}
-                alt=""
-                className={cn(
-                  "h-full w-full object-contain",
-                  aspectClass
-                )}
-                style={logoStyle}
-              />
-            )}
-            <span
-              className={cn(
-                "absolute inset-0 flex items-center justify-center rounded-lg bg-black/50 opacity-0 transition-opacity group-hover:opacity-100",
-                isAvatar && shape === "circle" && "rounded-full"
               )}
-              aria-hidden
-            >
-              <ImageUp className="text-secondary-foreground size-8" />
+              <span
+                className={cn(
+                  "absolute inset-0 flex items-center justify-center rounded-lg bg-black/50 opacity-0 transition-opacity group-hover:opacity-100",
+                  isAvatar && shape === "circle" && "rounded-full"
+                )}
+                aria-hidden
+              >
+                <ImageUp className="text-secondary-foreground size-8" />
+              </span>
+            </>
+          ) : (
+            <span className="text-muted-foreground flex flex-col items-center gap-1 text-xs">
+              <ImageIcon className="size-6" />
+              {variant === "avatar" ? "Photo" : "Logo"}
             </span>
-          </>
-        ) : (
-          <span className="text-muted-foreground flex flex-col items-center gap-1 text-xs">
-            <ImageIcon className="size-6" />
-            {variant === "avatar" ? "Photo" : "Logo"}
-          </span>
-        )}
+          )}
         </button>
         {displayUrl ? (
           <button
             type="button"
             onClick={handleClear}
+            disabled={clearLoading}
             aria-label="Supprimer l'image"
             className={cn(
-              "absolute -right-1 -top-1 z-10 flex size-6 items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+              "absolute -right-1 -top-1 z-10 flex size-6 items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
               isAvatar && shape === "circle" && "right-0 top-0"
             )}
           >
