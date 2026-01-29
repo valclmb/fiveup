@@ -39,7 +39,7 @@ export const SiteHeader = () => {
           <Button
             variant="outline"
             size="sm"
-            className="gap-1.5 text-muted-foreground hover:text-foreground"
+            className="h-9 gap-1.5 text-muted-foreground hover:text-foreground"
             onClick={() => setFeedbackOpen(true)}
           >
             <MessageCircleMore className="size-4" />

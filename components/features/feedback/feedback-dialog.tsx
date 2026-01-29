@@ -79,7 +79,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="top-14 left-auto right-8 translate-x-0 translate-y-0 gap-4 p-6 sm:max-w-md"
+        className="top-15 left-auto right-8 translate-x-0 translate-y-0 gap-4 p-6 sm:max-w-md"
         overlayClassName="bg-black/5 !backdrop-blur-none"
       >
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
