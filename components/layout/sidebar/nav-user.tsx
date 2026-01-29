@@ -75,7 +75,7 @@ export function NavUser({ user, isPending }: { user: User | undefined, isPending
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer"
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user?.image || ''} alt={user?.name || ''} />
@@ -108,25 +108,25 @@ export function NavUser({ user, isPending }: { user: User | undefined, isPending
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer">
                 <Sparkles />
                 Upgrade to Pro
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push('/profile')}>
+              <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/profile')}>
                 <UserIcon />
                 Profile
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push('/profile?tab=billing')}>
+              <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/profile?tab=billing')}>
                 <CreditCard />
                 Billing
               </DropdownMenuItem>
 
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleSignOut}>
+            <DropdownMenuItem className="cursor-pointer" onClick={handleSignOut}>
               <LogOut />
               Log out
             </DropdownMenuItem>

@@ -21,6 +21,7 @@ model User {
   shopifyStores         ShopifyStore[]
   subscriptions         Subscription[]
   googleBusinessAccount GoogleBusinessAccount?
+  feedbacks              Feedback[]
 
   @@map("user")
 }
@@ -135,4 +136,16 @@ model GoogleBusinessAccount {
   updatedAt    DateTime @updatedAt
 
   @@map("google_business_account")
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pageUrl   String   // URL de la page où le bouton a été cliqué
+  message   String   // Contenu du feedback (max 1024 caractères)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("feedback")
 }
