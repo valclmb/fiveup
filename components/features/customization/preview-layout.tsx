@@ -181,7 +181,7 @@ export function PreviewLayout({
       </div>
 
       <div
-        className="origin-top-left relative w-full shrink-0 overflow-hidden rounded-xl bg-muted/30 transition-width duration-300"
+        className="border origin-top-left relative w-full shrink-0 overflow-hidden rounded-xl bg-muted/30 transition-width duration-300"
         style={{
           width: previewBreakpoint.logicalWidth,
           height: previewBreakpoint.logicalHeight,
