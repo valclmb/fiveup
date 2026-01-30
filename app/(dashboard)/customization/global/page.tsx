@@ -6,7 +6,6 @@ import {
   useGlobalStylesForm,
 } from "@/components/features/customization/global/global-styles-form";
 import { PreviewLayout } from "@/components/features/customization/preview-layout";
-import { FeedbackForm } from "@/components/features/feedback/feedback-form";
 
 export default function GlobalStylesPage() {
   const state = useGlobalStylesForm();
@@ -17,12 +16,11 @@ export default function GlobalStylesPage() {
       content={<GlobalStylesForm {...state} />}
       preview={
         <PreviewLayout
+          previewMode="select"
           stylesOverride={formValues}
           logoUrlOverride={state.logoPreviewUrl ?? undefined}
           className="flex h-full w-full flex-col gap-4 rounded-md py-8 px-6"
-        >
-          {(styles) => <FeedbackForm styles={styles} />}
-        </PreviewLayout>
+        />
       }
     />
   );

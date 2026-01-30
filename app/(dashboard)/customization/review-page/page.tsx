@@ -13,6 +13,8 @@ export default function ReviewPage() {
       content={<ReviewPageForm form={form} saveMutation={saveMutation} />}
       preview={
         <PreviewLayout
+          previewMode="fixed"
+          previewLabel="Page review"
           className="flex h-full w-full flex-col gap-4 rounded-md py-8 px-6"
         >
           {(styles) => <ReviewPagePreview styles={styles} content={form.watch()} />}

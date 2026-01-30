@@ -1,6 +1,15 @@
 "use client";
 
+import { ReviewPagePreview } from "@/components/features/customization/review/review-page-preview";
+import { FeedbackForm } from "@/components/features/feedback/feedback-form";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import Typography from "@/components/ui/typography";
 import { CORNER_ROUNDNESS_PX, DEFAULT_CORNER_ROUNDNESS } from "@/lib/corner-roundness";
@@ -11,6 +20,7 @@ import {
 } from "@/lib/global-styles-queries";
 import type { GlobalStylesValues } from "@/lib/global-styles-values";
 import { DEFAULT_GLOBAL_STYLES } from "@/lib/global-styles-values";
+import { REVIEW_PAGE_QUERY_KEY } from "@/lib/review-page-queries";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Monitor, Smartphone } from "lucide-react";
@@ -38,6 +48,12 @@ export const PREVIEW_BREAKPOINTS = {
 const PREVIEW_BREAKPOINT_KEYS = ["mobile", "desktop"] as const;
 export type PreviewLayoutBreakpoint = (typeof PREVIEW_BREAKPOINT_KEYS)[number];
 
+export const PREVIEW_TYPE_OPTIONS = [
+  { value: "feedback", label: "Formulaire feedback" },
+  { value: "review-page", label: "Page review" },
+] as const;
+export type PreviewType = (typeof PREVIEW_TYPE_OPTIONS)[number]["value"];
+
 /** Styles utilisés par le cadre de la preview (fond, carte, logo). Réutilisable pour d'autres types de preview. */
 export type PreviewLayoutStyles = {
   font: string;
@@ -55,21 +71,37 @@ export type PreviewLayoutProps = {
   logoUrlOverride?: string;
   /** Optionnel : className sur le CardContent. */
   className?: string;
-  /** Contenu de la preview, reçoit les styles globaux (résolus via API ou override). */
-  children: (styles: GlobalStylesValues) => React.ReactNode;
+  /**
+   * "select" = dropdown pour choisir la preview (Feedback / Page review). Charge les données de la preview sélectionnée (cache partagé).
+   * "fixed" = pas de select, affiche previewLabel et le contenu passé en children.
+   */
+  previewMode?: "select" | "fixed";
+  /** Quand previewMode="fixed", label affiché à la place du select (ex. "Page review"). */
+  previewLabel?: string;
+  /** Quand previewMode="fixed", contenu de la preview. Ignoré en mode "select". */
+  children?: (styles: GlobalStylesValues) => React.ReactNode;
 };
 
 /**
  * Layout de preview réutilisable : onglets (mobile/desktop), zone scalée, fond, logo, carte.
  * Le contenu (ex. formulaire feedback, autre widget) est passé en children.
  */
+const DEFAULT_REVIEW_PAGE_CONTENT = {
+  title: "Comment noteriez vous votre expérience ?",
+  ratingTemplate: "arc-stars" as const,
+  buttonText: "Continuer",
+};
+
 export function PreviewLayout({
   stylesOverride,
   logoUrlOverride,
   className,
+  previewMode = "fixed",
+  previewLabel = "Aperçu",
   children,
 }: PreviewLayoutProps) {
   const [breakpoint, setBreakpoint] = useState<PreviewLayoutBreakpoint>("mobile");
+  const [selectedPreview, setSelectedPreview] = useState<PreviewType>("feedback");
   const previewBreakpoint = PREVIEW_BREAKPOINTS[breakpoint];
 
   const { data: globalStylesData } = useQuery({
@@ -80,6 +112,12 @@ export function PreviewLayout({
   const { data: logoData } = useQuery({
     queryKey: GLOBAL_STYLES_LOGO_QUERY_KEY,
     queryFn: () => getAll<{ brandLogoUrl: string | null }>("customization/global-styles/logo"),
+  });
+
+  const { data: reviewPageData } = useQuery({
+    queryKey: REVIEW_PAGE_QUERY_KEY,
+    queryFn: () => getAll<{ title: string; ratingTemplate: string; buttonText: string }>("customization/review-page"),
+    enabled: previewMode === "select" && selectedPreview === "review-page",
   });
 
   const styles: GlobalStylesValues =
@@ -119,9 +157,27 @@ export function PreviewLayout({
             })}
           </TabsList>
         </Tabs>
-        <Typography variant="p" className="text-muted-foreground text-sm">
-          Aperçu
-        </Typography>
+        {previewMode === "select" ? (
+          <Select
+            value={selectedPreview}
+            onValueChange={(v) => v && setSelectedPreview(v as PreviewType)}
+          >
+            <SelectTrigger className="h-8 w-fit min-w-[160px] text-muted-foreground">
+              <SelectValue placeholder="Choisir une preview" />
+            </SelectTrigger>
+            <SelectContent>
+              {PREVIEW_TYPE_OPTIONS.map((opt) => (
+                <SelectItem key={opt.value} value={opt.value}>
+                  {opt.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        ) : (
+          <Typography variant="p" className="text-muted-foreground text-sm">
+            {previewLabel}
+          </Typography>
+        )}
       </div>
 
       <div
@@ -166,7 +222,20 @@ export function PreviewLayout({
               borderRadius: CORNER_ROUNDNESS_PX[cornerRoundness] ?? CORNER_ROUNDNESS_PX[DEFAULT_CORNER_ROUNDNESS],
             }}
           >
-            <CardContent className={className}>{children(styles)}</CardContent>
+            <CardContent className={className}>
+              {previewMode === "select"
+                ? selectedPreview === "feedback"
+                  ? <FeedbackForm styles={styles} />
+                  : selectedPreview === "review-page" && (
+                    <ReviewPagePreview
+                      styles={styles}
+                      content={
+                        reviewPageData ?? DEFAULT_REVIEW_PAGE_CONTENT
+                      }
+                    />
+                  )
+                : children?.(styles)}
+            </CardContent>
           </Card>
         </div>
       </div>
