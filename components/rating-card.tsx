@@ -69,7 +69,7 @@ const RatingCard = ({ platform, className = "", delay, floatOffset = 0, whiteMod
           <CardContent className="p-0 space-y-2 ">
 
             <div className="flex gap-1">
-              <StarIcons size={20} className={cn("size-4 lg:size-auto", whiteMode ? "text-amber-400" : "")} />
+              <StarIcons size={20} className={cn("size-4 lg:size-auto text-amber-400")} />
             </div>
 
 

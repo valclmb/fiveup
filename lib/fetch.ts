@@ -165,8 +165,9 @@ export const patch = <T extends object>(link: string, content: T) => {
   })
     .then((res) => res?.json())
     .then((res) => {
-      if (res.error) {
-        toast.error(res.error);
+      if (res.error || res.detail) {
+        toast.error(res.error || res.detail);
+        throw new Error(res.error || res.detail);
       }
       return res;
     });
