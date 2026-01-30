@@ -44,7 +44,7 @@ interface ColorPickerProps {
   onChange: (value: string) => void;
   onBlur: () => void;
   isLoading?: boolean;
-  label: string;
+  label: string | React.ReactNode;
   error?: string;
   className?: string;
   alpha?: boolean;
@@ -311,7 +311,7 @@ export default function InputColor({
 
   return (
     <div className={cn(className)}>
-      <Label className="mb-3">{label}</Label>
+      {typeof label === "string" ? <Label className="mb-3">{label}</Label> : label}
       <div className="flex items-center gap-4">
         <Popover onOpenChange={handlePopoverChange}>
           <PopoverTrigger asChild>

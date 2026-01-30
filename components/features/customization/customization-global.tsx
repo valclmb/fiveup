@@ -3,14 +3,15 @@ import { DesignSystemFont, FontSelect } from "@/components/custom-ui/font-select
 import { ImageInput } from "@/components/custom-ui/image-input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import InputColor from "@/components/ui/input-color";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Typography from "@/components/ui/typography";
 import { deleteOne, getAll, patch, post } from "@/lib/fetch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+import { Loader2, Monitor } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -194,10 +195,10 @@ const CustomizationGlobal = () => {
                 </section>
 
 
-                <section>
+                <section >
 
                   <div>
-                    <Typography variant="h4">Card</Typography>
+                    <Typography variant="h4" >Card</Typography>
 
                     <div className="flex gap-6">
                       <Controller
@@ -210,12 +211,7 @@ const CustomizationGlobal = () => {
                             data-invalid={fieldState.invalid}
 
                           >
-
-                            <InputColor alpha label="Card Color" {...field} />
-                            <FieldContent className="relative">
-                              <FieldDescription className="absolute -bottom-2 right-0 text-xs">Only for desktop view</FieldDescription>
-
-                            </FieldContent>
+                            <InputColor alpha label={<FieldLabel className="mb-2">Card Color <OnlyDesktop /></FieldLabel>} {...field} />
                             {fieldState.invalid && (
                               <FieldError errors={[fieldState.error]} />
                             )}
@@ -278,6 +274,24 @@ const CustomizationGlobal = () => {
                         )}
                       />
                     </div>
+                    <Controller
+                      name="cornerRoundness"
+                      control={form.control}
+                      render={({ field, fieldState }) => (
+                        <Field
+                          className="min-w-48 mt-5"
+                          data-invalid={fieldState.invalid}
+                        >
+                          <FieldLabel htmlFor="customization-global-form-cornerRoundness">
+                            Card Corner roundness <OnlyDesktop />
+                          </FieldLabel>
+                          <CornerRoundnessInput {...field} />
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
+                      )}
+                    />
                   </div>
                 </section>
                 <div>
@@ -327,7 +341,7 @@ const CustomizationGlobal = () => {
                           data-invalid={fieldState.invalid}
                         >
                           <FieldLabel htmlFor="customization-global-form-buttonCornerRoundness">
-                            <Typography variant="h4">Button Corner roundness</Typography>
+                            Button corner roundness
                           </FieldLabel>
                           <CornerRoundnessInput {...field} />
                           {fieldState.invalid && (
@@ -337,6 +351,7 @@ const CustomizationGlobal = () => {
                       )}
                     />
                   </div>
+
                 </div>
 
 
@@ -366,3 +381,17 @@ const CustomizationGlobal = () => {
 }
 
 export default CustomizationGlobal;
+
+
+const OnlyDesktop = () => {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger><Monitor className="size-4 text-muted-foreground" /></TooltipTrigger>
+        <TooltipContent>
+          Only visible on desktop view
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
+}
