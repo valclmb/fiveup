@@ -1,5 +1,5 @@
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
-import { CornerRoundness } from "./customization-global";
+import type { CornerRoundness } from "@/lib/corner-roundness";
 
 interface CornerRoundnessInputProps {
   value: CornerRoundness;

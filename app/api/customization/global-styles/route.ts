@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { getSignedUrlForDownload } from "@/lib/r2";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
@@ -14,6 +13,7 @@ const DEFAULT_STYLES = {
   starsColor: "#FFD230",
   bgColor: "#FFFFFF",
   textColor: "#000000",
+  cardColor: "#FFFFFF",
 } as const;
 
 export async function GET() {
@@ -42,6 +42,7 @@ export async function GET() {
     starsColor: row.starsColor ?? DEFAULT_STYLES.starsColor,
     bgColor: row.bgColor ?? DEFAULT_STYLES.bgColor,
     textColor: row.textColor ?? DEFAULT_STYLES.textColor,
+    cardColor: row.cardColor ?? DEFAULT_STYLES.cardColor,
   };
 
   return NextResponse.json(result);
@@ -66,6 +67,7 @@ export async function PATCH(request: Request) {
     starsColor: body.starsColor ?? undefined,
     bgColor: body.bgColor ?? undefined,
     textColor: body.textColor ?? undefined,
+    cardColor: body.cardColor ?? undefined,
   };
 
   const updated = await prisma.globalStyles.upsert({
@@ -88,5 +90,6 @@ export async function PATCH(request: Request) {
     starsColor: updated.starsColor ?? DEFAULT_STYLES.starsColor,
     bgColor: updated.bgColor ?? DEFAULT_STYLES.bgColor,
     textColor: updated.textColor ?? DEFAULT_STYLES.textColor,
+    cardColor: updated.cardColor ?? DEFAULT_STYLES.cardColor,
   });
 }

@@ -1,15 +1,40 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import {
-  brandLogoKey,
-  getSignedUrlForDownload,
-  uploadToR2,
-} from "@/lib/r2";
+import { brandLogoKey, getSignedUrlForDownload, uploadToR2 } from "@/lib/r2";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 const MAX_SIZE = 2 * 1024 * 1024; // 2 MB
-const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/svg+xml"];
+const ALLOWED_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/svg+xml",
+];
+
+export async function GET() {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session?.user) {
+    return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
+  }
+
+  const row = await prisma.globalStyles.findUnique({
+    where: { userId: session.user.id },
+    select: { brandLogoUrl: true },
+  });
+
+  let brandLogoUrl: string | null = null;
+  if (row?.brandLogoUrl) {
+    try {
+      brandLogoUrl = await getSignedUrlForDownload(row.brandLogoUrl);
+    } catch {
+      brandLogoUrl = null;
+    }
+  }
+
+  return NextResponse.json({ brandLogoUrl });
+}
 
 export async function POST(request: Request) {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -24,21 +49,21 @@ export async function POST(request: Request) {
   if (!file || !(file instanceof File)) {
     return NextResponse.json(
       { error: "Fichier manquant ou invalide" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   if (file.size > MAX_SIZE) {
     return NextResponse.json(
       { error: "Fichier trop volumineux (max 2 Mo)" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
   if (!ALLOWED_TYPES.includes(file.type)) {
     return NextResponse.json(
       { error: "Type non autorisé (JPEG, PNG, WebP, SVG uniquement)" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 
@@ -59,10 +84,26 @@ export async function POST(request: Request) {
     const signedUrl = await getSignedUrlForDownload(key);
     return NextResponse.json({ url: signedUrl });
   } catch (err) {
-    console.error("Upload brand logo:", err);
+    console.error("Upload logo:", err);
     return NextResponse.json(
-      { error: "Erreur lors de l’upload" },
-      { status: 500 }
+      { error: "Erreur lors de l'upload" },
+      { status: 500 },
     );
   }
+}
+
+export async function DELETE() {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session?.user) {
+    return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
+  }
+
+  await prisma.globalStyles.upsert({
+    where: { userId: session.user.id },
+    create: { userId: session.user.id, brandLogoUrl: null },
+    update: { brandLogoUrl: null },
+  });
+
+  return new NextResponse(null, { status: 204 });
 }

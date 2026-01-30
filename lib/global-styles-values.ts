@@ -1,8 +1,8 @@
 /**
- * Styles du formulaire feedback (global styles).
- * Utilisé par : CustomizationPreview (aperçu) et la vraie page feedback (GET /api/global-styles).
+ * Type des global styles (font, couleurs, coins).
+ * Utilisé par : API global-styles, PreviewLayout, FeedbackForm, ReviewPagePreview, etc.
  */
-export type FeedbackFormStyles = {
+export type GlobalStylesValues = {
   font: string;
   cornerRoundness: string;
   buttonCornerRoundness: string;
@@ -15,7 +15,7 @@ export type FeedbackFormStyles = {
   cardColor: string;
 };
 
-export const DEFAULT_FEEDBACK_FORM_STYLES: FeedbackFormStyles = {
+export const DEFAULT_GLOBAL_STYLES: GlobalStylesValues = {
   font: "inter",
   cornerRoundness: "md",
   buttonCornerRoundness: "md",

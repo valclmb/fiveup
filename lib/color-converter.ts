@@ -95,12 +95,15 @@ export function hslToRgb(
 }
 
 // New alpha functions
-export function hexToRgba(hex: string): {
+export function hexToRgba(hex: string | undefined | null): {
   r: number;
   g: number;
   b: number;
   a: number;
 } {
+  if (hex == null || typeof hex !== "string" || !hex.trim()) {
+    return { r: 0, g: 0, b: 0, a: 1 };
+  }
   let cleanHex = hex.replace("#", "");
 
   if (cleanHex.length === 6) {

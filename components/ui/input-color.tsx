@@ -69,53 +69,55 @@ export default function InputColor({
   alpha = false,
 }: ColorPickerProps) {
   const [colorFormat, setColorFormat] = useState(alpha ? "HEXA" : "HEX");
+  const safeValue = value ?? "#000000";
   const [colorValues, setColorValues] = useState<ColorValues>(() => {
     if (alpha) {
-      const rgba = hexToRgba(value);
+      const rgba = hexToRgba(safeValue);
       const hsla = rgbaToHsla(rgba.r, rgba.g, rgba.b, rgba.a);
       return {
-        hex: value.length === 9 ? value.slice(0, 7) : value,
+        hex: safeValue.length === 9 ? safeValue.slice(0, 7) : safeValue,
         rgb: { r: rgba.r, g: rgba.g, b: rgba.b },
         hsl: rgbToHsl(rgba.r, rgba.g, rgba.b),
         rgba,
         hsla,
       };
     } else {
-      const rgb = hexToRgb(value);
+      const rgb = hexToRgb(safeValue);
       const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
       return {
-        hex: value,
+        hex: safeValue,
         rgb,
         hsl,
       };
     }
   });
   // Add a state to store the current HEX/HEXA input value
-  const [hexInputValue, setHexInputValue] = useState(value);
+  const [hexInputValue, setHexInputValue] = useState(safeValue);
   const [hexInputError, setHexInputError] = useState<string | null>(null);
 
   // Update all color formats when color changes
   const updateColorValues = (newColor: string) => {
+    const color = newColor ?? safeValue;
     if (alpha) {
-      const rgba = hexToRgba(newColor);
+      const rgba = hexToRgba(color);
       const hsla = rgbaToHsla(rgba.r, rgba.g, rgba.b, rgba.a);
       setColorValues({
-        hex: newColor.length === 9 ? newColor.slice(0, 7) : newColor,
+        hex: color.length === 9 ? color.slice(0, 7) : color,
         rgb: { r: rgba.r, g: rgba.g, b: rgba.b },
         hsl: rgbToHsl(rgba.r, rgba.g, rgba.b),
         rgba,
         hsla,
       });
-      setHexInputValue(newColor.toUpperCase());
+      setHexInputValue(color.toUpperCase());
     } else {
-      const rgb = hexToRgb(newColor);
+      const rgb = hexToRgb(color);
       const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
       setColorValues({
-        hex: newColor.toUpperCase(),
+        hex: color.toUpperCase(),
         rgb,
         hsl,
       });
-      setHexInputValue(newColor.toUpperCase());
+      setHexInputValue(color.toUpperCase());
     }
   };
 
@@ -145,17 +147,14 @@ export default function InputColor({
         if (formattedValue.length === maxLength) {
           // Only validate when full length
           colorSchema.parse(formattedValue);
-          // Already updated above
           setHexInputError(null);
         } else {
-          // Not full length, so log
-          console.log("Enter a valid color");
-          setHexInputError("Enter a valid color");
+          // Partial input: user still typing, no error
+          setHexInputError(null);
         }
       } catch (validationError) {
         if (validationError instanceof z.ZodError) {
-          // Do not update color, just keep the input value
-          console.log("Enter a valid color");
+          // Complete but invalid hex (e.g. wrong length in schema)
           setHexInputError("Enter a valid color");
         }
       }
@@ -288,8 +287,9 @@ export default function InputColor({
 
   // Initialize color values on mount and when value changes from outside
   useEffect(() => {
-    updateColorValues(value);
-    setHexInputValue(value.toUpperCase());
+    const v = value ?? "#000000";
+    updateColorValues(v);
+    setHexInputValue(v.toUpperCase());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
@@ -351,13 +351,13 @@ export default function InputColor({
                 {alpha ? (
                   <HexAlphaColorPicker
                     className="!aspect-square !h-[244.79px] !w-[244.79px]"
-                    color={value}
+                    color={safeValue}
                     onChange={handleColorChange}
                   />
                 ) : (
                   <HexColorPicker
                     className="!aspect-square !h-[244.79px] !w-[244.79px]"
-                    color={value}
+                    color={safeValue}
                     onChange={handleColorChange}
                   />
                 )}
@@ -520,7 +520,7 @@ export default function InputColor({
         </Popover>
         <div className="relative flex-1 sm:flex-none">
           <Input
-            placeholder={label}
+            placeholder={typeof label === "string" ? label : "Color"}
             value={getCurrentHexValue()}
             onChange={(e) => handleHexChange(e.target.value)}
             onBlur={onBlur}

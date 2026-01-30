@@ -21,7 +21,8 @@ model User {
   shopifyStores         ShopifyStore[]
   subscriptions         Subscription[]
   googleBusinessAccount GoogleBusinessAccount?
-  globalStyles          GlobalStyles?
+  globalStyles            GlobalStyles?
+  reviewPageCustomization ReviewPageCustomization?
 
   @@map("user")
 }
@@ -40,10 +41,24 @@ model GlobalStyles {
   starsColor          String?  @default("#ffd230")
   bgColor             String?  @default("#FFF")
   textColor           String?  @default("#000")
+  cardColor           String?  @default("#FFF")
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
   @@map("global_styles")
+}
+
+model ReviewPageCustomization {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title           String?  @default("Comment noteriez vous votre expérience ?")
+  ratingTemplate  String?  @default("arc-stars") // "arc-stars" | "classic"
+  buttonText      String?  @default("Continuer")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("review_page_customization")
 }
 
 model Subscription {
