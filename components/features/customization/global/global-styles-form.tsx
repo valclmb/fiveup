@@ -267,7 +267,7 @@ export function useGlobalStylesForm() {
     onSuccess: (data) => {
       form.reset(data);
       queryClient.invalidateQueries({ queryKey: GLOBAL_STYLES_QUERY_KEY });
-      toast.success("Styles enregistrés");
+      toast.success("Styles saved successfully");
     },
   });
 
@@ -283,7 +283,7 @@ export function useGlobalStylesForm() {
         return data.url;
       });
       queryClient.setQueryData(GLOBAL_STYLES_LOGO_QUERY_KEY, { brandLogoUrl: data.url });
-      toast.success("Logo mis à jour");
+      toast.success("Logo updated successfully");
     },
   });
 
@@ -295,7 +295,7 @@ export function useGlobalStylesForm() {
         return null;
       });
       queryClient.invalidateQueries({ queryKey: GLOBAL_STYLES_LOGO_QUERY_KEY });
-      toast.success("Logo supprimé");
+      toast.success("Logo deleted successfully");
     },
   });
 

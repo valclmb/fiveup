@@ -22,9 +22,9 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 const DEFAULT_VALUES: FormSchema = {
-  title: "Comment noteriez vous votre expérience ?",
+  title: "What would you rate your experience?",
   ratingTemplate: "classic",
-  buttonText: "Continuer",
+  buttonText: "Continue",
 };
 
 export function ReviewPageForm({
@@ -88,10 +88,10 @@ export function ReviewPageForm({
       {form.formState.isDirty && (
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => form.reset()}>
-            Annuler
+            Cancel
           </Button>
           <Button type="submit" form="review-page-form" disabled={saveMutation.isPending}>
-            {saveMutation.isPending ? "Enregistrement…" : "Valider les changements"}
+            {saveMutation.isPending ? "Saving…" : "Save changes"}
           </Button>
         </div>
       )}
@@ -122,7 +122,7 @@ export const useReviewPageForm = () => {
     onSuccess: (data) => {
       form.reset(data);
       queryClient.invalidateQueries({ queryKey: REVIEW_PAGE_QUERY_KEY });
-      toast.success("Page review enregistrée");
+      toast.success("Page review saved successfully");
     },
   });
 
