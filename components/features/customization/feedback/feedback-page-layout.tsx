@@ -8,29 +8,32 @@ import { Textarea } from "@/components/ui/textarea";
 import Typography from "@/components/ui/typography";
 import { CORNER_ROUNDNESS_PX, DEFAULT_CORNER_ROUNDNESS } from "@/lib/corner-roundness";
 import type { GlobalStylesValues } from "@/lib/global-styles-values";
+import { cn } from "@/lib/utils";
 import { Info } from "lucide-react";
 
-export type FeedbackFormContent = {
+export type FeedbackPageLayoutContent = {
   title?: string;
   helpText?: { enabled: boolean; content: string };
-  reviewTag?: { enabled: boolean; content: string };
+  reviewTag?: { enabled: boolean; content: string; options?: string[] };
+  /** Liste des sujets (chips) quand reviewTag est activé. Peut être dans reviewTag.options ou à la racine. */
+  reviewTagOptions?: string[];
   reviewTitle?: { enabled: boolean; content: string };
   reviewComment?: { enabled: boolean; content: string };
 };
 
-export type FeedbackFormProps = {
+export type FeedbackPageLayoutProps = {
   styles: GlobalStylesValues;
   /** Contenu personnalisable (titre, helpText, reviewTag, reviewTitle, reviewComment). Si absent, affiche les valeurs par défaut. */
-  content?: FeedbackFormContent;
+  content?: FeedbackPageLayoutContent;
 };
 
 const DEFAULT_TITLE = "Comment noteriez vous votre expérience ?";
 
 /**
- * Contenu spécifique au formulaire feedback (titre, étoiles, champs, bouton).
+ * Layout / contenu de la page feedback (titre, étoiles, champs, bouton).
  * À placer dans un PreviewLayout ou autre conteneur (ex. page feedback).
  */
-export function FeedbackForm({ styles, content }: FeedbackFormProps) {
+export function FeedbackPageLayout({ styles, content }: FeedbackPageLayoutProps) {
   const {
     font,
     cornerRoundness,
@@ -75,11 +78,38 @@ export function FeedbackForm({ styles, content }: FeedbackFormProps) {
           </Typography>
         )}
       </div>
-      <FieldGroup className="my-5 space-y-2">
+      <FieldGroup className="my-4 gap-6">
         {showReviewTag && content?.reviewTag && (
           <Field>
-            <FieldLabel>{content.reviewTag.content || "Tag / Sujet"}</FieldLabel>
-            <Input placeholder={content.reviewTag.content || "Tag"} style={fieldStyle} />
+            <FieldLabel>{content.reviewTag.content || "What is the main subject of your feedback?"}</FieldLabel>
+            {(() => {
+              const options = content.reviewTag.options ?? content.reviewTagOptions ?? [];
+              return options.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {options.map((option, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className={cn(
+                        "rounded-lg border px-2 py-1 text-xs transition-colors",
+                        "border-border hover:bg-muted/50"
+                      )}
+                      style={{
+                        borderRadius: CORNER_ROUNDNESS_PX[cornerRoundness] ?? CORNER_ROUNDNESS_PX[DEFAULT_CORNER_ROUNDNESS],
+                        borderColor,
+                      }}
+                    >
+                      {option || `Subject ${i + 1}`}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <Input
+                  placeholder={content.reviewTag.content || "Tag"}
+                  style={fieldStyle}
+                />
+              );
+            })()}
           </Field>
         )}
         {showReviewTitle && content?.reviewTitle && (

@@ -5,11 +5,12 @@ import {
   FeedbackPageForm,
   useFeedbackPageForm,
 } from "@/components/features/customization/feedback/feedback-page-form";
+import { FeedbackPageLayout } from "@/components/features/customization/feedback/feedback-page-layout";
 import { PreviewLayout } from "@/components/features/customization/preview-layout";
-import { FeedbackForm } from "@/components/features/feedback/feedback-form";
 
 export default function FeedbackPage() {
   const { form, saveMutation } = useFeedbackPageForm();
+  const formValues = form.watch();
 
   return (
     <CustomizationPageLayout
@@ -23,7 +24,7 @@ export default function FeedbackPage() {
           className="flex h-full w-full flex-col gap-4 rounded-md py-8 px-6"
         >
           {(styles) => (
-            <FeedbackForm styles={styles} content={form.watch()} />
+            <FeedbackPageLayout styles={styles} content={formValues} />
           )}
         </PreviewLayout>
       }

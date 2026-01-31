@@ -1,10 +1,10 @@
+import type { TogglableForm } from "@/components/features/customization/togglable-field";
+import { TogglableField } from "@/components/features/customization/togglable-field";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Item, ItemContent, ItemDescription, ItemMedia } from "@/components/ui/item";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
 import { getAll, patch } from "@/lib/fetch";
 import { REDIRECTION_PAGE_QUERY_KEY } from "@/lib/redirection-page-queries";
 import { cn } from "@/lib/utils";
@@ -47,11 +47,11 @@ export function RedirectionPageForm({
   const handleSubmit = form.handleSubmit((data) => saveMutation.mutate(data));
 
   return (
-    <div className="w-96">
+    <div className="max-w-[500px]">
       <Item className="pb-10" variant="outline" >
-        <ItemMedia variant="icon">
+        <ItemMedia variant="icon" >
           <Info />
-        </ItemMedia>
+        </ItemMedia >
         <ItemContent>
           <ItemDescription className="line-clamp-none">
             This page acts as a transition between the review the user has left and the review platforms (Trustpilot, Google).
@@ -59,7 +59,7 @@ export function RedirectionPageForm({
             It can be disabled in the <Link href="/rules">Rules</Link> tab.
           </ItemDescription>
         </ItemContent>
-      </Item>
+      </Item >
       <div className={cn("space-y-4 relative transition-all", showInfo ? "-translate-y-6" : "-translate-y-35")}>
         <Card >
           <Button size="icon" variant="ghost" onClick={() => setShowInfo(!showInfo)} className="absolute top-2 right-2">
@@ -98,46 +98,14 @@ export function RedirectionPageForm({
                     </Field>
                   )}
                 />
-                <div className="space-y-2">
-                  <Controller
-                    name="description.enabled"
-                    control={form.control}
-                    render={({ field }) => (
-                      <Field className="flex flex-row items-center gap-2">
-                        <Switch
-                          id="redirection-page-form-description-enabled"
-                          checked={field.value}
-                          onCheckedChange={field.onChange}
-                        />
-                        <FieldLabel htmlFor="redirection-page-form-description-enabled" className="cursor-pointer">
-                          Description text
-                        </FieldLabel>
-                      </Field>
-                    )}
-                  />
-                  <Controller
-                    name="description.content"
-                    control={form.control}
-                    render={({ field, fieldState }) => (
-                      <Field data-invalid={fieldState.invalid}>
-                        {/* <FieldLabel htmlFor="redirection-page-form-description-content">
-                        Texte de la description
-                      </FieldLabel> */}
-                        <Textarea
-                          id="redirection-page-form-description-content"
-                          {...field}
-                          rows={3}
-                          placeholder="Description text..."
-                          className="max-h-46"
-                          disabled={!form.watch("description.enabled")}
-                        />
-                        {fieldState.invalid && (
-                          <FieldError errors={[fieldState.error]} />
-                        )}
-                      </Field>
-                    )}
-                  />
-                </div>
+                <TogglableField
+                  form={form as unknown as UseFormReturn<TogglableForm>}
+                  name="description"
+                  label="Description text"
+                  placeholder="Description text..."
+                  useTextarea
+                  formId="redirection-page-form"
+                />
               </FieldGroup>
             </form>
           </CardContent>
@@ -157,7 +125,7 @@ export function RedirectionPageForm({
           </div>
         )}
       </div>
-    </div>
+    </div >
   );
 }
 

@@ -2,7 +2,7 @@
 
 import { RedirectionPagePreview } from "@/components/features/customization/redirection/redirection-page-preview";
 import { ReviewPagePreview } from "@/components/features/customization/review/review-page-preview";
-import { FeedbackForm } from "@/components/features/feedback/feedback-form";
+import { FeedbackPageLayout } from "@/components/features/customization/feedback/feedback-page-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
@@ -100,6 +100,7 @@ const DEFAULT_FEEDBACK_PAGE_CONTENT = {
   title: "How would you rate your experience?",
   helpText: { enabled: true, content: "Share your experience to help us improve." },
   reviewTag: { enabled: true, content: "What is the main subject of your feedback?" },
+  reviewTagOptions: ["Product quality", "Delivery", "Customer service", "Overall experience", "Other"],
   reviewTitle: { enabled: true, content: "Give a title to your review" },
   reviewComment: { enabled: true, content: "Leave a comment" },
 };
@@ -139,6 +140,7 @@ export function PreviewLayout({
         title: string;
         helpText: { enabled: boolean; content: string };
         reviewTag: { enabled: boolean; content: string };
+        reviewTagOptions: string[];
         reviewTitle: { enabled: boolean; content: string };
         reviewComment: { enabled: boolean; content: string };
       }>("customization/feedback-page"),
@@ -269,15 +271,15 @@ export function PreviewLayout({
                 ? children?.(styles)
                 : (() => {
                   switch (selectedPreview) {
-                    case "feedback":
-                      return (
-                        <FeedbackForm
-                          styles={styles}
-                          content={
-                            feedbackPageData ?? DEFAULT_FEEDBACK_PAGE_CONTENT
-                          }
-                        />
-                      );
+                      case "feedback":
+                        return (
+                          <FeedbackPageLayout
+                            styles={styles}
+                            content={
+                              feedbackPageData ?? DEFAULT_FEEDBACK_PAGE_CONTENT
+                            }
+                          />
+                        );
                     case "review-page":
                       return (
                         <ReviewPagePreview

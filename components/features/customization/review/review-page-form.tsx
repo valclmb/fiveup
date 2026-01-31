@@ -38,7 +38,7 @@ export function ReviewPageForm({
 
   return (
     <>
-      <Card className="min-w-96">
+      <Card className="w-[500px]">
         <CardContent>
           <form id="review-page-form" onSubmit={handleSubmit}>
             <FieldGroup className="w-full min-w-0 [container-type:normal]">
@@ -82,19 +82,21 @@ export function ReviewPageForm({
                 />
               )}
             </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
-      {form.formState.isDirty && (
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => form.reset()}>
-            Cancel
-          </Button>
-          <Button type="submit" form="review-page-form" disabled={saveMutation.isPending}>
-            {saveMutation.isPending ? "Saving…" : "Save changes"}
-          </Button>
-        </div>
-      )}
+          </form >
+        </CardContent >
+      </Card >
+      {
+        form.formState.isDirty && (
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => form.reset()}>
+              Cancel
+            </Button>
+            <Button type="submit" form="review-page-form" disabled={saveMutation.isPending}>
+              {saveMutation.isPending ? "Saving…" : "Save changes"}
+            </Button>
+          </div>
+        )
+      }
     </>
   );
 }

@@ -87,6 +87,7 @@ model FeedbackPageCustomization {
   helpTextEnabled      Boolean  @default(true)
   reviewTag            String?  @default("What is the main subject of your feedback?")
   reviewTagEnabled     Boolean  @default(true)
+  reviewTagOptions     Json?    // string[] : liste de sujets (ex. Qualité du produit, Livraison, …)
   reviewTitle          String?  @default("Give a title to your review")
   reviewTitleEnabled   Boolean  @default(true)
   reviewComment        String?  @default("Leave a comment")

@@ -8,13 +8,29 @@ const togglable = (content: string | null, enabled: boolean | null) => ({
   content: content ?? "",
 });
 
+const DEFAULT_SUBJECTS = [
+  "Product quality",
+  "Delivery",
+  "Customer service",
+  "Overall experience",
+  "Other",
+] as const;
+
 const DEFAULTS = {
   title: "How would you rate your experience?",
   helpText: togglable("Share your experience to help us improve.", true),
   reviewTag: togglable("What is the main subject of your feedback?", true),
+  reviewTagOptions: [...DEFAULT_SUBJECTS],
   reviewTitle: togglable("Give a title to your review", true),
   reviewComment: togglable("Leave a comment", true),
 } as const;
+
+const MAX_SUBJECTS = 5;
+
+function parseTagOptions(v: unknown): string[] {
+  if (!Array.isArray(v)) return [...DEFAULT_SUBJECTS];
+  return v.filter((x): x is string => typeof x === "string").slice(0, MAX_SUBJECTS);
+}
 
 function mapRow(row: {
   title: string | null;
@@ -22,6 +38,7 @@ function mapRow(row: {
   helpTextEnabled: boolean | null;
   reviewTag: string | null;
   reviewTagEnabled: boolean | null;
+  reviewTagOptions?: unknown;
   reviewTitle: string | null;
   reviewTitleEnabled: boolean | null;
   reviewComment: string | null;
@@ -31,6 +48,7 @@ function mapRow(row: {
     title: row.title ?? DEFAULTS.title,
     helpText: togglable(row.helpText, row.helpTextEnabled ?? true),
     reviewTag: togglable(row.reviewTag, row.reviewTagEnabled ?? true),
+    reviewTagOptions: parseTagOptions(row.reviewTagOptions),
     reviewTitle: togglable(row.reviewTitle, row.reviewTitleEnabled ?? true),
     reviewComment: togglable(row.reviewComment, row.reviewCommentEnabled ?? true),
   };
@@ -52,6 +70,7 @@ export async function GET() {
       title: DEFAULTS.title,
       helpText: DEFAULTS.helpText,
       reviewTag: DEFAULTS.reviewTag,
+      reviewTagOptions: DEFAULTS.reviewTagOptions,
       reviewTitle: DEFAULTS.reviewTitle,
       reviewComment: DEFAULTS.reviewComment,
     });
@@ -82,6 +101,11 @@ export async function PATCH(request: Request) {
   const reviewTitle = mapTogglable(body.reviewTitle);
   const reviewComment = mapTogglable(body.reviewComment);
 
+  const reviewTagOptions =
+    Array.isArray(body.reviewTagOptions) && body.reviewTagOptions.every((x: unknown) => typeof x === "string")
+      ? (body.reviewTagOptions as string[]).slice(0, 5)
+      : undefined;
+
   const data = {
     title: body.title ?? undefined,
     ...(Object.keys(helpText).length && {
@@ -92,6 +116,7 @@ export async function PATCH(request: Request) {
       reviewTag: reviewTag.content,
       reviewTagEnabled: reviewTag.enabled,
     }),
+    ...(reviewTagOptions !== undefined && { reviewTagOptions }),
     ...(Object.keys(reviewTitle).length && {
       reviewTitle: reviewTitle.content,
       reviewTitleEnabled: reviewTitle.enabled,

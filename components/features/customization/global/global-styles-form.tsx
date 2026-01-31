@@ -224,7 +224,7 @@ export function GlobalStylesForm({
 
 /**
  * Hook : données + form + mutations pour la page Global Styles.
- * À utiliser dans la page avec CustomizationPageLayout + GlobalStylesForm + PreviewLayout + FeedbackForm.
+ * À utiliser dans la page avec CustomizationPageLayout + GlobalStylesForm + PreviewLayout + FeedbackPageLayout.
  */
 export function useGlobalStylesForm() {
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);
