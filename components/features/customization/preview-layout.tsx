@@ -14,6 +14,7 @@ import {
 import { Tabs, TabsList, TabsTab } from "@/components/ui/tabs";
 import Typography from "@/components/ui/typography";
 import { CORNER_ROUNDNESS_PX, DEFAULT_CORNER_ROUNDNESS } from "@/lib/corner-roundness";
+import { FEEDBACK_PAGE_QUERY_KEY } from "@/lib/feedback-page-queries";
 import { getAll } from "@/lib/fetch";
 import {
   GLOBAL_STYLES_LOGO_QUERY_KEY,
@@ -35,7 +36,7 @@ export const PREVIEW_BREAKPOINTS = {
     label: "Mobile",
     icon: Smartphone,
     logicalWidth: 375,
-    logicalHeight: 667,
+    logicalHeight: 800,
     scale: 1,
   },
   desktop: {
@@ -95,6 +96,14 @@ const DEFAULT_REVIEW_PAGE_CONTENT = {
   buttonText: "Continuer",
 };
 
+const DEFAULT_FEEDBACK_PAGE_CONTENT = {
+  title: "How would you rate your experience?",
+  helpText: { enabled: true, content: "Share your experience to help us improve." },
+  reviewTag: { enabled: true, content: "What is the main subject of your feedback?" },
+  reviewTitle: { enabled: true, content: "Give a title to your review" },
+  reviewComment: { enabled: true, content: "Leave a comment" },
+};
+
 const DEFAULT_REDIRECTION_PAGE_CONTENT = {
   title: "Merci pour votre avis",
   buttonText: "Continuer",
@@ -121,6 +130,19 @@ export function PreviewLayout({
   const { data: logoData } = useQuery({
     queryKey: GLOBAL_STYLES_LOGO_QUERY_KEY,
     queryFn: () => getAll<{ brandLogoUrl: string | null }>("customization/global-styles/logo"),
+  });
+
+  const { data: feedbackPageData } = useQuery({
+    queryKey: FEEDBACK_PAGE_QUERY_KEY,
+    queryFn: () =>
+      getAll<{
+        title: string;
+        helpText: { enabled: boolean; content: string };
+        reviewTag: { enabled: boolean; content: string };
+        reviewTitle: { enabled: boolean; content: string };
+        reviewComment: { enabled: boolean; content: string };
+      }>("customization/feedback-page"),
+    enabled: previewMode === "select" && selectedPreview === "feedback",
   });
 
   const { data: reviewPageData } = useQuery({
@@ -246,29 +268,36 @@ export function PreviewLayout({
               {previewMode === "fixed"
                 ? children?.(styles)
                 : (() => {
-                    switch (selectedPreview) {
-                      case "feedback":
-                        return <FeedbackForm styles={styles} />;
-                      case "review-page":
-                        return (
-                          <ReviewPagePreview
-                            styles={styles}
-                            content={reviewPageData ?? DEFAULT_REVIEW_PAGE_CONTENT}
-                          />
-                        );
-                      case "redirection-page":
-                        return (
-                          <RedirectionPagePreview
-                            styles={styles}
-                            content={
-                              redirectionPageData ?? DEFAULT_REDIRECTION_PAGE_CONTENT
-                            }
-                          />
-                        );
-                      default:
-                        return null;
-                    }
-                  })()}
+                  switch (selectedPreview) {
+                    case "feedback":
+                      return (
+                        <FeedbackForm
+                          styles={styles}
+                          content={
+                            feedbackPageData ?? DEFAULT_FEEDBACK_PAGE_CONTENT
+                          }
+                        />
+                      );
+                    case "review-page":
+                      return (
+                        <ReviewPagePreview
+                          styles={styles}
+                          content={reviewPageData ?? DEFAULT_REVIEW_PAGE_CONTENT}
+                        />
+                      );
+                    case "redirection-page":
+                      return (
+                        <RedirectionPagePreview
+                          styles={styles}
+                          content={
+                            redirectionPageData ?? DEFAULT_REDIRECTION_PAGE_CONTENT
+                          }
+                        />
+                      );
+                    default:
+                      return null;
+                  }
+                })()}
             </CardContent>
           </Card>
         </div>

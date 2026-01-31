@@ -10,15 +10,27 @@ import { CORNER_ROUNDNESS_PX, DEFAULT_CORNER_ROUNDNESS } from "@/lib/corner-roun
 import type { GlobalStylesValues } from "@/lib/global-styles-values";
 import { Info } from "lucide-react";
 
+export type FeedbackFormContent = {
+  title?: string;
+  helpText?: { enabled: boolean; content: string };
+  reviewTag?: { enabled: boolean; content: string };
+  reviewTitle?: { enabled: boolean; content: string };
+  reviewComment?: { enabled: boolean; content: string };
+};
+
 export type FeedbackFormProps = {
   styles: GlobalStylesValues;
+  /** Contenu personnalisable (titre, helpText, reviewTag, reviewTitle, reviewComment). Si absent, affiche les valeurs par défaut. */
+  content?: FeedbackFormContent;
 };
+
+const DEFAULT_TITLE = "Comment noteriez vous votre expérience ?";
 
 /**
  * Contenu spécifique au formulaire feedback (titre, étoiles, champs, bouton).
  * À placer dans un PreviewLayout ou autre conteneur (ex. page feedback).
  */
-export function FeedbackForm({ styles }: FeedbackFormProps) {
+export function FeedbackForm({ styles, content }: FeedbackFormProps) {
   const {
     font,
     cornerRoundness,
@@ -29,11 +41,22 @@ export function FeedbackForm({ styles }: FeedbackFormProps) {
     starsColor,
   } = styles;
 
+  const title = content?.title ?? DEFAULT_TITLE;
+  const showHelpText = content?.helpText?.enabled && content.helpText.content;
+  const showReviewTag = content?.reviewTag?.enabled;
+  const showReviewTitle = content?.reviewTitle?.enabled;
+  const showReviewComment = content?.reviewComment?.enabled;
+
+  const fieldStyle = {
+    borderRadius: CORNER_ROUNDNESS_PX[cornerRoundness] ?? CORNER_ROUNDNESS_PX[DEFAULT_CORNER_ROUNDNESS],
+    borderColor,
+  };
+
   return (
     <>
       <div className="min-w-0 space-y-2">
         <Typography variant="h2" style={{ fontFamily: font }} className="mb-2 min-w-0 text-2xl">
-          Comment noteriez vous votre expérience ?
+          {title}
         </Typography>
         <StarIcons
           starsCount={5}
@@ -41,32 +64,62 @@ export function FeedbackForm({ styles }: FeedbackFormProps) {
           size={40}
           color={starsColor}
         />
-        <Typography variant="description" className="flex min-w-0 items-center gap-2" style={{ fontFamily: font }}>
-          <Info size={18} /> Lorem ipsum dollores dollores dollores
-        </Typography>
+        {showHelpText && content?.helpText && (
+          <Typography variant="description" className="flex min-w-0 items-center gap-2" style={{ fontFamily: font }}>
+            <Info size={18} /> {content.helpText.content}
+          </Typography>
+        )}
+        {!content && (
+          <Typography variant="description" className="flex min-w-0 items-center gap-2" style={{ fontFamily: font }}>
+            <Info size={18} /> Lorem ipsum dollores dollores dollores
+          </Typography>
+        )}
       </div>
       <FieldGroup className="my-5 space-y-2">
-        <Field>
-          <FieldLabel>Donnez un titre à votre avis</FieldLabel>
-          <Input
-            placeholder="Titre"
-            style={{
-              borderRadius: CORNER_ROUNDNESS_PX[cornerRoundness] ?? CORNER_ROUNDNESS_PX[DEFAULT_CORNER_ROUNDNESS],
-              borderColor,
-            }}
-          />
-        </Field>
-        <Field>
-          <FieldLabel>Laissez un commentaire</FieldLabel>
-          <Textarea
-            placeholder="Commentaire"
-            className="min-h-24 resize-none"
-            style={{
-              borderRadius: CORNER_ROUNDNESS_PX[cornerRoundness] ?? CORNER_ROUNDNESS_PX[DEFAULT_CORNER_ROUNDNESS],
-              borderColor,
-            }}
-          />
-        </Field>
+        {showReviewTag && content?.reviewTag && (
+          <Field>
+            <FieldLabel>{content.reviewTag.content || "Tag / Sujet"}</FieldLabel>
+            <Input placeholder={content.reviewTag.content || "Tag"} style={fieldStyle} />
+          </Field>
+        )}
+        {showReviewTitle && content?.reviewTitle && (
+          <Field>
+            <FieldLabel>{content.reviewTitle.content || "Give a title to your review"}</FieldLabel>
+            <Input
+              placeholder={content.reviewTitle.content || "Give a title to your review"}
+              style={fieldStyle}
+            />
+          </Field>
+        )}
+        {showReviewComment && content?.reviewComment && (
+          <Field>
+            <FieldLabel>{content.reviewComment.content || "Leave a comment"}</FieldLabel>
+            <Textarea
+              placeholder={content.reviewComment.content || "Leave a comment"}
+              className="min-h-24 resize-none"
+              style={fieldStyle}
+            />
+          </Field>
+        )}
+        {!content && (
+          <>
+            <Field>
+              <FieldLabel>Give a title to your review</FieldLabel>
+              <Input
+                placeholder="Give a title to your review"
+                style={fieldStyle}
+              />
+            </Field>
+            <Field>
+              <FieldLabel>Leave a comment</FieldLabel>
+              <Textarea
+                placeholder="Leave a comment"
+                className="min-h-24 resize-none"
+                style={fieldStyle}
+              />
+            </Field>
+          </>
+        )}
       </FieldGroup>
       <Button
         className="w-full"

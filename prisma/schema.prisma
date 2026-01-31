@@ -25,6 +25,7 @@ model User {
   globalStyles            GlobalStyles?
   reviewPageCustomization     ReviewPageCustomization?
   redirectionPageCustomization RedirectionPageCustomization?
+  feedbackPageCustomization   FeedbackPageCustomization?
 
   @@map("user")
 }
@@ -37,13 +38,13 @@ model GlobalStyles {
   font                String?   @default("inter")
   cornerRoundness     String?  @default("md")
   buttonCornerRoundness String? @default("md")
-  borderColor         String?  @default("#000")
-  buttonBgColor       String?  @default("#000")
-  buttonTextColor     String?  @default("#fff")
-  starsColor          String?  @default("#ffd230")
-  bgColor             String?  @default("#FFF")
-  textColor           String?  @default("#000")
-  cardColor           String?  @default("#FFF")
+  borderColor         String?  @default("#000000")
+  buttonBgColor       String?  @default("#000000")
+  buttonTextColor     String?  @default("#FFFFFF")
+  starsColor          String?  @default("#FFD230")
+  bgColor             String?  @default("#FFFFFF")
+  textColor           String?  @default("#000000")
+  cardColor           String?  @default("#FFFFFF")
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
@@ -75,6 +76,25 @@ model RedirectionPageCustomization {
   updatedAt          DateTime @updatedAt
 
   @@map("redirection_page_customization")
+}
+
+model FeedbackPageCustomization {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title                String?  @default("How would you rate your experience?")
+  helpText             String?  @default("Share your experience to help us improve.")
+  helpTextEnabled      Boolean  @default(true)
+  reviewTag            String?  @default("What is the main subject of your feedback?")
+  reviewTagEnabled     Boolean  @default(true)
+  reviewTitle          String?  @default("Give a title to your review")
+  reviewTitleEnabled   Boolean  @default(true)
+  reviewComment        String?  @default("Leave a comment")
+  reviewCommentEnabled Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@map("feedback_page_customization")
 }
 
 model Subscription {
