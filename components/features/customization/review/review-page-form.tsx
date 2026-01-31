@@ -22,7 +22,7 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 const DEFAULT_VALUES: FormSchema = {
-  title: "What would you rate your experience?",
+  title: "How would you rate your experience?",
   ratingTemplate: "classic",
   buttonText: "Continue",
 };

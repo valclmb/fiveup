@@ -23,7 +23,8 @@ model User {
   googleBusinessAccount GoogleBusinessAccount?
   feedbacks              Feedback[]
   globalStyles            GlobalStyles?
-  reviewPageCustomization ReviewPageCustomization?
+  reviewPageCustomization     ReviewPageCustomization?
+  redirectionPageCustomization RedirectionPageCustomization?
 
   @@map("user")
 }
@@ -53,13 +54,27 @@ model ReviewPageCustomization {
   id              String   @id @default(cuid())
   userId          String   @unique
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title           String?  @default("Comment noteriez vous votre expérience ?")
-  ratingTemplate  String?  @default("arc-stars") // "arc-stars" | "classic"
-  buttonText      String?  @default("Continuer")
+  title           String?  @default("How would you rate your experience?")
+  ratingTemplate  String?  @default("classic") // "arc-stars" | "classic"
+  buttonText      String?  @default("Continue")
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
   @@map("review_page_customization")
+}
+
+model RedirectionPageCustomization {
+  id                 String   @id @default(cuid())
+  userId             String   @unique
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title              String?  @default("Thank you for your feedback!")
+  buttonText         String?  @default("Continue")
+  description        String?  @default("You will be redirected to review platforms to share your experience.")
+  descriptionEnabled Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("redirection_page_customization")
 }
 
 model Subscription {

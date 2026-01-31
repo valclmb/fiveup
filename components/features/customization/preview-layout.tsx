@@ -1,5 +1,6 @@
 "use client";
 
+import { RedirectionPagePreview } from "@/components/features/customization/redirection/redirection-page-preview";
 import { ReviewPagePreview } from "@/components/features/customization/review/review-page-preview";
 import { FeedbackForm } from "@/components/features/feedback/feedback-form";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,6 +21,7 @@ import {
 } from "@/lib/global-styles-queries";
 import type { GlobalStylesValues } from "@/lib/global-styles-values";
 import { DEFAULT_GLOBAL_STYLES } from "@/lib/global-styles-values";
+import { REDIRECTION_PAGE_QUERY_KEY } from "@/lib/redirection-page-queries";
 import { REVIEW_PAGE_QUERY_KEY } from "@/lib/review-page-queries";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
@@ -51,6 +53,7 @@ export type PreviewLayoutBreakpoint = (typeof PREVIEW_BREAKPOINT_KEYS)[number];
 export const PREVIEW_TYPE_OPTIONS = [
   { value: "feedback", label: "Formulaire feedback" },
   { value: "review-page", label: "Page review" },
+  { value: "redirection-page", label: "Page redirection" },
 ] as const;
 export type PreviewType = (typeof PREVIEW_TYPE_OPTIONS)[number]["value"];
 
@@ -92,6 +95,12 @@ const DEFAULT_REVIEW_PAGE_CONTENT = {
   buttonText: "Continuer",
 };
 
+const DEFAULT_REDIRECTION_PAGE_CONTENT = {
+  title: "Merci pour votre avis",
+  buttonText: "Continuer",
+  description: { enabled: false, content: "" },
+};
+
 export function PreviewLayout({
   stylesOverride,
   logoUrlOverride,
@@ -118,6 +127,17 @@ export function PreviewLayout({
     queryKey: REVIEW_PAGE_QUERY_KEY,
     queryFn: () => getAll<{ title: string; ratingTemplate: string; buttonText: string }>("customization/review-page"),
     enabled: previewMode === "select" && selectedPreview === "review-page",
+  });
+
+  const { data: redirectionPageData } = useQuery({
+    queryKey: REDIRECTION_PAGE_QUERY_KEY,
+    queryFn: () =>
+      getAll<{
+        title: string;
+        buttonText: string;
+        description: { enabled: boolean; content: string };
+      }>("customization/redirection-page"),
+    enabled: previewMode === "select" && selectedPreview === "redirection-page",
   });
 
   const styles: GlobalStylesValues =
@@ -223,18 +243,32 @@ export function PreviewLayout({
             }}
           >
             <CardContent className={className}>
-              {previewMode === "select"
-                ? selectedPreview === "feedback"
-                  ? <FeedbackForm styles={styles} />
-                  : selectedPreview === "review-page" && (
-                    <ReviewPagePreview
-                      styles={styles}
-                      content={
-                        reviewPageData ?? DEFAULT_REVIEW_PAGE_CONTENT
-                      }
-                    />
-                  )
-                : children?.(styles)}
+              {previewMode === "fixed"
+                ? children?.(styles)
+                : (() => {
+                    switch (selectedPreview) {
+                      case "feedback":
+                        return <FeedbackForm styles={styles} />;
+                      case "review-page":
+                        return (
+                          <ReviewPagePreview
+                            styles={styles}
+                            content={reviewPageData ?? DEFAULT_REVIEW_PAGE_CONTENT}
+                          />
+                        );
+                      case "redirection-page":
+                        return (
+                          <RedirectionPagePreview
+                            styles={styles}
+                            content={
+                              redirectionPageData ?? DEFAULT_REDIRECTION_PAGE_CONTENT
+                            }
+                          />
+                        );
+                      default:
+                        return null;
+                    }
+                  })()}
             </CardContent>
           </Card>
         </div>
