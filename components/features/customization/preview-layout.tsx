@@ -1,8 +1,8 @@
 "use client";
 
+import { FeedbackPageLayout } from "@/components/features/customization/feedback/feedback-page-layout";
 import { RedirectionPagePreview } from "@/components/features/customization/redirection/redirection-page-preview";
 import { ReviewPagePreview } from "@/components/features/customization/review/review-page-preview";
-import { FeedbackPageLayout } from "@/components/features/customization/feedback/feedback-page-layout";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
@@ -271,15 +271,15 @@ export function PreviewLayout({
                 ? children?.(styles)
                 : (() => {
                   switch (selectedPreview) {
-                      case "feedback":
-                        return (
-                          <FeedbackPageLayout
-                            styles={styles}
-                            content={
-                              feedbackPageData ?? DEFAULT_FEEDBACK_PAGE_CONTENT
-                            }
-                          />
-                        );
+                    case "feedback":
+                      return (
+                        <FeedbackPageLayout
+                          styles={styles}
+                          content={
+                            feedbackPageData ?? DEFAULT_FEEDBACK_PAGE_CONTENT
+                          }
+                        />
+                      );
                     case "review-page":
                       return (
                         <ReviewPagePreview

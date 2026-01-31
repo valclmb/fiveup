@@ -83,7 +83,7 @@ export function GlobalStylesForm({
                     name="font"
                     control={form.control}
                     render={({ field, fieldState }) => (
-                      <Field className="min-w-48" data-invalid={fieldState.invalid}>
+                      <Field data-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor="customization-global-form-font">Font</FieldLabel>
                         <FontSelect id="customization-global-form-font" value={field.value} onValueChange={field.onChange} />
                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -94,7 +94,7 @@ export function GlobalStylesForm({
                     name="bgColor"
                     control={form.control}
                     render={({ field, fieldState }) => (
-                      <Field className="min-w-48" data-invalid={fieldState.invalid}>
+                      <Field data-invalid={fieldState.invalid}>
                         <InputColor alpha label="Background Color" {...field} />
                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                       </Field>

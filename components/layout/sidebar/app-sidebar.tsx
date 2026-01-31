@@ -8,7 +8,7 @@ import {
   SidebarMenuItem
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
-import { LayoutDashboard, Link, Megaphone, Paintbrush, Star } from "lucide-react"
+import { LayoutDashboard, Link, Megaphone, Paintbrush, Split, Star } from "lucide-react"
 import { useTheme } from "next-themes"
 import Image from "next/image"
 import * as React from "react"
@@ -36,6 +36,11 @@ const data = {
       title: "Campaigns",
       url: "#",
       icon: Megaphone,
+    },
+    {
+      title: "Rules",
+      url: "/rules",
+      icon: Split
     },
     {
       title: "Customization",
