@@ -26,9 +26,9 @@ const CustomizationLayout = ({ children }: { children: React.ReactNode }) => {
       <Tabs orientation="vertical" className="w-full" value={page || tabs[0].value}>
         <TabsList className="gap-2 h-max" >
           {tabs.map((tab) => (
-            <TabsTab key={tab.value} value={tab.value} className="h-10" >
-              <Link href={`${tab.value}`} className="flex items-center gap-2">
-                <tab.icon className="size-5" />{tab.label}
+            <TabsTab key={tab.value} value={tab.value} className="h-10 px-0" >
+              <Link href={`${tab.value}`} className="flex w-full h-full items-center gap-2 px-2">
+                <tab.icon className="size-5" color={tab.value === page ? "var(--primary)" : "var(--muted-foreground)"} />{tab.label}
               </Link>
             </TabsTab>
           ))}

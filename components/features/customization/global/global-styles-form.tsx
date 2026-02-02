@@ -21,6 +21,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import CornerRoundnessInput from "./corner-roundness-input";
+import { ThemePresets, type ThemePresetId } from "./theme-presets";
 
 const formSchema = z.object({
   font: z.string<DesignSystemFont>(),
@@ -52,7 +53,12 @@ export function GlobalStylesForm({
   onLogoPreviewChange,
   isLogoLoading,
 }: GlobalStylesFormProps) {
-  const handleSubmit = form.handleSubmit((data) => saveMutation.mutate(data));
+  const [selectedPresetId, setSelectedPresetId] = useState<ThemePresetId | "">("");
+  const handleSubmit = form.handleSubmit((data) =>
+    saveMutation.mutate(data, {
+      onSuccess: () => setSelectedPresetId(""),
+    })
+  );
 
   return (
     <>
@@ -208,16 +214,32 @@ export function GlobalStylesForm({
           </form>
         </CardContent>
       </Card>
-      {form.formState.isDirty && (
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => form.reset()}>
-            Cancel
-          </Button>
-          <Button type="submit" form="customization-global-form">
-            {saveMutation.isPending ? <Loader2 className="animate-spin" /> : "Save changes"}
-          </Button>
-        </div>
-      )}
+      <div className="flex w-full justify-between gap-2">
+        <ThemePresets
+          value={selectedPresetId}
+          onPresetSelect={(values, presetId) => {
+            form.reset(values, { keepDefaultValues: true });
+            setSelectedPresetId(presetId);
+          }}
+        />
+        {form.formState.isDirty && (
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                form.reset();
+                setSelectedPresetId("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" form="customization-global-form">
+              {saveMutation.isPending ? <Loader2 className="animate-spin" /> : "Save changes"}
+            </Button>
+          </div>
+        )}
+      </div>
+
     </>
   );
 }

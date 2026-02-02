@@ -255,7 +255,7 @@ export function PreviewLayout({
           <Card
             className={
               isMobile
-                ? "w-full max-w-3xl max-h-max border-0 p-0 shadow-none"
+                ? "w-full max-w-3xl max-h-max border-0 ring-0 p-0 shadow-none"
                 : "w-full max-w-3xl max-h-max border-1 p-0 shadow-none"
             }
             style={{
