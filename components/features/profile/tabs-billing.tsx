@@ -164,7 +164,7 @@ export default function TabsBilling() {
                 </div>
                 <div>
                   <Typography variant="description" className="text-muted-foreground">
-                    Facturation
+                    Billing
                   </Typography>
                   <Typography variant="p" className="font-medium">
                     {billingInterval === "annual"
@@ -181,11 +181,11 @@ export default function TabsBilling() {
                   <AlertCircle className="mt-0.5 size-4 shrink-0 text-amber-600 dark:text-amber-500" />
                   <div>
                     <Typography variant="p" className="text-sm font-medium text-amber-800 dark:text-amber-200">
-                      Annulation programmée
+                      Cancellation scheduled
                     </Typography>
                     <Typography variant="description" className="text-sm text-amber-700 dark:text-amber-300">
-                      Votre accès reste actif jusqu&apos;au{" "}
-                      <strong>{formatDate(subscription.periodEnd)}</strong>. Vous pouvez réactiver votre abonnement depuis le portail Stripe.
+                      Your access remains active until{" "}
+                      <strong>{formatDate(subscription.periodEnd)}</strong>. You can reactivate your subscription from the Stripe portal.
                     </Typography>
                   </div>
                 </div>
@@ -210,7 +210,7 @@ export default function TabsBilling() {
                 Plan actuel : Gratuit
               </Typography>
               <Typography variant="description" className="mt-1 text-muted-foreground">
-                Vous n&apos;avez pas d&apos;abonnement actif. Passez au Pro ou à l&apos;Ultra pour débloquer toutes les fonctionnalités.
+                You don&apos;t have an active subscription. Upgrade to Pro or Ultra to unlock all features.
               </Typography>
             </CardContent>
           </Card>
@@ -227,7 +227,7 @@ export default function TabsBilling() {
               rel="noopener noreferrer"
               className={buttonVariants({ variant: "outline" })}
             >
-              Gérer dans Stripe <ExternalLink className="ml-2 size-4" />
+              Manage in Stripe <ExternalLink className="ml-2 size-4" />
             </Link>
           </div>
         </div>

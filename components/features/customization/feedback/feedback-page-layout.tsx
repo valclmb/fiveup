@@ -27,7 +27,7 @@ export type FeedbackPageLayoutProps = {
   content?: FeedbackPageLayoutContent;
 };
 
-const DEFAULT_TITLE = "Comment noteriez vous votre expérience ?";
+const DEFAULT_TITLE = "How would you rate your experience?";
 
 /**
  * Layout / contenu de la page feedback (titre, étoiles, champs, bouton).

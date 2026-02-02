@@ -67,8 +67,8 @@ type ConnectionCardDisconnectButtonProps = {
 
 function ConnectionCardDisconnectButton({
   onDisconnect,
-  confirmTitle = "Êtes-vous sûr ?",
-  confirmDescription = "La connexion sera supprimée.",
+  confirmTitle = "Are you sure?",
+  confirmDescription = "The connection will be removed.",
 }: ConnectionCardDisconnectButtonProps) {
   return (
     <TooltipProvider>
@@ -91,14 +91,14 @@ function ConnectionCardDisconnectButton({
               <AlertDialogDescription>{confirmDescription}</AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Annuler</AlertDialogCancel>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction variant="destructive" onClick={onDisconnect}>
-                Oui, déconnecter
+                Yes, disconnect
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-        <TooltipContent>Supprimer la connexion</TooltipContent>
+        <TooltipContent>Remove connection</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );

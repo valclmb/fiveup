@@ -43,7 +43,7 @@ const AccountForm = () => {
       });
       queryClient.setQueryData(AVATAR_QUERY_KEY, { avatarUrl: data.url });
       refetchSession();
-      toast.success("Avatar mis à jour");
+      toast.success("Avatar updated");
     },
   });
 
@@ -56,7 +56,7 @@ const AccountForm = () => {
       });
       queryClient.invalidateQueries({ queryKey: AVATAR_QUERY_KEY });
       refetchSession();
-      toast.success("Avatar supprimé");
+      toast.success("Avatar deleted");
     },
   });
 

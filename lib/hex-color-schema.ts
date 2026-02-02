@@ -8,6 +8,6 @@ export const hexColorSchema = z
   .string()
   .regex(
     /^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/,
-    "Couleur hex invalide (ex. #FF0000 ou #FF0000FF)",
+    "Invalid hex color (e.g. #FF0000 or #FF0000FF)",
   )
   .transform((val) => val.toUpperCase());

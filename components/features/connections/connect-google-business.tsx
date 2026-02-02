@@ -36,7 +36,7 @@ export function ConnectGoogleBusiness() {
 
   const disconnect = useMutation({
     mutationFn: async () => {
-      toast.loading("Déconnexion de Google Business...");
+      toast.loading("Disconnecting from Google Business...");
       const response = await fetch("/api/google-business/account", {
         method: "DELETE",
       });
@@ -45,12 +45,12 @@ export function ConnectGoogleBusiness() {
     },
     onSuccess: () => {
       toast.dismiss();
-      toast.success("Google Business déconnecté");
+      toast.success("Google Business disconnected");
       queryClient.invalidateQueries({ queryKey: ["google-business-account"] });
     },
     onError: () => {
       toast.dismiss();
-      toast.error("Erreur lors de la déconnexion");
+      toast.error("Error during disconnection");
     },
   });
 
@@ -97,8 +97,8 @@ export function ConnectGoogleBusiness() {
       {account && (
         <ConnectionCard.DisconnectButton
           onDisconnect={() => disconnect.mutate()}
-          confirmTitle="Êtes-vous sûr ?"
-          confirmDescription="Five Up sera déconnecté de votre compte Google Business."
+          confirmTitle="Are you sure?"
+          confirmDescription="Five Up will be disconnected from your Google Business account."
         />
       )}
     </div>

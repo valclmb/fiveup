@@ -65,11 +65,11 @@ export default function PricingPage() {
       })
 
       if (error) {
-        console.error("Erreur lors de l'upgrade:", error)
+        console.error("Upgrade error:", error)
         setLoadingPlan(null)
       }
     } catch (error) {
-      console.error("Erreur inattendue:", error)
+      console.error("Unexpected error:", error)
       setLoadingPlan(null)
     }
   }

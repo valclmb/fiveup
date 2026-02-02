@@ -91,7 +91,7 @@ export type PreviewLayoutProps = {
  * Le contenu (ex. formulaire feedback, autre widget) est passé en children.
  */
 const DEFAULT_REVIEW_PAGE_CONTENT = {
-  title: "Comment noteriez vous votre expérience ?",
+  title: "How would you rate your experience?",
   ratingTemplate: "arc-stars" as const,
   buttonText: "Continuer",
 };
@@ -116,7 +116,7 @@ export function PreviewLayout({
   logoUrlOverride,
   className,
   previewMode = "fixed",
-  previewLabel = "Aperçu",
+  previewLabel = "Preview",
   children,
 }: PreviewLayoutProps) {
   const [breakpoint, setBreakpoint] = useState<PreviewLayoutBreakpoint>("mobile");
@@ -194,7 +194,7 @@ export function PreviewLayout({
             {PREVIEW_BREAKPOINT_KEYS.map((key) => {
               const { label, icon: Icon } = PREVIEW_BREAKPOINTS[key];
               return (
-                <TabsTab key={key} value={key} title={label} aria-label={`Aperçu ${label}`}>
+                <TabsTab key={key} value={key} title={label} aria-label={`Preview ${label}`}>
                   <Icon className="size-4" /> {label}
                 </TabsTab>
               );

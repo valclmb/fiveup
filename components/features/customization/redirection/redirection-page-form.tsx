@@ -152,7 +152,7 @@ export const useRedirectionPageForm = () => {
     onSuccess: (data) => {
       form.reset(data);
       queryClient.invalidateQueries({ queryKey: REDIRECTION_PAGE_QUERY_KEY });
-      toast.success("Page redirection enregistrée");
+      toast.success("Redirection page saved");
     },
   });
 

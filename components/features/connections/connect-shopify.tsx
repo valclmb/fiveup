@@ -58,7 +58,7 @@ export function ConnectShopify() {
     if (!value.trim()) return "Veuillez renseigner le nom de votre boutique.";
     const shopName = value.replace(".myshopify.com", "").trim();
     if (!/^[a-zA-Z0-9-]+$/.test(shopName)) {
-      return "Nom invalide. Utilisez uniquement lettres, chiffres et tirets.";
+      return "Invalid name. Use only letters, numbers and hyphens.";
     }
     return null;
   };
@@ -145,7 +145,7 @@ export function ConnectShopify() {
                       variant="outline"
                       onClick={() => setModalOpen(false)}
                     >
-                      Annuler
+                      Cancel
                     </Button>
                     <Button type="submit" disabled={isConnecting}>
                       {isConnecting ? <Spinner /> : "Connecter"}
@@ -160,8 +160,8 @@ export function ConnectShopify() {
       {store && (
         <ConnectionCard.DisconnectButton
           onDisconnect={() => disconnect.mutate(store.id)}
-          confirmTitle="Êtes-vous sûr ?"
-          confirmDescription="Five Up sera déconnecté de votre boutique."
+          confirmTitle="Are you sure?"
+          confirmDescription="Five Up will be disconnected from your store."
         />
       )}
     </div>

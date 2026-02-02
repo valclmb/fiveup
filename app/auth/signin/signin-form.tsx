@@ -45,7 +45,7 @@ const SignInForm = () => {
       if (data.error) {
         toast.error(data.error.message)
       } else {
-        toast.success('Connexion réussie. Vous êtes maintenant connecté.')
+        toast.success('Successfully signed in.')
       }
 
     },

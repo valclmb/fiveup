@@ -67,7 +67,7 @@ export function ReviewTagSection({ form, formId }: ReviewTagSectionProps) {
             <Input
               id={`${formId}-reviewTag-content`}
               {...field}
-              placeholder="Quelle est le principal sujet de votre retour ?"
+              placeholder="What is the main subject of your feedback?"
               disabled={!enabled}
             />
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -92,7 +92,7 @@ export function ReviewTagSection({ form, formId }: ReviewTagSectionProps) {
                   variant="ghost"
                   className="shrink-0 text-muted-foreground hover:text-destructive"
                   onClick={() => remove(index)}
-                  aria-label="Supprimer le sujet"
+                  aria-label="Remove subject"
                 >
                   <X className="size-4" />
                 </Button>

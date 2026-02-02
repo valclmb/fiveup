@@ -64,24 +64,24 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
       console.log('Signup response:', data);
       
       if (data.error) {
-        toast.error(data.error.message || 'Une erreur est survenue lors de la création du compte');
+        toast.error(data.error.message || 'An error occurred while creating the account');
         return;
       }
 
-      // Compte créé avec succès - afficher le message de confirmation
+      // Account created successfully - show confirmation message
       const email = data.data?.user?.email || form.getValues('email');
       setUserEmail(email);
       setSignupSuccess(true);
       onSignupSuccess?.(true); // Informer la page parent
       
-      toast.success('Compte créé !', {
-        description: 'Un email de vérification a été envoyé.',
+      toast.success('Account created!', {
+        description: 'A verification email has been sent.',
         duration: 3000,
       });
     },
     onError: (error: any) => {
       console.error('Signup error:', error);
-      const errorMessage = error?.message || error?.error?.message || 'Une erreur est survenue lors de la création du compte';
+      const errorMessage = error?.message || error?.error?.message || 'An error occurred while creating the account';
       toast.error(errorMessage);
     },
   })
@@ -95,7 +95,7 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
     signup.mutate(data)
   }
 
-  // Afficher le message de confirmation si l'inscription a réussi
+  // Show confirmation message if signup succeeded
   if (signupSuccess) {
     return (
       <AnimatedFade as="section">
@@ -152,7 +152,7 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
     );
   }
 
-  // Afficher le formulaire d'inscription normal
+  // Show normal signup form
   return (
     <AnimatedFade as="section">
       <form id="form-signup" className="space-y-8" onSubmit={form.handleSubmit(onSubmit)}>

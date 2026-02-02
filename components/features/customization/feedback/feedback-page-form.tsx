@@ -101,7 +101,7 @@ export function FeedbackPageForm({
                   form={form as unknown as UseFormReturn<TogglableForm>}
                   name="helpText"
                   label="Help text"
-                  placeholder="Texte d'aide sous les étoiles..."
+                  placeholder="Help text under the stars..."
                   formId={formId}
                 />
                 <ReviewTagSection form={form as unknown as UseFormReturn<ReviewTagSectionForm>} formId={formId} />
@@ -165,7 +165,7 @@ export const useFeedbackPageForm = () => {
     onSuccess: (data) => {
       form.reset(data);
       queryClient.invalidateQueries({ queryKey: FEEDBACK_PAGE_QUERY_KEY });
-      toast.success("Page feedback enregistrée");
+      toast.success("Feedback page saved");
     },
   });
 

@@ -48,21 +48,21 @@ export async function POST(request: Request) {
 
   if (!file || !(file instanceof File)) {
     return NextResponse.json(
-      { error: "Fichier manquant ou invalide" },
+      { error: "Missing or invalid file" },
       { status: 400 },
     );
   }
 
   if (file.size > MAX_SIZE) {
     return NextResponse.json(
-      { error: "Fichier trop volumineux (max 2 Mo)" },
+      { error: "File too large (max 2 MB)" },
       { status: 400 },
     );
   }
 
   if (!ALLOWED_TYPES.includes(file.type)) {
     return NextResponse.json(
-      { error: "Type non autorisé (JPEG, PNG, WebP, SVG uniquement)" },
+      { error: "Type not allowed (JPEG, PNG, WebP, SVG only)" },
       { status: 400 },
     );
   }
@@ -86,7 +86,7 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error("Upload logo:", err);
     return NextResponse.json(
-      { error: "Erreur lors de l'upload" },
+      { error: "Upload error" },
       { status: 500 },
     );
   }

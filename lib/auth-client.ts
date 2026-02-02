@@ -12,8 +12,8 @@ export const authClient = createAuthClient({
       if (response?.status === 429) {
         const retryAfter = response.headers.get("X-Retry-After");
         const message = retryAfter
-          ? `Trop de tentatives. Réessayez dans ${retryAfter} seconde(s).`
-          : "Trop de tentatives. Veuillez réessayer plus tard.";
+          ? `Too many attempts. Try again in ${retryAfter} second(s).`
+          : "Too many attempts. Please try again later.";
         if (typeof window !== "undefined") {
           const { toast } = await import("sonner");
           toast.error(message, { duration: 5000 });
