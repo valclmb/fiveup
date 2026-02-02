@@ -7,6 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import type { GlobalStylesFormValues } from "./global-styles-form";
 
 export type ThemePresetId =
@@ -150,11 +151,14 @@ function PresetColorDots({ preset }: { preset: (typeof THEME_PRESETS)[number] })
     preset.values.borderColor,
   ];
   return (
-    <span className="flex gap-1 shrink-0">
+    <span className="flex shrink-0">
       {colors.map((color, i) => (
         <span
           key={i}
-          className="size-2 rounded-full border border-white/10 shrink-0"
+          className={cn(
+            "size-5  rounded-full border  shrink-0",
+            i > 0 && "-ml-2"
+          )}
           style={{ backgroundColor: color }}
           aria-hidden
         />
