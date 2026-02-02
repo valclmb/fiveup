@@ -113,14 +113,14 @@ export function RedirectionPageForm({
         {form.formState.isDirty && (
           <div className="flex justify-end gap-2">
             <Button variant="outline" onClick={() => form.reset()}>
-              Annuler
+              Cancel
             </Button>
             <Button
               type="submit"
               form="redirection-page-form"
               disabled={saveMutation.isPending}
             >
-              {saveMutation.isPending ? "Enregistrement…" : "Valider les changements"}
+              {saveMutation.isPending ? "Saving…" : "Save changes"}
             </Button>
           </div>
         )}

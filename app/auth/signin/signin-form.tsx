@@ -28,8 +28,8 @@ const SignInForm = () => {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "valclmb.dev@gmail.com",
-      password: "Test1234",
+      email: "matteo@fiveup-review.com",
+      password: "Cinqetoiles69@",
     },
   })
 

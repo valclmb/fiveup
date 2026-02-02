@@ -211,10 +211,10 @@ export function GlobalStylesForm({
       {form.formState.isDirty && (
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => form.reset()}>
-            Annuler
+            Cancel
           </Button>
           <Button type="submit" form="customization-global-form">
-            {saveMutation.isPending ? <Loader2 className="animate-spin" /> : "Valider les changements"}
+            {saveMutation.isPending ? <Loader2 className="animate-spin" /> : "Save changes"}
           </Button>
         </div>
       )}

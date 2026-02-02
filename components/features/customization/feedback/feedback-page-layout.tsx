@@ -159,7 +159,7 @@ export function FeedbackPageLayout({ styles, content }: FeedbackPageLayoutProps)
           borderRadius: CORNER_ROUNDNESS_PX[buttonCornerRoundness] ?? CORNER_ROUNDNESS_PX[DEFAULT_CORNER_ROUNDNESS],
         }}
       >
-        Envoyer mon retour
+        Send my feedback
       </Button>
     </>
   );

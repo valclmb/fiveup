@@ -1,36 +1,14 @@
 "use client";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { ConnectionCard } from "@/components/features/connections/connection-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Item,
-  ItemActions,
-  ItemContent,
-  ItemMedia,
-} from "@/components/ui/item";
+import { ShineBorder } from "@/components/ui/shine-border";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import Typography from "@/components/ui/typography";
 import { getAll } from "@/lib/fetch";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MinusCircle } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -45,14 +23,16 @@ interface GoogleBusinessAccount {
 
 export function ConnectGoogleBusiness() {
   const queryClient = useQueryClient();
+  const [isConnecting, setIsConnecting] = useState(false);
 
   const { data: account, isLoading } = useQuery({
     queryKey: ["google-business-account"],
-    queryFn: () => getAll<{ account: GoogleBusinessAccount | null }>("/google-business/account"),
+    queryFn: () =>
+      getAll<{ account: GoogleBusinessAccount | null }>(
+        "/google-business/account"
+      ),
     select: (data) => data.account,
   });
-
-  console.log(account)
 
   const disconnect = useMutation({
     mutationFn: async () => {
@@ -74,114 +54,55 @@ export function ConnectGoogleBusiness() {
     },
   });
 
+  const handleConnect = () => {
+    setIsConnecting(true);
+    window.location.href = "/api/google-business/auth";
+  };
+
   return (
-    <div className="flex items-center gap-2 group">
-      <Item variant="outline" className="max-w-max bg-background z-20">
-        <ItemMedia variant="icon">
+    <div className="flex w-full items-center gap-2 group">
+      <ConnectionCard.Root>
+        <ShineBorder borderWidth={1} shineColor={["var(--primary)", "yellow", "cyan"]} />
+
+        <ConnectionCard.Logo>
           <Image
             src="/images/google-logo.svg"
             alt="Google Business"
-            width={90}
+            width={80}
             height={24}
+            className="object-contain"
           />
-        </ItemMedia>
-
-        <ConnectGoogleBusinessContent account={account} isLoading={isLoading} />
-      </Item>
-
+        </ConnectionCard.Logo>
+        {account && (
+          <ConnectionCard.Content>
+            <Typography variant="p" className="font-bold">
+              {account.locationName || account.accountName}
+            </Typography>
+          </ConnectionCard.Content>
+        )}
+        <ConnectionCard.Actions>
+          {isLoading ? (
+            <Skeleton className="h-9 w-24" />
+          ) : account ? (
+            <Badge variant="outline">
+              <div className="size-2 bg-primary rounded-full" /> Connected
+            </Badge>
+          ) : (
+            <Button onClick={handleConnect} disabled={isConnecting}>
+              {isConnecting ? <Spinner /> : "Connecter"}
+            </Button>
+          )}
+        </ConnectionCard.Actions>
+      </ConnectionCard.Root>
       {account && (
-        <TooltipProvider>
-          <Tooltip>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="-translate-x-10 group-hover:translate-x-0"
-                  >
-                    <MinusCircle className="text-destructive" />
-                  </Button>
-                </TooltipTrigger>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Five Up sera déconnecté de votre compte Google Business.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Annuler</AlertDialogCancel>
-                  <AlertDialogAction
-                    variant="destructive"
-                    onClick={() => disconnect.mutate()}
-                  >
-                    Oui, déconnecter
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-            <TooltipContent>Supprimer la connexion</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <ConnectionCard.DisconnectButton
+          onDisconnect={() => disconnect.mutate()}
+          confirmTitle="Êtes-vous sûr ?"
+          confirmDescription="Five Up sera déconnecté de votre compte Google Business."
+        />
       )}
     </div>
   );
 }
 
 export default ConnectGoogleBusiness;
-
-interface ConnectGoogleBusinessContentProps {
-  account: GoogleBusinessAccount | null | undefined;
-  isLoading: boolean;
-}
-
-const ConnectGoogleBusinessContent = ({
-  account,
-  isLoading,
-}: ConnectGoogleBusinessContentProps) => {
-  const [isConnecting, setIsConnecting] = useState(false);
-
-  const handleConnect = () => {
-    if (isConnecting) return;
-    setIsConnecting(true);
-    window.location.href = "/api/google-business/auth";
-  };
-
-  if (isLoading)
-    return (
-      <div className="flex gap-2">
-        <Skeleton className="min-w-60 h-10" />
-        <Skeleton className="w-20 h-10" />
-      </div>
-    );
-
-  if (!account) {
-    return (
-      <>
-
-        <ItemActions>
-          <Button onClick={handleConnect} disabled={isConnecting}>
-            {isConnecting ? <Spinner /> : "Connecter"}
-          </Button>
-        </ItemActions>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <ItemContent>
-        <Typography variant="p" className="font-bold">
-          {account.locationName || account.accountName}
-        </Typography>
-      </ItemContent>
-      <ItemActions>
-        <Badge variant="outline">
-          <div className="size-2 bg-primary rounded-full" /> Connected
-        </Badge>
-      </ItemActions>
-    </>
-  );
-};
