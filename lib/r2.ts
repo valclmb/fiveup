@@ -81,3 +81,12 @@ export function brandLogoKey(userId: string, filename: string): string {
   const slug = filename.replace(/\.[^.]+$/, "").replace(/\W+/g, "-") || "logo";
   return `brand-logos/${userId}/${Date.now()}-${slug}.${ext}`;
 }
+
+/**
+ * Génère une clé unique pour un avatar (ex: avatars/{userId}/{timestamp}-{slug}.ext).
+ */
+export function avatarKey(userId: string, filename: string): string {
+  const ext = filename.replace(/^.*\./, "") || "png";
+  const slug = filename.replace(/\.[^.]+$/, "").replace(/\W+/g, "-") || "avatar";
+  return `avatars/${userId}/${Date.now()}-${slug}.${ext}`;
+}

@@ -7,7 +7,7 @@ import { TabsContent } from "@/components/ui/tabs";
 import Typography from "@/components/ui/typography";
 import { authClient } from "@/lib/auth-client";
 import { useQuery } from "@tanstack/react-query";
-import { Calendar, ExternalLink, CreditCard, AlertCircle } from "lucide-react";
+import { AlertCircle, Calendar, CreditCard, ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 type SubscriptionStatus =
