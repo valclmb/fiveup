@@ -6,7 +6,7 @@ import Stripe from "stripe";
 import { sendResetPasswordEmail, sendVerificationEmail } from "./lib/email";
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-12-15.clover",
+  apiVersion: "2025-11-17.clover",
 });
 
 export const auth = betterAuth({
@@ -37,14 +37,14 @@ export const auth = betterAuth({
       }).catch((error) => {
         console.error(
           "❌ Erreur lors de l'envoi de l'email de réinitialisation:",
-          error,
+          error
         );
         // Ne pas throw pour éviter les timing attacks
       });
     },
     onPasswordReset: async ({ user }, request) => {
       console.log(
-        `✅ Mot de passe réinitialisé pour l'utilisateur ${user.email}`,
+        `✅ Mot de passe réinitialisé pour l'utilisateur ${user.email}`
       );
     },
   },
@@ -59,7 +59,7 @@ export const auth = betterAuth({
       }).catch((error) => {
         console.error(
           "❌ Erreur lors de l'envoi de l'email de vérification:",
-          error,
+          error
         );
         // Ne pas throw pour ne pas bloquer le processus d'inscription
       });
@@ -87,6 +87,43 @@ export const auth = betterAuth({
       createCustomerOnSignUp: true,
       subscription: {
         enabled: true,
+        getCheckoutSessionParams: async (
+          { user, session, plan, subscription },
+          _req,
+          ctx
+        ) => {
+          const referral = ctx.body?.metadata?.referral;
+
+          const customerId =
+            subscription?.stripeCustomerId || user.stripeCustomerId;
+
+          console.log(
+            "[Rewardful] Referral reçu:",
+            referral,
+            "| customerId:",
+            customerId
+          );
+
+          if (referral && customerId) {
+            try {
+              const customer = await stripeClient.customers.retrieve(
+                customerId
+              );
+              if (!customer.deleted) {
+                const existing = (customer as Stripe.Customer).metadata || {};
+                await stripeClient.customers.update(customerId, {
+                  metadata: { ...existing, referral },
+                });
+              }
+            } catch (err) {
+              console.error(
+                "[Rewardful] Failed to update customer metadata",
+                err
+              );
+            }
+          }
+          return { params: {} };
+        },
         plans: [
           {
             name: "pro",

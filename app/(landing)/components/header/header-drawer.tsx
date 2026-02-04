@@ -3,10 +3,10 @@
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerHeader,
-  DrawerTitle
+  DrawerTitle,
+  DrawerTrigger
 } from "@/components/ui/drawer";
 import { Menu } from "lucide-react";
 import { useState } from 'react';
@@ -16,21 +16,13 @@ import { Nav } from './header-nav';
 export const HeaderDrawer = () => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleToggle = () => {
-    setIsOpen(current => !current);
-  };
-
-  const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
-  };
-
   return (
-    <Drawer direction='top' open={isOpen} onOpenChange={handleOpenChange}>
-      <DrawerClose>
-        <Button size="icon" variant="outline" className="md:hidden cursor-pointer" onClick={handleToggle}>
+    <Drawer direction='top' open={isOpen} onOpenChange={setIsOpen}>
+      <DrawerTrigger asChild>
+        <Button size="icon" variant="outline" className="md:hidden cursor-pointer">
           <Menu />
         </Button>
-      </DrawerClose>
+      </DrawerTrigger>
 
       <DrawerContent>
         <DrawerHeader>
