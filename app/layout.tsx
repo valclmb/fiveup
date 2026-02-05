@@ -22,6 +22,16 @@ export default function RootLayout({
 
   return (
     <html lang="fr" className={`${inter.variable} dark`}>
+      <head>
+        <Script
+          async
+          defer
+          src='https://cdn.affonso.io/js/pixel.min.js'
+          data-affonso='cml97lrfc000h13su8oi120f1'
+          data-cookie_duration='4'
+          strategy='afterInteractive'
+        />
+      </head>
       <body className="antialiased relative">
         {/* Rewardful - scripts first, exact order from docs. Do not nest in Head. */}
         <Script id="rewardful-queue" strategy="beforeInteractive">

@@ -89,40 +89,33 @@ export const auth = betterAuth({
         enabled: true,
         getCheckoutSessionParams: async (
           { user, session, plan, subscription },
-          _req,
+          req,
           ctx
         ) => {
-          const referral = ctx.body?.metadata?.referral;
-
-          const customerId =
-            subscription?.stripeCustomerId || user.stripeCustomerId;
-
-          console.log(
-            "[Rewardful] Referral reçu:",
-            referral,
-            "| customerId:",
-            customerId
+          // Affonso - pass referral cookie to Stripe for commission tracking
+          const cookieHeader = req?.headers?.get?.("cookie") ?? "";
+          const affonsoMatch = cookieHeader.match(
+            /(?:^|; )affonso_referral=([^;]*)/
           );
+          const affonsoReferral = affonsoMatch
+            ? decodeURIComponent(affonsoMatch[1].trim())
+            : "";
 
-          if (referral && customerId) {
-            try {
-              const customer = await stripeClient.customers.retrieve(
-                customerId
-              );
-              if (!customer.deleted) {
-                const existing = (customer as Stripe.Customer).metadata || {};
-                await stripeClient.customers.update(customerId, {
-                  metadata: { ...existing, referral },
-                });
-              }
-            } catch (err) {
-              console.error(
-                "[Rewardful] Failed to update customer metadata",
-                err
-              );
-            }
+          const metadata: Record<string, string> = {};
+          if (affonsoReferral) metadata.affonso_referral = affonsoReferral;
+
+          if (process.env.NODE_ENV === "development") {
+            console.log("[Affonso] Checkout metadata:", {
+              affonso_referral: affonsoReferral || "(none)",
+              cookieFound: !!affonsoReferral,
+            });
           }
-          return { params: {} };
+
+          return {
+            params: {
+              metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
+            },
+          };
         },
         plans: [
           {
