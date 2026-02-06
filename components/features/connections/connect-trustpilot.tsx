@@ -34,6 +34,7 @@ interface TrustpilotAccount {
   profileImageUrl: string | null;
   lastSyncAt: string | null;
   reviewsStored: number;
+  stats?: { total: number | null } | null;
 }
 
 interface TrustpilotSync {
@@ -109,11 +110,13 @@ export function ConnectTrustpilot() {
         setIsPolling(false);
         setSyncId(null);
         queryClient.invalidateQueries({ queryKey: ["trustpilot-account"] });
+        queryClient.invalidateQueries({ queryKey: ["trustpilot-reviews"] });
         toast.success(`Sync completed! ${data.reviewsCount ?? 0} reviews imported.`);
       } else if (data.status === "FAILED") {
         setIsPolling(false);
         setSyncId(null);
         queryClient.invalidateQueries({ queryKey: ["trustpilot-account"] });
+        queryClient.invalidateQueries({ queryKey: ["trustpilot-reviews"] });
         toast.error(`Sync failed: ${data.error ?? "Unknown error"}`);
       }
     } catch (error) {
@@ -145,6 +148,7 @@ export function ConnectTrustpilot() {
       setDialogOpen(false);
       setUrl("");
       queryClient.invalidateQueries({ queryKey: ["trustpilot-account"] });
+      queryClient.invalidateQueries({ queryKey: ["trustpilot-reviews"] });
 
       if (data.status === "RECONNECTED") {
         toast.success(data.message || "Account reconnected!");
@@ -172,6 +176,7 @@ export function ConnectTrustpilot() {
       toast.dismiss();
       toast.success("Trustpilot disconnected");
       queryClient.invalidateQueries({ queryKey: ["trustpilot-account"] });
+      queryClient.invalidateQueries({ queryKey: ["trustpilot-reviews"] });
     },
     onError: () => {
       toast.dismiss();
@@ -235,7 +240,9 @@ export function ConnectTrustpilot() {
                       <span>{account.trustScore.toFixed(1)}</span>
                     </div>
                     <span>•</span>
-                    <span>{account.reviewsStored} reviews</span>
+                    <span>
+                      {(account.stats?.total ?? account.reviewsStored)} reviews
+                    </span>
                   </div>
                 )}
                 {isSyncing && (

@@ -40,6 +40,7 @@ export interface TrustpilotReviewData {
   consumer?: {
     displayName?: string;
     countryCode?: string;
+    imageUrl?: string;
   };
   labels?: {
     verification?: {
@@ -85,6 +86,7 @@ export interface ApifyDatasetItem {
   consumer?: {
     displayName?: string;
     countryCode?: string;
+    imageUrl?: string;
   };
   labels?: {
     verification?: {
@@ -129,6 +131,7 @@ export async function startTrustpilotScrape(
     scrapeAllReviews: true,
     includeCompanyDetails: true,
     includeStatistics: true,
+    includeStats: true,
     maxItems: options?.maxItems ?? 1000,
     newerThan: newerThanStr,
   };

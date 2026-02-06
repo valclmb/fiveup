@@ -178,6 +178,7 @@ async function processApifyResults(
           text: review.text,
           language: review.language,
           authorName: review.consumer?.displayName,
+          authorImageUrl: review.consumer?.imageUrl,
           authorCountry: review.consumer?.countryCode,
           isVerified: review.labels?.verification?.isVerified ?? false,
           experiencedAt: review.dates?.experiencedDate
@@ -197,6 +198,7 @@ async function processApifyResults(
           text: review.text,
           language: review.language,
           authorName: review.consumer?.displayName,
+          authorImageUrl: review.consumer?.imageUrl,
           authorCountry: review.consumer?.countryCode,
           isVerified: review.labels?.verification?.isVerified ?? false,
           replyText: review.reply?.message,

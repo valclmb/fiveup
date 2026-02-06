@@ -18,6 +18,8 @@ export async function GET(request: NextRequest) {
     const page = parseInt(searchParams.get("page") ?? "1", 10);
     const limit = Math.min(parseInt(searchParams.get("limit") ?? "20", 10), 100);
     const rating = searchParams.get("rating");
+    const status = searchParams.get("status"); // "answered" | "pending"
+    const search = searchParams.get("search")?.trim();
     const sortBy = searchParams.get("sortBy") ?? "publishedAt";
     const sortOrder = searchParams.get("sortOrder") === "asc" ? "asc" : "desc";
 
@@ -37,6 +39,12 @@ export async function GET(request: NextRequest) {
     const where: {
       accountId: string;
       rating?: number;
+      replyText?: { not: null } | null;
+      OR?: Array<
+        | { text?: { contains: string; mode: "insensitive" } }
+        | { title?: { contains: string; mode: "insensitive" } }
+        | { authorName?: { contains: string; mode: "insensitive" } }
+      >;
     } = {
       accountId: account.id,
     };
@@ -48,12 +56,42 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    if (status === "answered") {
+      where.replyText = { not: null };
+    } else if (status === "pending") {
+      where.replyText = null;
+    }
+
+    if (search) {
+      where.OR = [
+        { text: { contains: search, mode: "insensitive" } },
+        { title: { contains: search, mode: "insensitive" } },
+        { authorName: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
     // Get total count
     const totalCount = await prisma.trustpilotReview.count({ where });
 
-    // Get reviews with pagination
-    const reviews = await prisma.trustpilotReview.findMany({
+    // Get reviews with pagination (explicit select to ensure authorImageUrl is included)
+    const reviewsRaw = await prisma.trustpilotReview.findMany({
       where,
+      select: {
+        id: true,
+        trustpilotId: true,
+        rating: true,
+        title: true,
+        text: true,
+        language: true,
+        authorName: true,
+        authorImageUrl: true,
+        authorCountry: true,
+        isVerified: true,
+        experiencedAt: true,
+        publishedAt: true,
+        replyText: true,
+        replyPublishedAt: true,
+      },
       orderBy: {
         [sortBy === "rating" ? "rating" : "publishedAt"]: sortOrder,
       },
@@ -61,27 +99,23 @@ export async function GET(request: NextRequest) {
       take: limit,
     });
 
-    // Get rating distribution
-    const ratingDistribution = await prisma.trustpilotReview.groupBy({
-      by: ["rating"],
-      where: { accountId: account.id },
-      _count: { rating: true },
-    });
+    const reviews = reviewsRaw.map((r) => ({
+      ...r,
+      reviewUrl: `https://www.trustpilot.com/reviews/${r.trustpilotId}`,
+    }));
 
+    // Use stored stats from Trustpilot (synced via Apify with includeStatistics: true)
     const stats = {
-      total: totalCount,
+      total: account.statsTotal ?? 0,
+      trustScore: account.trustScore ?? null,
       distribution: {
-        1: 0,
-        2: 0,
-        3: 0,
-        4: 0,
-        5: 0,
+        1: account.statsOne ?? 0,
+        2: account.statsTwo ?? 0,
+        3: account.statsThree ?? 0,
+        4: account.statsFour ?? 0,
+        5: account.statsFive ?? 0,
       } as Record<number, number>,
     };
-
-    for (const item of ratingDistribution) {
-      stats.distribution[item.rating] = item._count.rating;
-    }
 
     return NextResponse.json({
       reviews,

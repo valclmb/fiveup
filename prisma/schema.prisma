@@ -303,6 +303,7 @@ model TrustpilotReview {
   text              String?           // Contenu de l'avis
   language          String?           // Langue de l'avis
   authorName        String?           // Nom de l'auteur
+  authorImageUrl    String?           // Photo de profil (consumer.imageUrl Apify)
   authorCountry     String?           // Pays de l'auteur
   isVerified        Boolean           @default(false) // Avis vérifié
   experiencedAt     DateTime?         // Date de l'expérience
