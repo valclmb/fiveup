@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 const DEFAULTS = {
-  title: "Comment noteriez vous votre expérience ?",
+  title: "How would you rate your experience?",
   ratingTemplate: "arc-stars" as const,
   buttonText: "Continuer",
 } as const;

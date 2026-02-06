@@ -13,6 +13,7 @@ export default function GlobalStylesPage() {
 
   return (
     <CustomizationPageLayout
+      className="items-start"
       content={<GlobalStylesForm {...state} />}
       preview={
         <PreviewLayout

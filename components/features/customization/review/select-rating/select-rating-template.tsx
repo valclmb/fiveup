@@ -111,10 +111,10 @@ export function SelectRatingTemplate({
                   : "border-border"
               )}
             >
-              <div className="relative h-[105px] w-full overflow-hidden bg-muted/20 p-2">
+              <div className="relative h-[150px] w-full overflow-hidden bg-muted/20 p-2">
                 {imageError[template.id] ? (
                   <span className="absolute inset-0 flex items-center justify-center text-muted-foreground text-xs">
-                    Aperçu
+                    Preview
                   </span>
                 ) : (
                   <>

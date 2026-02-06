@@ -61,7 +61,7 @@ const Impact = () => {
           </AnimatedImpactItem>
 
           <AnimatedImpactItem delay={0.5} className="col-span-2 md:col-span-1 md:col-start-2">
-            <Button variant="landing" className="w-full">Commencer maintenant</Button>
+            <Button variant="landing" className="w-full">Get started now</Button>
           </AnimatedImpactItem>
 
         </aside>
@@ -75,7 +75,7 @@ const Impact = () => {
               </Card>
               <div>
                 <Typography variant="h3" className="flex items-center gap-2"> 4 <StarIcon />  → 5 <StarIcon /> average rating uplift</Typography>
-                <Typography variant="description" className="text-muted-foreground">Les clients mécontents s'expriment souvent en ligne, sans que vous ayez eu l'occasion d'intervenir en amont.</Typography>
+                <Typography variant="description" className="text-muted-foreground">Unhappy customers often speak out online, before you've had a chance to intervene.</Typography>
               </div>
             </li>
             <li className="flex items-start gap-8">
@@ -84,7 +84,7 @@ const Impact = () => {
               </Card>
               <div>
                 <Typography variant="h3">70% of low ratings resolved before going public</Typography>
-                <Typography variant="description" className="text-muted-foreground">Les avis sont dispersés, sans suivi clair, sans automatisation et sans vision d'ensemble pour agir efficacement.</Typography>
+                <Typography variant="description" className="text-muted-foreground">Reviews are scattered, with no clear tracking, no automation, and no overview to act effectively.</Typography>
               </div>
             </li> */}
 

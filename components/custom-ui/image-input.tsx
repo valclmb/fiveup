@@ -187,7 +187,7 @@ export function ImageInput({
             type="button"
             onClick={handleClear}
             disabled={clearLoading}
-            aria-label="Supprimer l'image"
+            aria-label="Remove image"
             className={cn(
               "absolute -right-1 -top-1 z-10 flex size-6 items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors hover:bg-destructive hover:text-destructive-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
               isAvatar && shape === "circle" && "right-0 top-0"

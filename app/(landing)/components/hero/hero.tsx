@@ -32,11 +32,11 @@ const Hero = () => {
 
         <div className="flex flex-col lg:flex-row items-center gap-4">
           <AnimatedHeroItem delay={0.8}>
-            <Link href="/auth/signup" className={buttonVariants({ variant: "landing" })}>Commencer maintenant</Link>
+            <Link href="/auth/signup" className={buttonVariants({ variant: "landing" })}>Get started now</Link>
           </AnimatedHeroItem>
 
           <AnimatedHeroItem delay={0.9}>
-            <a href="#features" className={buttonVariants({ variant: "secondary" })}>Découvrir les fonctionnalités</a>
+            <a href="#features" className={buttonVariants({ variant: "secondary" })}>Discover features</a>
           </AnimatedHeroItem>
         </div>
 

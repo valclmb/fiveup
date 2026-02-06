@@ -26,8 +26,8 @@ function ProfilePage() {
 
 
 
-  return <div className="flex gap-4 ">
-    <Tabs defaultValue={tabValue} value={tabValue} onValueChange={setTabValue} orientation="vertical" className=" min-w-[500px]">
+  return <div className="flex items-start gap-4 ">
+    <Tabs defaultValue={tabValue} value={tabValue} onValueChange={setTabValue} orientation="vertical" className="items-start" >
       <TabsList className="gap-2" >
         <TabsTrigger value="account">
           <User />Account information </TabsTrigger>
@@ -54,7 +54,7 @@ function ProfilePage() {
       </Card>
     </Tabs>
 
-  </div>
+  </div >
 }
 
 export default ProfilePage;

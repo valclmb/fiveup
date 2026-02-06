@@ -24,7 +24,7 @@ const reviews = [
     name: "John",
     username: "@john",
     title: "A real time saver",
-    body: "On gère plusieurs établissements et FiveUp nous permet de tout centraliser dans un seul dashboard. C’est clair, fluide, et les résultats sont mesurables.",
+    body: "We manage several establishments and FiveUp allows us to centralize everything in a single dashboard. It's clear, fluid, and the results are measurable.",
     img: "https://avatar.vercel.sh/john",
   },
   {
@@ -68,7 +68,7 @@ const Reviews = () => {
             <ReviewCard key={review.username} {...review} />
           ))}
         </Marquee>
-        {/* -left/right-px évite un éventuel "hairline" 1px aux bords (arrondis/sub-pixels) */}
+        {/* -left/right-px avoids potential 1px hairline at edges (rounded/sub-pixels) */}
         <div className="from-background pointer-events-none absolute inset-y-0 -left-px w-1/4 bg-linear-to-r"></div>
         <div className="from-background pointer-events-none absolute inset-y-0 -right-px w-1/4 bg-linear-to-l"></div>
       </div>
@@ -101,7 +101,7 @@ const ReviewCard = ({
 
         <Typography variant="blockquote" className="text-sm">{body}</Typography>
         <div className="flex flex-row items-center gap-2 mt-4">
-          <Image className="rounded-full" width={32} height={32} alt="profil pic" src={img} />
+          <Image className="rounded-full" width={32} height={32} alt="profile pic" src={img} />
           <div className="flex flex-col">
             <figcaption className="text-sm font-medium dark:text-white">
               {name}

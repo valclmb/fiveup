@@ -21,6 +21,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import CornerRoundnessInput from "./corner-roundness-input";
+import { ThemePresets, type ThemePresetId } from "./theme-presets";
 
 const formSchema = z.object({
   font: z.string<DesignSystemFont>(),
@@ -52,7 +53,12 @@ export function GlobalStylesForm({
   onLogoPreviewChange,
   isLogoLoading,
 }: GlobalStylesFormProps) {
-  const handleSubmit = form.handleSubmit((data) => saveMutation.mutate(data));
+  const [selectedPresetId, setSelectedPresetId] = useState<ThemePresetId | "">("");
+  const handleSubmit = form.handleSubmit((data) =>
+    saveMutation.mutate(data, {
+      onSuccess: () => setSelectedPresetId(""),
+    })
+  );
 
   return (
     <>
@@ -83,7 +89,7 @@ export function GlobalStylesForm({
                     name="font"
                     control={form.control}
                     render={({ field, fieldState }) => (
-                      <Field className="min-w-48" data-invalid={fieldState.invalid}>
+                      <Field data-invalid={fieldState.invalid}>
                         <FieldLabel htmlFor="customization-global-form-font">Font</FieldLabel>
                         <FontSelect id="customization-global-form-font" value={field.value} onValueChange={field.onChange} />
                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
@@ -94,7 +100,7 @@ export function GlobalStylesForm({
                     name="bgColor"
                     control={form.control}
                     render={({ field, fieldState }) => (
-                      <Field className="min-w-48" data-invalid={fieldState.invalid}>
+                      <Field data-invalid={fieldState.invalid}>
                         <InputColor alpha label="Background Color" {...field} />
                         {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
                       </Field>
@@ -208,23 +214,39 @@ export function GlobalStylesForm({
           </form>
         </CardContent>
       </Card>
-      {form.formState.isDirty && (
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={() => form.reset()}>
-            Annuler
-          </Button>
-          <Button type="submit" form="customization-global-form">
-            {saveMutation.isPending ? <Loader2 className="animate-spin" /> : "Valider les changements"}
-          </Button>
-        </div>
-      )}
+      <div className="flex w-full justify-between gap-2">
+        <ThemePresets
+          value={selectedPresetId}
+          onPresetSelect={(values, presetId) => {
+            form.reset(values, { keepDefaultValues: true });
+            setSelectedPresetId(presetId);
+          }}
+        />
+        {form.formState.isDirty && (
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                form.reset();
+                setSelectedPresetId("");
+              }}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" form="customization-global-form">
+              {saveMutation.isPending ? <Loader2 className="animate-spin" /> : "Save changes"}
+            </Button>
+          </div>
+        )}
+      </div>
+
     </>
   );
 }
 
 /**
  * Hook : données + form + mutations pour la page Global Styles.
- * À utiliser dans la page avec CustomizationPageLayout + GlobalStylesForm + PreviewLayout + FeedbackForm.
+ * À utiliser dans la page avec CustomizationPageLayout + GlobalStylesForm + PreviewLayout + FeedbackPageLayout.
  */
 export function useGlobalStylesForm() {
   const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(null);

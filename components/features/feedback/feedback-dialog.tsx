@@ -1,19 +1,16 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { FEEDBACK_CONSTANTS, FEEDBACK_MESSAGES } from "@/lib/feedback";
+import { MessageCircleMore } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useState, useTransition } from "react";
 import { toast } from "sonner";
 
-interface FeedbackDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
+export function FeedbackDialog() {
+  const [open, setOpen] = useState(false)
   const [message, setMessage] = useState("");
   const [isPending, startTransition] = useTransition();
 
@@ -60,13 +57,14 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
 
           toast.success(FEEDBACK_MESSAGES.SUCCESS);
           setMessage("");
-          onOpenChange(false);
+          setOpen(false)
         } catch {
           toast.error(FEEDBACK_MESSAGES.SUBMIT_ERROR);
         }
+
       });
     },
-    [message, onOpenChange]
+    [message]
   );
 
   const handleMessageChange = useCallback(
@@ -77,10 +75,18 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
   );
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent
-        className="top-15 left-auto right-8 translate-x-0 translate-y-0 gap-4 p-6 sm:max-w-md"
-        overlayClassName="bg-black/5 !backdrop-blur-none"
+    <Popover >
+      <PopoverTrigger>
+        <Button variant="outline" size="sm" className="h-9 gap-1.5 text-muted-foreground hover:text-foreground">
+          <MessageCircleMore className="size-4" />
+          Feedback
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        align="end"
+        className="min-w-md"
+      // className="top-15 left-auto right-8 translate-x-0 translate-y-0 gap-4 p-6 sm:max-w-md"
+      // overlayClassName="bg-black/5 !backdrop-blur-none"
       >
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <Textarea
@@ -93,9 +99,11 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
             disabled={isPending}
           />
           <div className="flex items-center justify-between gap-4">
+
             <Button type="submit" disabled={isPending}>
               {isPending ? "Sending…" : "Send"}
             </Button>
+
             <p className="text-muted-foreground text-sm">
               Need more help?{" "}
               <Link
@@ -107,7 +115,7 @@ export function FeedbackDialog({ open, onOpenChange }: FeedbackDialogProps) {
             </p>
           </div>
         </form>
-      </DialogContent>
-    </Dialog>
+      </PopoverContent>
+    </Popover>
   );
 }

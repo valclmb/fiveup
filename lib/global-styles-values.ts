@@ -1,6 +1,6 @@
 /**
  * Type des global styles (font, couleurs, coins).
- * Utilisé par : API global-styles, PreviewLayout, FeedbackForm, ReviewPagePreview, etc.
+ * Utilisé par : API global-styles, PreviewLayout, FeedbackPageLayout, ReviewPagePreview, etc.
  */
 export type GlobalStylesValues = {
   font: string;

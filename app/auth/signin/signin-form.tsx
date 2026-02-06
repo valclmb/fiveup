@@ -28,8 +28,10 @@ const SignInForm = () => {
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "valclmb.dev@gmail.com",
-      password: "Test1234",
+      // email: "matteo@fiveup-review.com",
+      // password: "Cinqetoiles69@",
+      email: "",
+      password: "",
     },
   })
 
@@ -45,7 +47,7 @@ const SignInForm = () => {
       if (data.error) {
         toast.error(data.error.message)
       } else {
-        toast.success('Connexion réussie. Vous êtes maintenant connecté.')
+        toast.success('Successfully signed in.')
       }
 
     },

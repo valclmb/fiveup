@@ -1,10 +1,33 @@
-const FeedbackPage = () => {
-  return <div>
-    <ul>
-      <li>Champs du formulaire de feedback (titre,texte d'aide,sujet de l'avis(tags),commentaire,texte du bouton)</li>
-      <li>Définition du texte de confirmation du formulaire de feedback</li>
-    </ul>
-  </div>;
-};
+"use client";
 
-export default FeedbackPage;
+import { CustomizationPageLayout } from "@/components/features/customization/customization-page-layout";
+import {
+  FeedbackPageForm,
+  useFeedbackPageForm,
+} from "@/components/features/customization/feedback/feedback-page-form";
+import { FeedbackPageLayout } from "@/components/features/customization/feedback/feedback-page-layout";
+import { PreviewLayout } from "@/components/features/customization/preview-layout";
+
+export default function FeedbackPage() {
+  const { form, saveMutation } = useFeedbackPageForm();
+  const formValues = form.watch();
+
+  return (
+    <CustomizationPageLayout
+      content={
+        <FeedbackPageForm form={form} saveMutation={saveMutation} />
+      }
+      preview={
+        <PreviewLayout
+          previewMode="fixed"
+          previewLabel="Formulaire feedback"
+          className="flex h-full w-full flex-col gap-4 rounded-md py-8 px-6"
+        >
+          {(styles) => (
+            <FeedbackPageLayout styles={styles} content={formValues} />
+          )}
+        </PreviewLayout>
+      }
+    />
+  );
+}
