@@ -33,15 +33,6 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased relative">
-        {/* Rewardful - scripts first, exact order from docs. Do not nest in Head. */}
-        <Script id="rewardful-queue" strategy="beforeInteractive">
-          {`(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');`}
-        </Script>
-        <Script
-          src="https://r.wdfl.co/rw.js"
-          data-rewardful="8d8269"
-          strategy="afterInteractive"
-        />
         <Providers>{children}</Providers>
       </body>
     </html>
