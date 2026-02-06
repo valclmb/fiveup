@@ -19,6 +19,7 @@ export async function GET(request: NextRequest) {
     const limit = Math.min(parseInt(searchParams.get("limit") ?? "20", 10), 100);
     const rating = searchParams.get("rating");
     const status = searchParams.get("status"); // "answered" | "pending"
+    const countryParam = searchParams.get("country"); // ISO codes: single "FR" or comma-separated "FR,GB,US"
     const search = searchParams.get("search")?.trim();
     const sortBy = searchParams.get("sortBy") ?? "publishedAt";
     const sortOrder = searchParams.get("sortOrder") === "asc" ? "asc" : "desc";
@@ -39,6 +40,7 @@ export async function GET(request: NextRequest) {
     const where: {
       accountId: string;
       rating?: number;
+      authorCountry?: string;
       replyText?: { not: null } | null;
       OR?: Array<
         | { text?: { contains: string; mode: "insensitive" } }
@@ -62,6 +64,18 @@ export async function GET(request: NextRequest) {
       where.replyText = null;
     }
 
+    if (countryParam) {
+      const countries = countryParam
+        .split(",")
+        .map((c) => c.trim().toUpperCase())
+        .filter((c) => c.length === 2);
+      if (countries.length === 1) {
+        where.authorCountry = countries[0];
+      } else if (countries.length > 1) {
+        where.authorCountry = { in: countries };
+      }
+    }
+
     if (search) {
       where.OR = [
         { text: { contains: search, mode: "insensitive" } },
@@ -70,8 +84,19 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    // Get total count
-    const totalCount = await prisma.trustpilotReview.count({ where });
+    // Get total count and distinct countries for filter
+    const [totalCount, countriesRaw] = await Promise.all([
+      prisma.trustpilotReview.count({ where }),
+      prisma.trustpilotReview.findMany({
+        where: { accountId: account.id },
+        select: { authorCountry: true },
+        distinct: ["authorCountry"],
+        orderBy: { authorCountry: "asc" },
+      }),
+    ]);
+    const countries = countriesRaw
+      .map((c) => c.authorCountry)
+      .filter((c): c is string => !!c);
 
     // Get reviews with pagination (explicit select to ensure authorImageUrl is included)
     const reviewsRaw = await prisma.trustpilotReview.findMany({
@@ -126,6 +151,7 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil(totalCount / limit),
       },
       stats,
+      countries,
     });
   } catch (error) {
     console.error("Trustpilot reviews error:", error);

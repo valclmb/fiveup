@@ -28,9 +28,11 @@ import {
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
+import { CountryDropdown } from "@/components/ui/country-dropdown";
+import { countries } from "country-data-list";
 import {
-  type TrustpilotReview,
   reviewsColumns,
+  type TrustpilotReview
 } from "./reviews-columns";
 
 interface ReviewsResponse {
@@ -46,6 +48,7 @@ interface ReviewsResponse {
     trustScore: number | null;
     distribution: Record<number, number>;
   };
+  countries: string[];
 }
 
 function StarRating({ rating }: { rating: number }) {
@@ -92,7 +95,7 @@ function StatsSection({ stats }: { stats?: ReviewsResponse["stats"] | null }) {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Note moyenne</CardTitle>
+          <CardTitle className="text-sm font-medium">Average rating</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-2">
@@ -100,7 +103,7 @@ function StatsSection({ stats }: { stats?: ReviewsResponse["stats"] | null }) {
             <StarRating rating={Math.round(avgRating)} />
           </div>
           <Typography variant="description" className="mt-1">
-            {total} avis total
+            {total} total reviews
           </Typography>
         </CardContent>
       </Card>
@@ -166,6 +169,7 @@ export function TrustpilotReviewsList() {
   const [page, setPage] = useState(1);
   const [ratingFilter, setRatingFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [countryFilter, setCountryFilter] = useState<string[]>([]);
   const [sortOrder, setSortOrder] = useState<"desc" | "asc">("desc");
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
@@ -187,6 +191,7 @@ export function TrustpilotReviewsList() {
       page,
       ratingFilter,
       statusFilter,
+      countryFilter,
       sortOrder,
       searchDebounced,
     ],
@@ -199,6 +204,13 @@ export function TrustpilotReviewsList() {
       if (ratingFilter !== "all") params.set("rating", ratingFilter);
       if (statusFilter === "answered") params.set("status", "answered");
       if (statusFilter === "pending") params.set("status", "pending");
+      if (countryFilter.length > 0) {
+        const alpha2Codes = countryFilter
+          .map((a3) => countries.all.find((c) => c.alpha3 === a3)?.alpha2)
+          .filter(Boolean) as string[];
+        if (alpha2Codes.length > 0)
+          params.set("country", alpha2Codes.join(","));
+      }
       if (searchDebounced) params.set("search", searchDebounced);
       return getAll<ReviewsResponse>(`/trustpilot/reviews?${params.toString()}`);
     },
@@ -267,9 +279,9 @@ export function TrustpilotReviewsList() {
                     }}
                   >
                     <TabsList>
-                      <TabsTrigger value="all" disabled={hasNoData}>Tous</TabsTrigger>
-                      <TabsTrigger value="pending" disabled={hasNoData}>A répondre</TabsTrigger>
-                      <TabsTrigger value="answered" disabled={hasNoData}>Répondu</TabsTrigger>
+                      <TabsTrigger value="all" disabled={hasNoData}>All</TabsTrigger>
+                      <TabsTrigger value="pending" disabled={hasNoData}>To reply</TabsTrigger>
+                      <TabsTrigger value="answered" disabled={hasNoData}>Answered</TabsTrigger>
                     </TabsList>
                   </Tabs>
 
@@ -277,7 +289,7 @@ export function TrustpilotReviewsList() {
                     <div className="relative flex-1 sm:max-w-sm">
                       <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
                       <Input
-                        placeholder="Rechercher"
+                        placeholder="Search"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="pl-9"
@@ -294,17 +306,29 @@ export function TrustpilotReviewsList() {
                     >
                       <SelectTrigger className="w-[130px]" disabled={hasNoData}>
                         <Filter className="size-4" />
-                        <SelectValue placeholder="Filtrer" />
+                        <SelectValue placeholder="Filter" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="all">Toutes les notes</SelectItem>
-                        <SelectItem value="5">5 étoiles</SelectItem>
-                        <SelectItem value="4">4 étoiles</SelectItem>
-                        <SelectItem value="3">3 étoiles</SelectItem>
-                        <SelectItem value="2">2 étoiles</SelectItem>
-                        <SelectItem value="1">1 étoile</SelectItem>
+                        <SelectItem value="all">All ratings</SelectItem>
+                        <SelectItem value="5">5 stars</SelectItem>
+                        <SelectItem value="4">4 stars</SelectItem>
+                        <SelectItem value="3">3 stars</SelectItem>
+                        <SelectItem value="2">2 stars</SelectItem>
+                        <SelectItem value="1">1 star</SelectItem>
                       </SelectContent>
                     </Select>
+
+                    <CountryDropdown
+                      placeholder="Select countries"
+                      defaultValue={countryFilter}
+                      onChange={() => {}}
+                      onApply={(countries) => {
+                        setCountryFilter(countries.map((c) => c.alpha3));
+                        setPage(1);
+                      }}
+                      slim
+                      multiple
+                    />
 
                     <Select
                       value={sortOrder}
@@ -314,11 +338,11 @@ export function TrustpilotReviewsList() {
                       }}
                     >
                       <SelectTrigger className="w-[150px]" disabled={hasNoData}>
-                        <SelectValue placeholder="Tri" />
+                        <SelectValue placeholder="Sort" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="desc">Le plus récent</SelectItem>
-                        <SelectItem value="asc">Le plus ancien</SelectItem>
+                        <SelectItem value="desc">Most recent</SelectItem>
+                        <SelectItem value="asc">Oldest</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -345,7 +369,7 @@ export function TrustpilotReviewsList() {
                           <ChevronLeft className="size-4" />
                         </Button>
                         <Typography variant="description">
-                          Page {page} sur {data.pagination.totalPages}
+                          Page {page} of {data.pagination.totalPages}
                         </Typography>
                         <Button
                           variant="outline"
@@ -369,15 +393,19 @@ export function TrustpilotReviewsList() {
                         No reviews yet
                       </Typography>
                       <Typography variant="description">
-                        {ratingFilter !== "all" || statusFilter !== "all"
+                        {ratingFilter !== "all" ||
+                          statusFilter !== "all" ||
+                          countryFilter.length > 0
                           ? "No reviews match your filters."
                           : "Your Trustpilot reviews will appear here once synced."}
                       </Typography>
-                      {ratingFilter === "all" && statusFilter === "all" && (
-                        <Button asChild className="mt-4">
-                          <a href="/connections">Go to Connections</a>
-                        </Button>
-                      )}
+                      {ratingFilter === "all" &&
+                        statusFilter === "all" &&
+                        countryFilter.length === 0 && (
+                          <Button asChild className="mt-4">
+                            <a href="/connections">Go to Connections</a>
+                          </Button>
+                        )}
                     </CardContent>
                   </Card>
                 ) : (
@@ -400,7 +428,7 @@ export function TrustpilotReviewsList() {
                           <ChevronLeft className="size-4" />
                         </Button>
                         <Typography variant="description">
-                          Page {page} sur {data.pagination.totalPages}
+                          Page {page} of {data.pagination.totalPages}
                         </Typography>
                         <Button
                           variant="outline"
