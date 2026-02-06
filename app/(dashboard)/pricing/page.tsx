@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -8,12 +8,20 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import Typography from "@/components/ui/typography"
-import { Check, Loader2, Zap } from "lucide-react"
-import { cn } from "@/lib/utils"
 import { authClient } from "@/lib/auth-client"
+import { cn } from "@/lib/utils"
+import { Check, Loader2, Zap } from "lucide-react"
+import { useEffect, useState } from "react"
+
+// Rewardful is loaded via script tag - types for global variables
+declare global {
+  interface Window {
+    rewardful?: (method: string, callback?: () => void) => void
+    Rewardful?: { referral: string }
+  }
+}
 
 const PLANS = {
   pro: {
@@ -51,18 +59,37 @@ const PLANS = {
 type PlanName = keyof typeof PLANS
 
 export default function PricingPage() {
+  const [referral, setReferral] = useState<string | null>(null)
   const [isYearly, setIsYearly] = useState(false)
   const [loadingPlan, setLoadingPlan] = useState<PlanName | null>(null)
+
+  useEffect(() => {
+    const rw = window.rewardful
+    if (rw) {
+      rw("ready", () => {
+        const ref = window.Rewardful?.referral
+        if (ref) setReferral(ref)
+      })
+    }
+  }, [])
 
   const handleUpgrade = async (plan: PlanName) => {
     setLoadingPlan(plan)
     try {
+      // Get referral at click time (Rewardful may have loaded since page load)
+      const referralId =
+        typeof window !== "undefined"
+          ? window.Rewardful?.referral ?? referral
+          : referral
+
       const { error } = await authClient.subscription.upgrade({
         plan,
         annual: isYearly,
         successUrl: `${typeof window !== "undefined" ? window.location.origin : ""}/dashboard?success=subscription`,
         cancelUrl: `${typeof window !== "undefined" ? window.location.origin : ""}/dashboard/pricing`,
+        metadata: referralId ? { referral: referralId } : undefined,
       })
+
 
       if (error) {
         console.error("Upgrade error:", error)
@@ -73,6 +100,8 @@ export default function PricingPage() {
       setLoadingPlan(null)
     }
   }
+
+
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">

@@ -6,7 +6,7 @@ import Stripe from "stripe";
 import { sendResetPasswordEmail, sendVerificationEmail } from "./lib/email";
 
 const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-12-15.clover",
+  apiVersion: "2025-11-17.clover",
 });
 
 export const auth = betterAuth({
@@ -37,14 +37,14 @@ export const auth = betterAuth({
       }).catch((error) => {
         console.error(
           "❌ Erreur lors de l'envoi de l'email de réinitialisation:",
-          error,
+          error
         );
         // Ne pas throw pour éviter les timing attacks
       });
     },
     onPasswordReset: async ({ user }, request) => {
       console.log(
-        `✅ Mot de passe réinitialisé pour l'utilisateur ${user.email}`,
+        `✅ Mot de passe réinitialisé pour l'utilisateur ${user.email}`
       );
     },
   },
@@ -59,7 +59,7 @@ export const auth = betterAuth({
       }).catch((error) => {
         console.error(
           "❌ Erreur lors de l'envoi de l'email de vérification:",
-          error,
+          error
         );
         // Ne pas throw pour ne pas bloquer le processus d'inscription
       });
@@ -87,6 +87,36 @@ export const auth = betterAuth({
       createCustomerOnSignUp: true,
       subscription: {
         enabled: true,
+        getCheckoutSessionParams: async (
+          { user, session, plan, subscription },
+          req,
+          ctx
+        ) => {
+          // Affonso - pass referral cookie to Stripe for commission tracking
+          const cookieHeader = req?.headers?.get?.("cookie") ?? "";
+          const affonsoMatch = cookieHeader.match(
+            /(?:^|; )affonso_referral=([^;]*)/
+          );
+          const affonsoReferral = affonsoMatch
+            ? decodeURIComponent(affonsoMatch[1].trim())
+            : "";
+
+          const metadata: Record<string, string> = {};
+          if (affonsoReferral) metadata.affonso_referral = affonsoReferral;
+
+          if (process.env.NODE_ENV === "development") {
+            console.log("[Affonso] Checkout metadata:", {
+              affonso_referral: affonsoReferral || "(none)",
+              cookieFound: !!affonsoReferral,
+            });
+          }
+
+          return {
+            params: {
+              metadata: Object.keys(metadata).length > 0 ? metadata : undefined,
+            },
+          };
+        },
         plans: [
           {
             name: "pro",
