@@ -80,12 +80,14 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Type exporté pour utilisation dans les hooks
+// Type exporté pour utilisation dans les hooks (champs principaux + téléphone)
 export interface ShopifyOrder {
   id: number;
   name: string; // "#1001"
   order_number: number;
   email?: string;
+  /** Téléphone saisi au checkout (niveau commande) */
+  phone?: string | null;
   created_at: string;
   total_price: string;
   currency: string;
@@ -93,10 +95,11 @@ export interface ShopifyOrder {
   financial_status: string;
   customer?: {
     id: number;
-    email: string;
-    first_name: string;
-    last_name: string;
-    phone?: string;
+    email?: string | null;
+    first_name?: string | null;
+    last_name?: string | null;
+    /** Téléphone du client (profil) */
+    phone?: string | null;
   };
   line_items: Array<{
     id: number;
@@ -105,11 +108,22 @@ export interface ShopifyOrder {
     price: string;
     product_id: number;
   }>;
+  /** Adresse de facturation (contient souvent le téléphone) */
+  billing_address?: {
+    first_name?: string | null;
+    last_name?: string | null;
+    address1?: string | null;
+    city?: string | null;
+    country?: string | null;
+    phone?: string | null;
+  };
+  /** Adresse de livraison (contient souvent le téléphone) */
   shipping_address?: {
-    first_name: string;
-    last_name: string;
-    address1: string;
-    city: string;
-    country: string;
+    first_name?: string | null;
+    last_name?: string | null;
+    address1?: string | null;
+    city?: string | null;
+    country?: string | null;
+    phone?: string | null;
   };
 }

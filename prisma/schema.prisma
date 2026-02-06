@@ -171,14 +171,15 @@ model Verification {
 }
 
 model ShopifyStore {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  shop        String   @unique // "ma-boutique.myshopify.com"
-  accessToken String   // Token d'accès Shopify
-  scope       String   // Scopes accordés
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                   String               @id @default(cuid())
+  userId               String
+  user                 User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  shop                 String               @unique // "ma-boutique.myshopify.com"
+  accessToken          String               // Token d'accès Shopify
+  scope                String               // Scopes accordés
+  orderReviewRequests  OrderReviewRequest[]
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
 
   @@index([userId])
   @@map("shopify_store")
@@ -220,4 +221,23 @@ model Feedback {
 
   @@index([userId])
   @@map("feedback")
+}
+
+/** Demande d'avis programmée après une commande Shopify (étape B → QStash). */
+model OrderReviewRequest {
+  id              String        @id @default(cuid())
+  storeId         String        // Boutique Shopify qui a reçu la commande
+  store           ShopifyStore  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  shopifyOrderId  String        // ID Shopify de la commande (pour retrouver la commande)
+  customerPhone   String?
+  customerEmail   String?
+  scheduledAt     DateTime      // Heure à laquelle QStash doit appeler /api/send-review-message
+  status          String        @default("pending") // pending | sent | failed
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  @@unique([storeId, shopifyOrderId])
+  @@index([storeId])
+  @@index([status])
+  @@map("order_review_request")
 }
