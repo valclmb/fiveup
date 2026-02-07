@@ -22,7 +22,7 @@ export const StarIcon = ({
   size = 24,
   outline = false,
   strokeWidth = 2,
-  color = "#23F4BD"
+  color = "#ffd230"
 }: StarIconProps) => {
   return (
     <svg
