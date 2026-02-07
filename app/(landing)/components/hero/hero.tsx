@@ -10,7 +10,7 @@ const Hero = () => {
   return (
     <div className='relative w-full flex flex-col items-center gap-10 mb-28 sm:mb-24 md:mb-32 '>
       <AnimatedHeroItem variant="scaleUp">
-        <Badge variant="secondary" >Review management </Badge>
+        <Badge variant="landing" >Review management </Badge>
       </AnimatedHeroItem>
       <div className="space-y-2">
 

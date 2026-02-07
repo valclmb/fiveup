@@ -13,7 +13,7 @@ const Footer = () => {
 
           <section className="flex  flex-wrap sm:flex-row justify-between gap-10 sm:gap-5 pt-10 ">
             <div >
-              <Image src="/logos/logo-white-baseline.svg" alt="logo" width={200} height={40} className="mb-4" />
+              <Image src="/logos/logo-white-baseline.svg" alt="logo" width={150} height={40} className="mb-4" />
               <Link href="mailto:contact@fiveup.com" className="hover:underline text-white" >contact@fiveup.com</Link>
             </div>
             <ul className="space-y-2 text-sm text-muted-foreground min-w-32">
@@ -69,7 +69,7 @@ const Footer = () => {
             </ul>
           </section>
           <Typography variant="p" className="text-muted-foreground text-sm mt-7">
-            FiveUp 2026 | All rights reserved
+            FiveUp {new Date().getFullYear()} | All rights reserved
           </Typography>
         </div>
       </footer>
