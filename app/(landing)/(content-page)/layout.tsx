@@ -15,23 +15,13 @@ export default function ContentPageLayout({
       <div className="z-30 absolute -top-20 right-1/2 translate-x-1/2 h-[400px] blur-[100px]  w-1/2 bg-tertiary" />
       <div className="z-20 absolute top-0 h-[800px] w-full bg-gradient-to-b from-background to-transparent" />
       <div className=" z-10 absolute w-[70%] h-full border-x bg-linear-to-b translate-x-1/2 right-1/2 " />
-      {/* <div className="absolute top-[700px] h-[600px] w-full bg-gradient-to-b from-tertiary/20 to-transparent" /> */}
-
-      {/* <div className="absolute top-[530px]  w-full h-1 border-t translate-x-1/2 right-1/2 " /> */}
-
       <div className="z-0 absolute top-[750px] h-[600px] border-t w-full bg-gradient-to-b from-tertiary/40 to-transparent" />
-
-      {/* <div className="absolute top-[1450px]  w-full h-1 border-t translate-x-1/2 right-1/2 " /> */}
-
-      {/* <div className="absolute top-[1450px] h-[600px] border-t w-full bg-gradient-to-b from-tertiary/20 to-transparent" /> */}
       <div className="absolute top-[2050px]  w-full h-1 border-t translate-x-1/2 right-1/2 " />
       <div className="z-20 absolute top-[1200px] h-[1700px] w-full bg-[linear-gradient(to_bottom,transparent_20%,var(--background)_100%)]" />
-
-      {/* <div className="absolute top-[2050px]  w-full h-1 border-t translate-x-1/2 right-1/2 " /> */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--background)_0%,transparent_20%,transparent_70%,var(--background)_100%)]" />
     </div>
 
-    <div className="relative w-full max-w-7xl mx-auto space-y-32 py-2 px-4 z-90" >
+    <div className="w-full  mx-auto space-y-32 z-90" >
       {children}
 
       <Faq />
