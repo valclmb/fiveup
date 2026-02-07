@@ -6,6 +6,8 @@ import React from "react";
 const poppins = Poppins({ weight: ['400', '500', '600', '700'], subsets: ['latin'], variable: '--font-poppins' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
+export const headingFontClassName = poppins.className;
+
 export const typographyVariants = cva(`text-xl ${poppins.className}`, {
   variants: {
     variant: {
