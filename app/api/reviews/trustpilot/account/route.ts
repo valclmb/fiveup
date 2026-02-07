@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { TRUSTPILOT_CONSTANTS } from "@/lib/reviews/trustpilot/constants";
+import { getCooldownStatus } from "@/lib/reviews/cooldown";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
@@ -39,16 +39,8 @@ export async function GET() {
     // isConnected: true or null = connected, false = disconnected
     const isConnected = account.isConnected !== false;
 
-    // Calculate days until domain can be changed
-    const lastDomainChange = account.lastDomainChangeAt ?? account.createdAt;
-    const daysSinceLastDomainChange = Math.floor(
-      (Date.now() - lastDomainChange.getTime()) / (1000 * 60 * 60 * 24)
-    );
-    const canChangeDomain =
-      daysSinceLastDomainChange >= TRUSTPILOT_CONSTANTS.DOMAIN_CHANGE_COOLDOWN_DAYS;
-    const daysUntilDomainChange = canChangeDomain
-      ? 0
-      : TRUSTPILOT_CONSTANTS.DOMAIN_CHANGE_COOLDOWN_DAYS - daysSinceLastDomainChange;
+    const { canChange: canChangeDomain, daysUntilChange: daysUntilDomainChange } =
+      getCooldownStatus(account.lastDomainChangeAt, account.createdAt);
 
     return NextResponse.json({
       connected: isConnected,

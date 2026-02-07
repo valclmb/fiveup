@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { startGoogleMapsScrape } from "@/lib/apify";
 import { prisma } from "@/lib/prisma";
+import { getCooldownStatus } from "@/lib/reviews/cooldown";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -101,7 +102,24 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Different place - delete old reviews and reconnect
+      // Different place - check cooldown
+      const { canChange, daysUntilChange } = getCooldownStatus(
+        existingAccount.lastDomainChangeAt,
+        existingAccount.createdAt
+      );
+
+      if (!canChange) {
+        return NextResponse.json(
+          {
+            error: `Place change not allowed. Wait ${daysUntilChange} day(s) or reconnect with the same place.`,
+            daysRemaining: daysUntilChange,
+            currentPlaceId: existingAccount.sourceId,
+          },
+          { status: 429 }
+        );
+      }
+
+      // Place change allowed - delete old reviews
       await prisma.review.deleteMany({
         where: { accountId: existingAccount.id },
       });
@@ -112,6 +130,7 @@ export async function POST(request: NextRequest) {
           sourceId: primaryPlaceId,
           businessUrl,
           isConnected: true,
+          lastDomainChangeAt: new Date(),
           name: null,
           trustScore: null,
           totalReviews: null,
@@ -153,6 +172,7 @@ export async function POST(request: NextRequest) {
         sourceId: primaryPlaceId,
         businessUrl,
         isConnected: true,
+        lastDomainChangeAt: new Date(),
         sourceMetadata: { placeIds },
       },
     });

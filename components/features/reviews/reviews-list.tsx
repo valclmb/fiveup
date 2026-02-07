@@ -137,7 +137,7 @@ export function ReviewsList({ hasTrustpilot, hasGoogle }: ReviewsListProps) {
   const isInitialLoad = isLoading && !data;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {isInitialLoad && (
         <div className="space-y-6">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -184,298 +184,299 @@ export function ReviewsList({ hasTrustpilot, hasGoogle }: ReviewsListProps) {
             <>
               {/* Stats are rendered by the parent page via /api/reviews/stats */}
 
-              <Card>
-                <CardContent className="flex flex-col gap-4 ">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <Tabs
-                      value={statusFilter}
+              {/* <Card>
+                <CardContent className="flex flex-col gap-4 "> */}
+              <div className="flex flex-col bg-card border p-4 rounded-xl  gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <Tabs
+                  value={statusFilter}
+                  onValueChange={(v) => {
+                    if (hasNoData) return;
+                    setStatusFilter(v);
+                    setPage(1);
+                  }}
+                >
+                  <TabsList>
+                    <TabsTrigger value="all" disabled={hasNoData}>
+                      All
+                    </TabsTrigger>
+                    <TabsTrigger value="pending" disabled={hasNoData}>
+                      To reply
+                    </TabsTrigger>
+                    <TabsTrigger value="answered" disabled={hasNoData}>
+                      Answered
+                    </TabsTrigger>
+                  </TabsList>
+                </Tabs>
+
+                <div className="flex flex-1 items-center gap-2 sm:justify-end">
+                  <div className="relative flex-1 sm:max-w-sm">
+                    <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input
+                      placeholder="Search"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="pl-9"
+                      disabled={hasNoData}
+                    />
+                  </div>
+
+                  <Select
+                    value={ratingFilter}
+                    onValueChange={(v) => {
+                      setRatingFilter(v);
+                      setPage(1);
+                    }}
+                  >
+                    <SelectTrigger className="w-[130px]" disabled={hasNoData}>
+                      <Filter className="size-4" />
+                      <SelectValue placeholder="Filter" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All ratings</SelectItem>
+                      <SelectItem value="5">5 stars</SelectItem>
+                      <SelectItem value="4">4 stars</SelectItem>
+                      <SelectItem value="3">3 stars</SelectItem>
+                      <SelectItem value="2">2 stars</SelectItem>
+                      <SelectItem value="1">1 star</SelectItem>
+                    </SelectContent>
+                  </Select>
+
+                  {showSourceFilter && (
+                    <Select
+                      value={sourceFilter}
                       onValueChange={(v) => {
-                        if (hasNoData) return;
-                        setStatusFilter(v);
+                        setSourceFilter(v as ReviewSourceFilter);
                         setPage(1);
                       }}
                     >
-                      <TabsList>
-                        <TabsTrigger value="all" disabled={hasNoData}>
-                          All
-                        </TabsTrigger>
-                        <TabsTrigger value="pending" disabled={hasNoData}>
-                          To reply
-                        </TabsTrigger>
-                        <TabsTrigger value="answered" disabled={hasNoData}>
-                          Answered
-                        </TabsTrigger>
-                      </TabsList>
-                    </Tabs>
+                      <SelectTrigger className="w-[140px]" disabled={hasNoData}>
+                        <SelectValue placeholder="Platform" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {SOURCE_OPTIONS.map((opt) => (
+                          <SelectItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
 
-                    <div className="flex flex-1 items-center gap-2 sm:justify-end">
-                      <div className="relative flex-1 sm:max-w-sm">
-                        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input
-                          placeholder="Search"
-                          value={search}
-                          onChange={(e) => setSearch(e.target.value)}
-                          className="pl-9"
-                          disabled={hasNoData}
-                        />
-                      </div>
+                  <CountryDropdown
+                    placeholder="Select countries"
+                    defaultValue={countryFilter}
+                    onChange={() => { }}
+                    onApply={(countryList) => {
+                      setCountryFilter(countryList.map((c) => c.alpha3));
+                      setPage(1);
+                    }}
+                    slim
+                    multiple
+                  />
 
-                      <Select
-                        value={ratingFilter}
-                        onValueChange={(v) => {
-                          setRatingFilter(v);
-                          setPage(1);
-                        }}
-                      >
-                        <SelectTrigger className="w-[130px]" disabled={hasNoData}>
-                          <Filter className="size-4" />
-                          <SelectValue placeholder="Filter" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All ratings</SelectItem>
-                          <SelectItem value="5">5 stars</SelectItem>
-                          <SelectItem value="4">4 stars</SelectItem>
-                          <SelectItem value="3">3 stars</SelectItem>
-                          <SelectItem value="2">2 stars</SelectItem>
-                          <SelectItem value="1">1 star</SelectItem>
-                        </SelectContent>
-                      </Select>
+                  <Select
+                    value={sortOrder}
+                    onValueChange={(v) => {
+                      setSortOrder(v as "desc" | "asc");
+                      setPage(1);
+                    }}
+                  >
+                    <SelectTrigger className="w-[150px]" disabled={hasNoData}>
+                      <SelectValue placeholder="Sort" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="desc">Most recent</SelectItem>
+                      <SelectItem value="asc">Oldest</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
 
-                      {showSourceFilter && (
-                        <Select
-                          value={sourceFilter}
-                          onValueChange={(v) => {
-                            setSourceFilter(v as ReviewSourceFilter);
-                            setPage(1);
-                          }}
-                        >
-                          <SelectTrigger className="w-[140px]" disabled={hasNoData}>
-                            <SelectValue placeholder="Platform" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {SOURCE_OPTIONS.map((opt) => (
-                              <SelectItem key={opt.value} value={opt.value}>
-                                {opt.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-
-                      <CountryDropdown
-                        placeholder="Select countries"
-                        defaultValue={countryFilter}
-                        onChange={() => { }}
-                        onApply={(countryList) => {
-                          setCountryFilter(countryList.map((c) => c.alpha3));
-                          setPage(1);
-                        }}
-                        slim
-                        multiple
-                      />
-
-                      <Select
-                        value={sortOrder}
-                        onValueChange={(v) => {
-                          setSortOrder(v as "desc" | "asc");
-                          setPage(1);
-                        }}
-                      >
-                        <SelectTrigger className="w-[150px]" disabled={hasNoData}>
-                          <SelectValue placeholder="Sort" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="desc">Most recent</SelectItem>
-                          <SelectItem value="asc">Oldest</SelectItem>
-                        </SelectContent>
-                      </Select>
+              {isFetching ? (
+                <>
+                  <div className="overflow-hidden rounded-md border">
+                    <div className="space-y-3 p-4">
+                      {[...Array(10)].map((_, i) => (
+                        <Skeleton key={i} className="h-12 w-full" />
+                      ))}
                     </div>
                   </div>
-
-                  {isFetching ? (
-                    <>
-                      <div className="overflow-hidden rounded-md border">
-                        <div className="space-y-3 p-4">
-                          {[...Array(10)].map((_, i) => (
-                            <Skeleton key={i} className="h-12 w-full" />
-                          ))}
-                        </div>
-                      </div>
-                      {data.pagination && data.pagination.totalPages > 1 && (
-                        <Pagination className="justify-end">
-                          <PaginationContent>
-                            <PaginationItem>
-                              <PaginationPrevious
+                  {data.pagination && data.pagination.totalPages > 1 && (
+                    <Pagination className="justify-end">
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious
+                            href="#"
+                            aria-disabled={page === 1 || isFetching}
+                            className={
+                              page === 1 || isFetching
+                                ? "pointer-events-none opacity-50"
+                                : ""
+                            }
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (page === 1 || isFetching) return;
+                              setPage((p) => Math.max(1, p - 1));
+                            }}
+                          />
+                        </PaginationItem>
+                        {getPaginationItems(
+                          page,
+                          data.pagination.totalPages
+                        ).map((item, i) =>
+                          item === "ellipsis" ? (
+                            <PaginationItem key={`ellipsis-${i}`}>
+                              <PaginationEllipsis />
+                            </PaginationItem>
+                          ) : (
+                            <PaginationItem key={item}>
+                              <PaginationLink
                                 href="#"
-                                aria-disabled={page === 1 || isFetching}
-                                className={
-                                  page === 1 || isFetching
-                                    ? "pointer-events-none opacity-50"
-                                    : ""
-                                }
+                                isActive={page === item}
                                 onClick={(e) => {
                                   e.preventDefault();
-                                  if (page === 1 || isFetching) return;
-                                  setPage((p) => Math.max(1, p - 1));
+                                  if (isFetching) return;
+                                  setPage(item);
                                 }}
-                              />
+                              >
+                                {item}
+                              </PaginationLink>
                             </PaginationItem>
-                            {getPaginationItems(
-                              page,
-                              data.pagination.totalPages
-                            ).map((item, i) =>
-                              item === "ellipsis" ? (
-                                <PaginationItem key={`ellipsis-${i}`}>
-                                  <PaginationEllipsis />
-                                </PaginationItem>
-                              ) : (
-                                <PaginationItem key={item}>
-                                  <PaginationLink
-                                    href="#"
-                                    isActive={page === item}
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      if (isFetching) return;
-                                      setPage(item);
-                                    }}
-                                  >
-                                    {item}
-                                  </PaginationLink>
-                                </PaginationItem>
+                          )
+                        )}
+                        <PaginationItem>
+                          <PaginationNext
+                            href="#"
+                            aria-disabled={
+                              page === data.pagination.totalPages ||
+                              isFetching
+                            }
+                            className={
+                              page === data.pagination.totalPages ||
+                                isFetching
+                                ? "pointer-events-none opacity-50"
+                                : ""
+                            }
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (
+                                page === data.pagination.totalPages ||
+                                isFetching
                               )
-                            )}
-                            <PaginationItem>
-                              <PaginationNext
-                                href="#"
-                                aria-disabled={
-                                  page === data.pagination.totalPages ||
-                                  isFetching
-                                }
-                                className={
-                                  page === data.pagination.totalPages ||
-                                    isFetching
-                                    ? "pointer-events-none opacity-50"
-                                    : ""
-                                }
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  if (
-                                    page === data.pagination.totalPages ||
-                                    isFetching
-                                  )
-                                    return;
-                                  setPage((p) =>
-                                    Math.min(data.pagination.totalPages, p + 1)
-                                  );
-                                }}
-                              />
-                            </PaginationItem>
-                          </PaginationContent>
-                        </Pagination>
-                      )}
-                    </>
-                  ) : !data.reviews?.length ? (
-                    <Card className="border-dashed">
-                      <CardContent className="flex flex-col items-center justify-center py-12">
-                        <Typography variant="h3" className="mb-2">
-                          No reviews yet
-                        </Typography>
-                        <Typography variant="description">
-                          {ratingFilter !== "all" ||
-                            statusFilter !== "all" ||
-                            sourceFilter !== "all" ||
-                            countryFilter.length > 0
-                            ? "No reviews match your filters."
-                            : "Your reviews will appear here once synced."}
-                        </Typography>
-                        {ratingFilter === "all" &&
-                          statusFilter === "all" &&
-                          sourceFilter === "all" &&
-                          countryFilter.length === 0 && (
-                            <Button asChild className="mt-4">
-                              <a href="/connections">Go to Connections</a>
-                            </Button>
-                          )}
-                      </CardContent>
-                    </Card>
-                  ) : (
-                    <>
-                      <DataTable
-                        columns={reviewsColumns}
-                        data={data.reviews}
-                        disablePagination
-                      />
-
-                      {data.pagination && data.pagination.totalPages > 1 && (
-                        <Pagination className="justify-end">
-                          <PaginationContent>
-                            <PaginationItem>
-                              <PaginationPrevious
-                                href="#"
-                                aria-disabled={page === 1}
-                                className={
-                                  page === 1
-                                    ? "pointer-events-none opacity-50"
-                                    : ""
-                                }
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  if (page === 1) return;
-                                  setPage((p) => Math.max(1, p - 1));
-                                }}
-                              />
-                            </PaginationItem>
-                            {getPaginationItems(
-                              page,
-                              data.pagination.totalPages
-                            ).map((item, i) =>
-                              item === "ellipsis" ? (
-                                <PaginationItem key={`ellipsis-${i}`}>
-                                  <PaginationEllipsis />
-                                </PaginationItem>
-                              ) : (
-                                <PaginationItem key={item}>
-                                  <PaginationLink
-                                    href="#"
-                                    isActive={page === item}
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      setPage(item);
-                                    }}
-                                  >
-                                    {item}
-                                  </PaginationLink>
-                                </PaginationItem>
-                              )
-                            )}
-                            <PaginationItem>
-                              <PaginationNext
-                                href="#"
-                                aria-disabled={
-                                  page === data.pagination.totalPages
-                                }
-                                className={
-                                  page === data.pagination.totalPages
-                                    ? "pointer-events-none opacity-50"
-                                    : ""
-                                }
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  if (page === data.pagination.totalPages)
-                                    return;
-                                  setPage((p) =>
-                                    Math.min(data.pagination.totalPages, p + 1)
-                                  );
-                                }}
-                              />
-                            </PaginationItem>
-                          </PaginationContent>
-                        </Pagination>
-                      )}
-                    </>
+                                return;
+                              setPage((p) =>
+                                Math.min(data.pagination.totalPages, p + 1)
+                              );
+                            }}
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
                   )}
-                </CardContent>
-              </Card>
+                </>
+              ) : !data.reviews?.length ? (
+                <Card className="border-dashed">
+                  <CardContent className="flex flex-col items-center justify-center py-12">
+                    <Typography variant="h3" className="mb-2">
+                      No reviews yet
+                    </Typography>
+                    <Typography variant="description">
+                      {ratingFilter !== "all" ||
+                        statusFilter !== "all" ||
+                        sourceFilter !== "all" ||
+                        countryFilter.length > 0
+                        ? "No reviews match your filters."
+                        : "Your reviews will appear here once synced."}
+                    </Typography>
+                    {ratingFilter === "all" &&
+                      statusFilter === "all" &&
+                      sourceFilter === "all" &&
+                      countryFilter.length === 0 && (
+                        <Button asChild className="mt-4">
+                          <a href="/connections">Go to Connections</a>
+                        </Button>
+                      )}
+                  </CardContent>
+                </Card>
+              ) : (
+                <>
+                  <DataTable
+                    columns={reviewsColumns}
+                    data={data.reviews}
+                    disablePagination
+
+                  />
+
+                  {data.pagination && data.pagination.totalPages > 1 && (
+                    <Pagination className="justify-end">
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious
+                            href="#"
+                            aria-disabled={page === 1}
+                            className={
+                              page === 1
+                                ? "pointer-events-none opacity-50"
+                                : ""
+                            }
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (page === 1) return;
+                              setPage((p) => Math.max(1, p - 1));
+                            }}
+                          />
+                        </PaginationItem>
+                        {getPaginationItems(
+                          page,
+                          data.pagination.totalPages
+                        ).map((item, i) =>
+                          item === "ellipsis" ? (
+                            <PaginationItem key={`ellipsis-${i}`}>
+                              <PaginationEllipsis />
+                            </PaginationItem>
+                          ) : (
+                            <PaginationItem key={item}>
+                              <PaginationLink
+                                href="#"
+                                isActive={page === item}
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  setPage(item);
+                                }}
+                              >
+                                {item}
+                              </PaginationLink>
+                            </PaginationItem>
+                          )
+                        )}
+                        <PaginationItem>
+                          <PaginationNext
+                            href="#"
+                            aria-disabled={
+                              page === data.pagination.totalPages
+                            }
+                            className={
+                              page === data.pagination.totalPages
+                                ? "pointer-events-none opacity-50"
+                                : ""
+                            }
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (page === data.pagination.totalPages)
+                                return;
+                              setPage((p) =>
+                                Math.min(data.pagination.totalPages, p + 1)
+                              );
+                            }}
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                  )}
+                </>
+              )}
+              {/* </CardContent>
+              </Card> */}
             </>
           );
         })()}

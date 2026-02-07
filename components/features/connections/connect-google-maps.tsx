@@ -31,7 +31,7 @@ import Typography from "@/components/ui/typography";
 import { getAll } from "@/lib/fetch";
 import { GOOGLE_CONSTANTS } from "@/lib/reviews/google/constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { MapPin, Star, Unplug } from "lucide-react";
+import { Clock, MapPin, Star, Unplug } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -47,6 +47,8 @@ interface GoogleAccountResponse {
     trustScore: number | null;
     totalReviews: number | null;
     reviewsStored: number;
+    canChangeDomain: boolean;
+    daysUntilDomainChange: number;
     stats?: { total?: number | null };
   };
   latestSync?: {
@@ -85,6 +87,8 @@ export function ConnectGoogleMaps() {
   const latestSync = data?.latestSync;
   const isConnected = data?.connected ?? false;
   const hasAccount = data?.hasAccount ?? false;
+  const canChangeDomain = account?.canChangeDomain ?? true;
+  const daysUntilDomainChange = account?.daysUntilDomainChange ?? 0;
 
   useEffect(() => {
     if (latestSync && ["PENDING", "RUNNING"].includes(latestSync.status)) {
@@ -313,16 +317,26 @@ export function ConnectGoogleMaps() {
                       placeholder="ChIJ... or https://maps.google.com/..."
                       value={placeInput}
                       onChange={(e) => setPlaceInput(e.target.value)}
-                      disabled={connect.isPending}
+                      disabled={connect.isPending || !canChangeDomain}
                     />
-                    <Typography variant="description" className="text-xs">
-                      One place ID per line, or comma-separated.
-                    </Typography>
+                    {!canChangeDomain && (
+                      <div className="flex items-center gap-2 text-xs text-orange-500">
+                        <Clock className="size-3" />
+                        <span>
+                          You can change place in {daysUntilDomainChange} day(s).
+                        </span>
+                      </div>
+                    )}
+                    {canChangeDomain && (
+                      <Typography variant="description" className="text-xs">
+                        One place ID per line, or comma-separated.
+                      </Typography>
+                    )}
                   </div>
                   <Button
                     type="submit"
                     className="w-full"
-                    disabled={connect.isPending || !placeInput.trim()}
+                    disabled={connect.isPending || !placeInput.trim() || !canChangeDomain}
                   >
                     {connect.isPending ? (
                       <>

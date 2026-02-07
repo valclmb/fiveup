@@ -126,20 +126,33 @@ async function processGoogleResults(
         "stars" in item
     );
 
+    // Compute distribution from reviews (Google doesn't provide it from API)
+    const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    for (const r of reviews) {
+      const rating = Math.min(5, Math.max(1, r.stars));
+      distribution[rating as 1 | 2 | 3 | 4 | 5]++;
+    }
+
     const firstItem = reviews[0];
-    if (firstItem) {
-      await prisma.reviewAccount.update({
-        where: { id: accountId },
-        data: {
+    await prisma.reviewAccount.update({
+      where: { id: accountId },
+      data: {
+        ...(firstItem && {
           name: firstItem.title ?? null,
           trustScore: firstItem.totalScore ?? null,
           totalReviews: firstItem.reviewsCount ?? null,
           profileImageUrl: firstItem.imageUrl ?? null,
           businessUrl: firstItem.url ?? undefined,
-          lastSyncAt: new Date(),
-        },
-      });
-    }
+        }),
+        statsTotal: reviews.length,
+        statsOne: distribution[1],
+        statsTwo: distribution[2],
+        statsThree: distribution[3],
+        statsFour: distribution[4],
+        statsFive: distribution[5],
+        lastSyncAt: new Date(),
+      },
+    });
 
     const chunks = createBatchChunks(reviews);
     let reviewsCount = 0;

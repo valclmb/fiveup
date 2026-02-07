@@ -5,6 +5,7 @@ import {
   startTrustpilotScrape,
 } from "@/lib/apify";
 import { prisma } from "@/lib/prisma";
+import { getCooldownStatus } from "@/lib/reviews/cooldown";
 import { TRUSTPILOT_CONSTANTS } from "@/lib/reviews/trustpilot/constants";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -93,18 +94,16 @@ export async function POST(request: NextRequest) {
       }
 
       // Different domain - check cooldown
-      const lastChange = existingAccount.lastDomainChangeAt ?? existingAccount.createdAt;
-      const daysSinceLastChange = Math.floor(
-        (Date.now() - lastChange.getTime()) / (1000 * 60 * 60 * 24)
+      const { canChange, daysUntilChange } = getCooldownStatus(
+        existingAccount.lastDomainChangeAt,
+        existingAccount.createdAt
       );
 
-      if (daysSinceLastChange < TRUSTPILOT_CONSTANTS.DOMAIN_CHANGE_COOLDOWN_DAYS) {
-        const daysRemaining =
-          TRUSTPILOT_CONSTANTS.DOMAIN_CHANGE_COOLDOWN_DAYS - daysSinceLastChange;
+      if (!canChange) {
         return NextResponse.json(
           {
-            error: `Domain change not allowed. Wait ${daysRemaining} day(s) or reconnect "${existingAccount.sourceId}".`,
-            daysRemaining,
+            error: `Domain change not allowed. Wait ${daysUntilChange} day(s) or reconnect "${existingAccount.sourceId}".`,
+            daysRemaining: daysUntilChange,
             currentDomain: existingAccount.sourceId,
           },
           { status: 429 }

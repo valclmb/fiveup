@@ -1,8 +1,10 @@
 /**
  * Google Maps Reviews configuration constants
+ * Uses shared REVIEWS_CONSTANTS
  */
 
+import { REVIEWS_CONSTANTS } from "../constants";
+
 export const GOOGLE_CONSTANTS = {
-  /** Polling interval for sync status (ms) */
-  SYNC_POLL_INTERVAL_MS: 6000,
+  ...REVIEWS_CONSTANTS,
 } as const;

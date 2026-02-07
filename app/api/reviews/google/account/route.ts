@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getCooldownStatus } from "@/lib/reviews/cooldown";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
@@ -36,6 +37,9 @@ export async function GET() {
     const latestSync = account.syncs[0];
     const isConnected = account.isConnected !== false;
 
+    const { canChange: canChangeDomain, daysUntilChange: daysUntilDomainChange } =
+      getCooldownStatus(account.lastDomainChangeAt, account.createdAt);
+
     return NextResponse.json({
       connected: isConnected,
       hasAccount: true,
@@ -49,8 +53,8 @@ export async function GET() {
         profileImageUrl: account.profileImageUrl,
         lastSyncAt: account.lastSyncAt,
         reviewsStored: account._count.reviews,
-        canChangeDomain: true, // Google has no cooldown
-        daysUntilDomainChange: 0,
+        canChangeDomain,
+        daysUntilDomainChange,
         stats: {
           total: account.statsTotal,
           one: account.statsOne,
