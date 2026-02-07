@@ -153,9 +153,9 @@ export function ReviewsList({ hasTrustpilot, hasGoogle }: ReviewsListProps) {
         <Card className="border-destructive">
           <CardContent className="py-12 text-center">
             {error instanceof Error &&
-            (error.message.includes("No review account") ||
-              error.message.includes("No Trustpilot account") ||
-              error.message.includes("No Google Maps")) ? (
+              (error.message.includes("No review account") ||
+                error.message.includes("No Trustpilot account") ||
+                error.message.includes("No Google Maps")) ? (
               <>
                 <Typography variant="h3" className="mb-2">
                   No review account connected
@@ -185,7 +185,7 @@ export function ReviewsList({ hasTrustpilot, hasGoogle }: ReviewsListProps) {
               {/* Stats are rendered by the parent page via /api/reviews/stats */}
 
               <Card>
-                <CardContent className="flex flex-col gap-4">
+                <CardContent className="flex flex-col gap-4 ">
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <Tabs
                       value={statusFilter}
@@ -265,7 +265,7 @@ export function ReviewsList({ hasTrustpilot, hasGoogle }: ReviewsListProps) {
                       <CountryDropdown
                         placeholder="Select countries"
                         defaultValue={countryFilter}
-                        onChange={() => {}}
+                        onChange={() => { }}
                         onApply={(countryList) => {
                           setCountryFilter(countryList.map((c) => c.alpha3));
                           setPage(1);
@@ -353,7 +353,7 @@ export function ReviewsList({ hasTrustpilot, hasGoogle }: ReviewsListProps) {
                                 }
                                 className={
                                   page === data.pagination.totalPages ||
-                                  isFetching
+                                    isFetching
                                     ? "pointer-events-none opacity-50"
                                     : ""
                                 }
@@ -382,9 +382,9 @@ export function ReviewsList({ hasTrustpilot, hasGoogle }: ReviewsListProps) {
                         </Typography>
                         <Typography variant="description">
                           {ratingFilter !== "all" ||
-                          statusFilter !== "all" ||
-                          sourceFilter !== "all" ||
-                          countryFilter.length > 0
+                            statusFilter !== "all" ||
+                            sourceFilter !== "all" ||
+                            countryFilter.length > 0
                             ? "No reviews match your filters."
                             : "Your reviews will appear here once synced."}
                         </Typography>
