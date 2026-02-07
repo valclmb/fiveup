@@ -15,7 +15,7 @@ const connectSchema = z.object({
 });
 
 /**
- * POST /api/trustpilot/connect
+ * POST /api/reviews/trustpilot/connect
  * Connect a Trustpilot account and start syncing reviews
  */
 export async function POST(request: NextRequest) {
@@ -40,9 +40,9 @@ export async function POST(request: NextRequest) {
     const businessDomain = extractDomainFromUrl(url);
 
     // Check if account already exists
-    const existingAccount = await prisma.trustpilotAccount.findUnique({
-      where: { userId: session.user.id },
-      include: { 
+    const existingAccount = await prisma.reviewAccount.findUnique({
+      where: { userId_source: { userId: session.user.id, source: "TRUSTPILOT" } },
+      include: {
         syncs: { orderBy: { startedAt: "desc" }, take: 1 },
         _count: { select: { reviews: true } },
       },
@@ -74,11 +74,11 @@ export async function POST(request: NextRequest) {
 
     // Case 2: Account exists but is disconnected
     if (existingAccount && !isCurrentlyConnected) {
-      const isSameDomain = existingAccount.businessDomain === businessDomain;
+      const isSameDomain = existingAccount.sourceId === businessDomain;
 
       if (isSameDomain) {
         // Reconnect same domain - just reactivate, no new sync needed
-        await prisma.trustpilotAccount.update({
+        await prisma.reviewAccount.update({
           where: { id: existingAccount.id },
           data: { isConnected: true },
         });
@@ -103,29 +103,28 @@ export async function POST(request: NextRequest) {
           TRUSTPILOT_CONSTANTS.DOMAIN_CHANGE_COOLDOWN_DAYS - daysSinceLastChange;
         return NextResponse.json(
           {
-            error: `Domain change not allowed. Wait ${daysRemaining} day(s) or reconnect "${existingAccount.businessDomain}".`,
+            error: `Domain change not allowed. Wait ${daysRemaining} day(s) or reconnect "${existingAccount.sourceId}".`,
             daysRemaining,
-            currentDomain: existingAccount.businessDomain,
+            currentDomain: existingAccount.sourceId,
           },
           { status: 429 }
         );
       }
 
       // Domain change allowed - delete old reviews
-      await prisma.trustpilotReview.deleteMany({
+      await prisma.review.deleteMany({
         where: { accountId: existingAccount.id },
       });
 
       // Update account with new domain
-      await prisma.trustpilotAccount.update({
+      await prisma.reviewAccount.update({
         where: { id: existingAccount.id },
         data: {
           businessUrl,
-          businessDomain,
+          sourceId: businessDomain,
           isConnected: true,
           lastDomainChangeAt: new Date(),
-          // Reset company info
-          companyName: null,
+          name: null,
           trustScore: null,
           totalReviews: null,
           profileImageUrl: null,
@@ -141,7 +140,7 @@ export async function POST(request: NextRequest) {
       // Start Apify scrape (full sync for new domain)
       const apifyRun = await startTrustpilotScrape(businessUrl);
 
-      const sync = await prisma.trustpilotSync.create({
+      const sync = await prisma.reviewSync.create({
         data: {
           accountId: existingAccount.id,
           apifyRunId: apifyRun.data.id,
@@ -160,11 +159,12 @@ export async function POST(request: NextRequest) {
     }
 
     // Case 3: No existing account - create new
-    const account = await prisma.trustpilotAccount.create({
+    const account = await prisma.reviewAccount.create({
       data: {
         userId: session.user.id,
+        source: "TRUSTPILOT",
+        sourceId: businessDomain,
         businessUrl,
-        businessDomain,
         isConnected: true,
         lastDomainChangeAt: new Date(),
       },
@@ -173,7 +173,7 @@ export async function POST(request: NextRequest) {
     // Start Apify scrape (full sync)
     const apifyRun = await startTrustpilotScrape(businessUrl);
 
-    const sync = await prisma.trustpilotSync.create({
+    const sync = await prisma.reviewSync.create({
       data: {
         accountId: account.id,
         apifyRunId: apifyRun.data.id,

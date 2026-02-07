@@ -4,7 +4,7 @@ import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * GET /api/trustpilot/reviews
+ * GET /api/reviews/trustpilot/reviews
  * Get stored Trustpilot reviews for the current user
  */
 export async function GET(request: NextRequest) {
@@ -28,9 +28,11 @@ export async function GET(request: NextRequest) {
         : "publishedAt";
     const sortOrder = searchParams.get("sortOrder") === "asc" ? "asc" : "desc";
 
-    // Get Trustpilot account
-    const account = await prisma.trustpilotAccount.findUnique({
-      where: { userId: session.user.id },
+    // Get Trustpilot review account
+    const account = await prisma.reviewAccount.findUnique({
+      where: {
+        userId_source: { userId: session.user.id, source: "TRUSTPILOT" },
+      },
     });
 
     if (!account) {
@@ -92,8 +94,8 @@ export async function GET(request: NextRequest) {
 
     // Get total count and distinct countries for filter
     const [totalCount, countriesRaw] = await Promise.all([
-      prisma.trustpilotReview.count({ where }),
-      prisma.trustpilotReview.findMany({
+      prisma.review.count({ where }),
+      prisma.review.findMany({
         where: { accountId: account.id },
         select: { authorCountry: true },
         distinct: ["authorCountry"],
@@ -104,12 +106,12 @@ export async function GET(request: NextRequest) {
       .map((c) => c.authorCountry)
       .filter((c): c is string => !!c);
 
-    // Get reviews with pagination (explicit select to ensure authorImageUrl is included)
-    const reviewsRaw = await prisma.trustpilotReview.findMany({
+    // Get reviews with pagination
+    const reviewsRaw = await prisma.review.findMany({
       where,
       select: {
         id: true,
-        trustpilotId: true,
+        sourceId: true,
         rating: true,
         title: true,
         text: true,
@@ -122,6 +124,7 @@ export async function GET(request: NextRequest) {
         publishedAt: true,
         replyText: true,
         replyPublishedAt: true,
+        reviewUrl: true,
       },
       orderBy: {
         [sortBy === "rating" ? "rating" : "publishedAt"]: sortOrder,
@@ -132,7 +135,8 @@ export async function GET(request: NextRequest) {
 
     const reviews = reviewsRaw.map((r) => ({
       ...r,
-      reviewUrl: `https://www.trustpilot.com/reviews/${r.trustpilotId}`,
+      trustpilotId: r.sourceId, // Backward compat for frontend
+      reviewUrl: r.reviewUrl ?? `https://www.trustpilot.com/reviews/${r.sourceId}`,
     }));
 
     // Use stored stats from Trustpilot (synced via Apify with includeStatistics: true)

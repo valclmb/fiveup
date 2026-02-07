@@ -1,12 +1,11 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { TRUSTPILOT_CONSTANTS } from "@/lib/trustpilot/constants";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 /**
- * GET /api/trustpilot/account
- * Get the connected Trustpilot account info
+ * GET /api/reviews/google/account
+ * Get the connected Google Maps reviews account info
  */
 export async function GET() {
   try {
@@ -15,8 +14,10 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const account = await prisma.trustpilotAccount.findUnique({
-      where: { userId: session.user.id },
+    const account = await prisma.reviewAccount.findUnique({
+      where: {
+        userId_source: { userId: session.user.id, source: "GOOGLE" },
+      },
       include: {
         syncs: {
           orderBy: { startedAt: "desc" },
@@ -33,20 +34,7 @@ export async function GET() {
     }
 
     const latestSync = account.syncs[0];
-
-    // isConnected: true or null = connected, false = disconnected
     const isConnected = account.isConnected !== false;
-
-    // Calculate days until domain can be changed
-    const lastDomainChange = account.lastDomainChangeAt ?? account.createdAt;
-    const daysSinceLastDomainChange = Math.floor(
-      (Date.now() - lastDomainChange.getTime()) / (1000 * 60 * 60 * 24)
-    );
-    const canChangeDomain =
-      daysSinceLastDomainChange >= TRUSTPILOT_CONSTANTS.DOMAIN_CHANGE_COOLDOWN_DAYS;
-    const daysUntilDomainChange = canChangeDomain
-      ? 0
-      : TRUSTPILOT_CONSTANTS.DOMAIN_CHANGE_COOLDOWN_DAYS - daysSinceLastDomainChange;
 
     return NextResponse.json({
       connected: isConnected,
@@ -54,15 +42,15 @@ export async function GET() {
       account: {
         id: account.id,
         businessUrl: account.businessUrl,
-        businessDomain: account.businessDomain,
-        companyName: account.companyName,
+        placeId: account.sourceId,
+        companyName: account.name,
         trustScore: account.trustScore,
         totalReviews: account.totalReviews,
         profileImageUrl: account.profileImageUrl,
         lastSyncAt: account.lastSyncAt,
         reviewsStored: account._count.reviews,
-        canChangeDomain,
-        daysUntilDomainChange,
+        canChangeDomain: true, // Google has no cooldown
+        daysUntilDomainChange: 0,
         stats: {
           total: account.statsTotal,
           one: account.statsOne,
@@ -84,7 +72,7 @@ export async function GET() {
         : null,
     });
   } catch (error) {
-    console.error("Trustpilot account error:", error);
+    console.error("Google reviews account error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Internal server error" },
       { status: 500 }
@@ -93,8 +81,8 @@ export async function GET() {
 }
 
 /**
- * DELETE /api/trustpilot/account
- * Disconnect the Trustpilot account (keeps data for potential reconnection)
+ * DELETE /api/reviews/google/account
+ * Disconnect the Google Maps reviews account
  */
 export async function DELETE() {
   try {
@@ -103,18 +91,19 @@ export async function DELETE() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const account = await prisma.trustpilotAccount.findUnique({
-      where: { userId: session.user.id },
+    const account = await prisma.reviewAccount.findUnique({
+      where: {
+        userId_source: { userId: session.user.id, source: "GOOGLE" },
+      },
     });
 
     if (!account) {
       return NextResponse.json(
-        { error: "No Trustpilot account connected" },
+        { error: "No Google Maps reviews account connected" },
         { status: 404 }
       );
     }
 
-    // isConnected: true or null = connected, false = already disconnected
     if (account.isConnected === false) {
       return NextResponse.json(
         { error: "Account is already disconnected" },
@@ -122,18 +111,17 @@ export async function DELETE() {
       );
     }
 
-    // Mark as disconnected (keep data for potential reconnection)
-    await prisma.trustpilotAccount.update({
+    await prisma.reviewAccount.update({
       where: { id: account.id },
       data: { isConnected: false },
     });
 
     return NextResponse.json({
       success: true,
-      message: "Trustpilot account disconnected. Your reviews are preserved.",
+      message: "Google Maps reviews disconnected. Your reviews are preserved.",
     });
   } catch (error) {
-    console.error("Trustpilot disconnect error:", error);
+    console.error("Google reviews disconnect error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Internal server error" },
       { status: 500 }

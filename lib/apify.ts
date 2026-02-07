@@ -238,3 +238,47 @@ export function normalizeTrustpilotUrl(input: string): string {
   const domain = extractDomainFromUrl(input);
   return `https://www.trustpilot.com/review/${domain}`;
 }
+
+// ============ GOOGLE MAPS REVIEWS SCRAPER ============
+
+const GOOGLE_MAPS_ACTOR_ID = "compass~google-maps-reviews-scraper";
+
+const GOOGLE_DEFAULT_MAX_REVIEWS = 500;
+const GOOGLE_DEFAULT_LOOKBACK = "1 year";
+
+/**
+ * Start an Apify run to scrape Google Maps reviews
+ */
+export async function startGoogleMapsScrape(
+  placeIds: string[],
+  options?: {
+    maxReviews?: number;
+    reviewsStartDate?: string;
+  }
+): Promise<ApifyRunResponse> {
+  const token = getApifyToken();
+
+  const input = {
+    placeIds,
+    maxReviews: options?.maxReviews ?? GOOGLE_DEFAULT_MAX_REVIEWS,
+    reviewsStartDate: options?.reviewsStartDate ?? GOOGLE_DEFAULT_LOOKBACK,
+    personalData: true,
+    reviewsOrigin: "google",
+  };
+
+  const response = await fetch(
+    `${APIFY_BASE_URL}/acts/${GOOGLE_MAPS_ACTOR_ID}/runs?token=${token}`,
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(input),
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Apify Google API error: ${response.status} - ${error}`);
+  }
+
+  return response.json();
+}

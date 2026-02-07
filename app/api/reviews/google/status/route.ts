@@ -1,20 +1,20 @@
 import { auth } from "@/auth";
 import {
-  type ApifyDatasetItem,
   deleteApifyDataset,
   getApifyDatasetItems,
   getApifyRunStatus,
 } from "@/lib/apify";
 import { prisma } from "@/lib/prisma";
+import { createBatchChunks } from "@/lib/trustpilot/apify-mapper";
 import {
-  createBatchChunks,
-  parseReviewFromApify,
-} from "@/lib/trustpilot/apify-mapper";
+  parseGoogleReviewFromApify,
+  type GoogleReviewItem,
+} from "@/lib/reviews/google-mapper";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * GET /api/trustpilot/status
+ * GET /api/reviews/google/status
  * Get the status of the current/latest sync
  */
 export async function GET(request: NextRequest) {
@@ -24,28 +24,27 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get optional syncId from query params
     const { searchParams } = new URL(request.url);
     const syncId = searchParams.get("syncId");
 
-    // Get Trustpilot account
-    const account = await prisma.trustpilotAccount.findUnique({
-      where: { userId: session.user.id },
+    const account = await prisma.reviewAccount.findUnique({
+      where: {
+        userId_source: { userId: session.user.id, source: "GOOGLE" },
+      },
     });
 
     if (!account) {
       return NextResponse.json(
-        { error: "No Trustpilot account connected" },
+        { error: "No Google Maps reviews account connected" },
         { status: 404 }
       );
     }
 
-    // Get sync record
     const sync = syncId
-      ? await prisma.trustpilotSync.findFirst({
+      ? await prisma.reviewSync.findFirst({
           where: { id: syncId, accountId: account.id },
         })
-      : await prisma.trustpilotSync.findFirst({
+      : await prisma.reviewSync.findFirst({
           where: { accountId: account.id },
           orderBy: { startedAt: "desc" },
         });
@@ -57,17 +56,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // If sync is still running, check Apify status
-    if (
-      sync.apifyRunId &&
-      ["PENDING", "RUNNING"].includes(sync.status)
-    ) {
+    if (sync.apifyRunId && ["PENDING", "RUNNING"].includes(sync.status)) {
       const apifyStatus = await getApifyRunStatus(sync.apifyRunId);
       const newStatus = apifyStatus.data.status;
 
-      // If Apify job finished, process results
       if (newStatus === "SUCCEEDED" && sync.apifyDatasetId) {
-        await processApifyResults(sync.id, sync.apifyDatasetId, account.id);
+        await processGoogleResults(sync.id, sync.apifyDatasetId, account.id);
 
         return NextResponse.json({
           syncId: sync.id,
@@ -77,7 +71,7 @@ export async function GET(request: NextRequest) {
       }
 
       if (["FAILED", "ABORTED", "TIMED-OUT"].includes(newStatus)) {
-        await prisma.trustpilotSync.update({
+        await prisma.reviewSync.update({
           where: { id: sync.id },
           data: {
             status: "FAILED",
@@ -93,7 +87,6 @@ export async function GET(request: NextRequest) {
         });
       }
 
-      // Still running
       return NextResponse.json({
         syncId: sync.id,
         status: "RUNNING",
@@ -101,7 +94,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    // Return current sync status
     return NextResponse.json({
       syncId: sync.id,
       status: sync.status,
@@ -111,7 +103,7 @@ export async function GET(request: NextRequest) {
       finishedAt: sync.finishedAt,
     });
   } catch (error) {
-    console.error("Trustpilot status error:", error);
+    console.error("Google reviews status error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Internal server error" },
       { status: 500 }
@@ -119,67 +111,53 @@ export async function GET(request: NextRequest) {
   }
 }
 
-/**
- * Process Apify results and store in database
- */
-async function processApifyResults(
+async function processGoogleResults(
   syncId: string,
   datasetId: string,
   accountId: string
 ) {
   try {
-    // Fetch results from Apify
-    const items = await getApifyDatasetItems(datasetId);
+    const items = await getApifyDatasetItems(datasetId) as unknown[];
+    const reviews = items.filter(
+      (item): item is GoogleReviewItem =>
+        !!item &&
+        typeof item === "object" &&
+        "reviewId" in item &&
+        "stars" in item
+    );
 
-    // Extract company info and stats from first item (if available)
-    const firstItem = items[0] as ApifyDatasetItem | undefined;
-    const company = firstItem?.company;
-    const stats = firstItem?.stats;
-
-    // Update account with company info and stats
-    if (company || stats) {
-      await prisma.trustpilotAccount.update({
+    const firstItem = reviews[0];
+    if (firstItem) {
+      await prisma.reviewAccount.update({
         where: { id: accountId },
         data: {
-          companyName: company?.displayName,
-          trustScore: company?.trustScore,
-          totalReviews: company?.numberOfReviews,
-          profileImageUrl: company?.profileImageUrl,
-          statsTotal: stats?.total,
-          statsOne: stats?.one,
-          statsTwo: stats?.two,
-          statsThree: stats?.three,
-          statsFour: stats?.four,
-          statsFive: stats?.five,
+          name: firstItem.title ?? null,
+          trustScore: firstItem.totalScore ?? null,
+          totalReviews: firstItem.reviewsCount ?? null,
+          profileImageUrl: firstItem.imageUrl ?? null,
+          businessUrl: firstItem.url ?? undefined,
           lastSyncAt: new Date(),
         },
       });
     }
 
-    // Process reviews
-    const reviews = items.filter(
-      (item): item is ApifyDatasetItem & { id: string; rating: number } =>
-        !!item.id && typeof item.rating === "number"
-    );
-
-    // Batch upsert reviews (parallel for performance)
     const chunks = createBatchChunks(reviews);
     let reviewsCount = 0;
 
     for (const chunk of chunks) {
       const upserts = chunk.map((review) => {
-        const data = parseReviewFromApify(review);
-        return prisma.trustpilotReview.upsert({
+        const data = parseGoogleReviewFromApify(review);
+        return prisma.review.upsert({
           where: {
-            accountId_trustpilotId: {
+            accountId_sourceId: {
               accountId,
-              trustpilotId: review.id,
+              sourceId: review.reviewId,
             },
           },
           create: {
             accountId,
+            source: "GOOGLE",
             ...data,
-            trustpilotId: review.id,
           },
           update: data,
         });
@@ -188,8 +166,7 @@ async function processApifyResults(
       reviewsCount += chunk.length;
     }
 
-    // Update sync record
-    await prisma.trustpilotSync.update({
+    await prisma.reviewSync.update({
       where: { id: syncId },
       data: {
         status: "SUCCEEDED",
@@ -198,16 +175,15 @@ async function processApifyResults(
       },
     });
 
-    // Delete Apify dataset to save storage costs
     await deleteApifyDataset(datasetId);
 
     console.log(
-      `[Trustpilot] Sync ${syncId} completed: ${reviewsCount} reviews processed`
+      `[Google] Sync ${syncId} completed: ${reviewsCount} reviews processed`
     );
   } catch (error) {
-    console.error("Error processing Apify results:", error);
+    console.error("Error processing Google results:", error);
 
-    await prisma.trustpilotSync.update({
+    await prisma.reviewSync.update({
       where: { id: syncId },
       data: {
         status: "FAILED",

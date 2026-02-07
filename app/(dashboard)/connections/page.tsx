@@ -1,6 +1,6 @@
 "use client"
 import ConnectFiveUp from "@/components/features/connections/connect-fiveup";
-import ConnectGoogleBusiness from "@/components/features/connections/connect-google-business";
+import ConnectGoogleMaps from "@/components/features/connections/connect-google-maps";
 import ConnectMail from "@/components/features/connections/connect-mail";
 import ShopifyIntegrationCard from "@/components/features/connections/connect-shopify";
 import ConnectTrustpilot from "@/components/features/connections/connect-trustpilot";
@@ -19,7 +19,8 @@ export default function Page() {
   const fiveUpRef = useRef<HTMLDivElement>(null);
   const whatsappRef = useRef<HTMLDivElement>(null);
   const mailRef = useRef<HTMLDivElement>(null);
-  const googleBusinessRef = useRef<HTMLDivElement>(null);
+  // const googleBusinessRef = useRef<HTMLDivElement>(null);
+  const googleMapsRef = useRef<HTMLDivElement>(null);
   const trustpilotRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -61,8 +62,11 @@ export default function Page() {
             <div ref={trustpilotRef} className="relative z-10 w-full max-w-[300px]">
               <ConnectTrustpilot />
             </div>
-            <div ref={googleBusinessRef} className="relative z-10 w-full max-w-[300px]">
+            {/* <div ref={googleBusinessRef} className="relative z-10 w-full max-w-[300px]">
               <ConnectGoogleBusiness />
+            </div> */}
+            <div ref={googleMapsRef} className="relative z-10 w-full max-w-[300px]">
+              <ConnectGoogleMaps />
             </div>
           </div>
           <AnimatedBeam
@@ -109,7 +113,7 @@ export default function Page() {
             staggerInterval={5}
             containerRef={containerRef}
             fromRef={whatsappRef}
-            toRef={googleBusinessRef}
+            toRef={googleMapsRef}
             pathWidth={3}
           />
           <AnimatedBeam
@@ -118,7 +122,7 @@ export default function Page() {
             staggerInterval={5}
             containerRef={containerRef}
             fromRef={mailRef}
-            toRef={googleBusinessRef}
+            toRef={googleMapsRef}
             disabled
             pathWidth={3}
           />
