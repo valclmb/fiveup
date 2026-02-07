@@ -1,6 +1,6 @@
 import { startTrustpilotScrape } from "@/lib/apify";
 import { prisma } from "@/lib/prisma";
-import { TRUSTPILOT_CONSTANTS } from "@/lib/trustpilot/constants";
+import { TRUSTPILOT_CONSTANTS } from "@/lib/reviews/trustpilot/constants";
 import { NextRequest, NextResponse } from "next/server";
 
 /**

@@ -5,11 +5,11 @@ import {
   getApifyRunStatus,
 } from "@/lib/apify";
 import { prisma } from "@/lib/prisma";
-import { createBatchChunks } from "@/lib/trustpilot/apify-mapper";
+import { createBatchChunks } from "@/lib/reviews/utils";
 import {
   parseGoogleReviewFromApify,
   type GoogleReviewItem,
-} from "@/lib/reviews/google-mapper";
+} from "@/lib/reviews/google/apify-mapper";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 

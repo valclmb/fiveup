@@ -1,3 +1,0 @@
-export const GOOGLE_REVIEWS_CONSTANTS = {
-  SYNC_POLL_INTERVAL_MS: 6000,
-} as const;

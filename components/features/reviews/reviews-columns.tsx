@@ -15,9 +15,9 @@ import {
   ArrowUpDown,
   CheckCircle,
   ChevronDown,
-  ExternalLink,
+  Eye,
   PenLine,
-  Star,
+  Star
 } from "lucide-react";
 import Image from "next/image";
 
@@ -283,7 +283,7 @@ export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
             rel="noopener noreferrer"
             className="flex items-center gap-1.5"
           >
-            <ExternalLink className="size-4" />
+            <Eye className="size-4" />
             View review
           </a>
         </Button>

@@ -3,8 +3,6 @@
  */
 import type { ApifyDatasetItem } from "@/lib/apify";
 
-const BATCH_SIZE = 50;
-
 export function parseTrustpilotReviewFromApify(
   item: ApifyDatasetItem & { id: string; rating: number }
 ) {
@@ -28,15 +26,4 @@ export function parseTrustpilotReviewFromApify(
       ? new Date(item.reply.publishedDate)
       : null,
   };
-}
-
-/** @deprecated Use parseTrustpilotReviewFromApify */
-export const parseReviewFromApify = parseTrustpilotReviewFromApify;
-
-export function createBatchChunks<T>(array: T[], size: number = BATCH_SIZE): T[][] {
-  const chunks: T[][] = [];
-  for (let i = 0; i < array.length; i += size) {
-    chunks.push(array.slice(i, i + size));
-  }
-  return chunks;
 }

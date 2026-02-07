@@ -1,5 +1,5 @@
 /**
- * Shared Trustpilot API types
+ * Trustpilot API types
  */
 
 export interface TrustpilotAccountApi {

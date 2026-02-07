@@ -29,7 +29,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Spinner } from "@/components/ui/spinner";
 import Typography from "@/components/ui/typography";
 import { getAll } from "@/lib/fetch";
-import { GOOGLE_REVIEWS_CONSTANTS } from "@/lib/reviews/google-constants";
+import { GOOGLE_CONSTANTS } from "@/lib/reviews/google/constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MapPin, Star, Unplug } from "lucide-react";
 import Image from "next/image";
@@ -123,7 +123,7 @@ export function ConnectGoogleMaps() {
 
     const interval = setInterval(
       pollStatus,
-      GOOGLE_REVIEWS_CONSTANTS.SYNC_POLL_INTERVAL_MS
+      GOOGLE_CONSTANTS.SYNC_POLL_INTERVAL_MS
     );
     return () => clearInterval(interval);
   }, [isPolling, syncId, pollStatus]);

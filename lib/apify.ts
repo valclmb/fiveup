@@ -2,7 +2,7 @@
  * Apify API client for Trustpilot scraping
  */
 
-import { TRUSTPILOT_CONSTANTS } from "@/lib/trustpilot/constants";
+import { TRUSTPILOT_CONSTANTS } from "@/lib/reviews/trustpilot/constants";
 
 const APIFY_BASE_URL = "https://api.apify.com/v2";
 const APIFY_ACTOR_ID = "memo23~trustpilot-scraper-ppe";

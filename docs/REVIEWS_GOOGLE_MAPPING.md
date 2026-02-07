@@ -37,5 +37,5 @@
 
 1. Créer une route `/api/reviews/google/connect` pour définir les placeIds.
 2. Intégrer le scraper Apify `compass~google-maps-reviews-scraper`.
-3. Implémenter le mapping avec `parseGoogleReviewFromApify` dans `lib/reviews/google-mapper.ts`.
+3. Implémenter le mapping avec `parseGoogleReviewFromApify` dans `lib/reviews/google/apify-mapper.ts`.
 4. Adapter la page reviews pour afficher Trustpilot et Google (filtre par source).

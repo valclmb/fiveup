@@ -6,10 +6,8 @@ import {
   getApifyRunStatus,
 } from "@/lib/apify";
 import { prisma } from "@/lib/prisma";
-import {
-  createBatchChunks,
-  parseTrustpilotReviewFromApify,
-} from "@/lib/trustpilot/apify-mapper";
+import { createBatchChunks } from "@/lib/reviews/utils";
+import { parseTrustpilotReviewFromApify } from "@/lib/reviews/trustpilot/apify-mapper";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 

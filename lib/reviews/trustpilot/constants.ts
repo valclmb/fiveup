@@ -1,5 +1,5 @@
 /**
- * Shared Trustpilot configuration constants
+ * Trustpilot configuration constants
  */
 
 export const TRUSTPILOT_CONSTANTS = {

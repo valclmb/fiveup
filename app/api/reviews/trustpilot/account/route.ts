@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { TRUSTPILOT_CONSTANTS } from "@/lib/trustpilot/constants";
+import { TRUSTPILOT_CONSTANTS } from "@/lib/reviews/trustpilot/constants";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
