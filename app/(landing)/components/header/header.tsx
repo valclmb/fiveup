@@ -8,22 +8,21 @@ import { Nav } from './header-nav';
 
 const Header = async () => {
   return (
-    <header className="sticky top-0 z-40 pt-1 max-w-7xl w-full mx-auto">
+    <header className="sticky top-0 z-100 pt-1 max-w-7xl w-full mx-auto">
       <AnimatedHeaderWrapper
         className={cn(
-          "origin-top border-[0.1px] m-1 border-black/40 p-4 bg-black/70 backdrop-blur-2xl flex items-center justify-between rounded-2xl",
+          "origin-top m-2  p-4 border-[0.1px] border-card  bg-card/80 backdrop-blur-2xl flex items-center justify-between rounded-2xl",
           "transition-colors duration-300",
         )}
       >
         <div className="flex items-center">
-          <Link href="/">
+          <Link href="/" className='flex items-center gap-1 ml-1'>
             <Image
               src="/logos/logo-white.svg"
               alt="Logo"
-              width={110}
+              width={80}
               height={29}
               priority
-              className='translate-y-0.5 translate-x-1'
             />
           </Link>
         </div>

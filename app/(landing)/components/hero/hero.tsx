@@ -17,7 +17,7 @@ const Hero = () => {
         <AnimatedHeroItem delay={0.3}>
           <Typography variant="h1" className="text-center">
             Turn every customer
-            <div className="inline ml-2 xs:ml-0 sm:flex items-center justify-center gap-2">into a <span className="text-primary">5 </span><StarIcon size={42} className="inline xs:block xs:-translate-y-1 size-5 md:size-auto" /> <span className="text-primary">review</span></div>
+            <div className="inline ml-2 xs:ml-0 sm:flex items-center justify-center gap-2">into a <span className="text-primary">5 </span><StarIcon size={42} color="var(--primary)" className="inline xs:block xs:-translate-y-1 size-5 md:size-auto" /> <span className="text-primary">review</span></div>
           </Typography>
         </AnimatedHeroItem>
 
@@ -42,7 +42,7 @@ const Hero = () => {
 
         <Typography variant="p" className="text-sm sm:text-base my-4 md:mt-8 flex gap-2 items-center">
           <AnimatedHeroSpan delay={1} variant="scaleIn">
-            <StarIcon className="text-background bg-primary p-1 rounded-full" size={24} />
+            <StarIcon color="var(--background)" className="text-background bg-primary p-1 rounded-full" size={24} />
           </AnimatedHeroSpan>
           <AnimatedHeroSpan delay={1.1}>
             Rated <span className="font-bold"> 4.9/5</span> from over <span className="font-bold">600</span> reviews.

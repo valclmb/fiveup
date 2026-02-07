@@ -68,34 +68,9 @@ export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
             className="object-contain"
           />
         ) : (
-          <StarIcon size={24} color="#00b67a" />
+          <StarIcon size={24} color="var(--primary)" />
         )}
       </div>)
-    },
-  },
-  {
-    accessorKey: "authorName",
-    header: "Customer",
-    cell: ({ row }) => {
-      const name: string = String(row.getValue("authorName") ?? "Anonymous");
-      const imageUrl = row.original.authorImageUrl;
-      const initials = row.original.authorName
-        ? String(row.original.authorName)
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .slice(0, 2)
-          .toUpperCase()
-        : "?";
-      return (
-        <div className="flex items-center gap-2">
-          <Avatar className="size-6">
-            {imageUrl ? <AvatarImage src={imageUrl} alt={String(name)} /> : null}
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
-          <span className="font-medium">{name}</span>
-        </div>
-      );
     },
   },
   {
@@ -127,7 +102,7 @@ export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex items-center gap-1 text-md font-bold ">
+      <div className="flex items-center  justify-center gap-1 text-md font-bold ">
         {row.getValue("rating")}
         <StarIcon
           size={20}
@@ -137,6 +112,31 @@ export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
 
       </div>
     ),
+  },
+  {
+    accessorKey: "authorName",
+    header: "Customer",
+    cell: ({ row }) => {
+      const name: string = String(row.getValue("authorName") ?? "Anonymous");
+      const imageUrl = row.original.authorImageUrl;
+      const initials = row.original.authorName
+        ? String(row.original.authorName)
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .slice(0, 2)
+          .toUpperCase()
+        : "?";
+      return (
+        <div className="flex items-center gap-2">
+          <Avatar className="size-6">
+            {imageUrl ? <AvatarImage src={imageUrl} alt={String(name)} /> : null}
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+          <span className="font-medium">{name}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "text",
