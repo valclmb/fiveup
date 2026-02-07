@@ -4,8 +4,9 @@ import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * GET /api/reviews/google/reviews
- * Get stored Google Maps reviews for the current user
+ * GET /api/reviews
+ * Get all reviews for the current user (Trustpilot + Google)
+ * Query params: page, limit, source (trustpilot|google), rating, status, country, search, sortBy, sortOrder
  */
 export async function GET(request: NextRequest) {
   try {
@@ -14,22 +15,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const account = await prisma.reviewAccount.findUnique({
-      where: {
-        userId_source: { userId: session.user.id, source: "GOOGLE" },
-      },
-    });
-
-    if (!account) {
-      return NextResponse.json(
-        { error: "No Google Maps reviews account connected" },
-        { status: 404 }
-      );
-    }
-
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") ?? "1", 10);
     const limit = Math.min(parseInt(searchParams.get("limit") ?? "20", 10), 100);
+    const sourceParam = searchParams.get("source"); // "trustpilot" | "google"
     const rating = searchParams.get("rating");
     const status = searchParams.get("status");
     const countryParam = searchParams.get("country");
@@ -41,8 +30,45 @@ export async function GET(request: NextRequest) {
         : "publishedAt";
     const sortOrder = searchParams.get("sortOrder") === "asc" ? "asc" : "desc";
 
+    // Get connected accounts
+    const accountsWhere: { userId: string; isConnected?: object } = {
+      userId: session.user.id,
+    };
+    accountsWhere.isConnected = { not: false };
+
+    const accounts = await prisma.reviewAccount.findMany({
+      where: accountsWhere,
+      select: { id: true, source: true },
+    });
+
+    if (accounts.length === 0) {
+      return NextResponse.json(
+        { error: "No review account connected" },
+        { status: 404 }
+      );
+    }
+
+    // Filter by source if specified
+    let accountIds = accounts.map((a) => a.id);
+    if (sourceParam === "trustpilot") {
+      accountIds = accounts
+        .filter((a) => a.source === "TRUSTPILOT")
+        .map((a) => a.id);
+    } else if (sourceParam === "google") {
+      accountIds = accounts
+        .filter((a) => a.source === "GOOGLE")
+        .map((a) => a.id);
+    }
+
+    if (accountIds.length === 0) {
+      return NextResponse.json(
+        { error: `No ${sourceParam} account connected` },
+        { status: 404 }
+      );
+    }
+
     type ReviewWhere = {
-      accountId: string;
+      accountId: { in: string[] };
       rating?: number;
       authorCountry?: string | { in: string[] };
       replyText?: { not: null } | null;
@@ -53,7 +79,9 @@ export async function GET(request: NextRequest) {
       >;
     };
 
-    const where: ReviewWhere = { accountId: account.id };
+    const where: ReviewWhere = {
+      accountId: { in: accountIds },
+    };
 
     if (rating) {
       const ratingNum = parseInt(rating, 10);
@@ -79,13 +107,39 @@ export async function GET(request: NextRequest) {
       ];
     }
 
-    const [totalCount, countriesRaw] = await Promise.all([
+    const [totalCount, countriesRaw, reviewsRaw] = await Promise.all([
       prisma.review.count({ where }),
       prisma.review.findMany({
-        where: { accountId: account.id },
+        where: { accountId: { in: accountIds } },
         select: { authorCountry: true },
         distinct: ["authorCountry"],
         orderBy: { authorCountry: "asc" },
+      }),
+      prisma.review.findMany({
+        where,
+        select: {
+          id: true,
+          source: true,
+          sourceId: true,
+          rating: true,
+          title: true,
+          text: true,
+          language: true,
+          authorName: true,
+          authorImageUrl: true,
+          authorCountry: true,
+          isVerified: true,
+          experiencedAt: true,
+          publishedAt: true,
+          replyText: true,
+          replyPublishedAt: true,
+          reviewUrl: true,
+        },
+        orderBy: {
+          [sortBy === "rating" ? "rating" : "publishedAt"]: sortOrder,
+        },
+        skip: (page - 1) * limit,
+        take: limit,
       }),
     ]);
 
@@ -93,49 +147,16 @@ export async function GET(request: NextRequest) {
       .map((c) => c.authorCountry)
       .filter((c): c is string => !!c);
 
-    const reviewsRaw = await prisma.review.findMany({
-      where,
-      select: {
-        id: true,
-        sourceId: true,
-        rating: true,
-        title: true,
-        text: true,
-        language: true,
-        authorName: true,
-        authorImageUrl: true,
-        authorCountry: true,
-        isVerified: true,
-        experiencedAt: true,
-        publishedAt: true,
-        replyText: true,
-        replyPublishedAt: true,
-        reviewUrl: true,
-      },
-      orderBy: {
-        [sortBy === "rating" ? "rating" : "publishedAt"]: sortOrder,
-      },
-      skip: (page - 1) * limit,
-      take: limit,
-    });
-
     const reviews = reviewsRaw.map((r) => ({
       ...r,
+      source: r.source as "TRUSTPILOT" | "GOOGLE",
       trustpilotId: r.sourceId,
-      reviewUrl: r.reviewUrl ?? null,
+      reviewUrl:
+        r.reviewUrl ??
+        (r.source === "TRUSTPILOT"
+          ? `https://www.trustpilot.com/reviews/${r.sourceId}`
+          : null),
     }));
-
-    const stats = {
-      total: account.statsTotal ?? 0,
-      trustScore: account.trustScore ?? null,
-      distribution: {
-        1: account.statsOne ?? 0,
-        2: account.statsTwo ?? 0,
-        3: account.statsThree ?? 0,
-        4: account.statsFour ?? 0,
-        5: account.statsFive ?? 0,
-      } as Record<number, number>,
-    };
 
     return NextResponse.json({
       reviews,
@@ -145,11 +166,10 @@ export async function GET(request: NextRequest) {
         totalCount,
         totalPages: Math.ceil(totalCount / limit),
       },
-      stats,
       countries,
     });
   } catch (error) {
-    console.error("Google reviews error:", error);
+    console.error("Reviews error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Internal server error" },
       { status: 500 }

@@ -6,121 +6,186 @@ import { cn } from "@/lib/utils";
 import { Star } from "lucide-react";
 import Image from "next/image";
 
-export interface ReviewsStats {
+export interface SourceStats {
   total: number;
   trustScore: number | null;
   distribution: Record<number, number>;
 }
 
-const DEFAULT_STATS: ReviewsStats = {
-  total: 0,
-  trustScore: null,
-  distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+export interface ReviewsStatsSectionProps {
+  /** Stats per source - only include sources that are connected */
+  statsBySource: {
+    trustpilot?: SourceStats;
+    google?: SourceStats;
+  };
+}
+
+const DEFAULT_DISTRIBUTION: Record<number, number> = {
+  1: 0,
+  2: 0,
+  3: 0,
+  4: 0,
+  5: 0,
 };
 
-function StarRating({ rating }: { rating: number }) {
+function StarRating({
+  rating,
+  starColor = "#00b67a",
+}: {
+  rating: number;
+  starColor?: string;
+}) {
   return (
     <div className="flex items-center gap-0.5">
       {[1, 2, 3, 4, 5].map((star) => (
         <Star
           key={star}
-          className={cn(
-            "size-4",
-            star <= rating
-              ? "fill-[#00b67a] text-[#00b67a]"
-              : "fill-muted text-muted"
-          )}
+          className={cn("size-4", star <= rating ? "fill-current" : "fill-muted text-muted")}
+          style={star <= rating ? { color: starColor } : undefined}
         />
       ))}
     </div>
   );
 }
 
-export function ReviewsStatsSection({ stats }: { stats?: ReviewsStats | null }) {
-  const safeStats = stats ?? DEFAULT_STATS;
-  const total = safeStats.total ?? 0;
-  const distribution = safeStats.distribution ?? DEFAULT_STATS.distribution;
+function DistributionBar({
+  distribution,
+  total,
+  barColor = "#00b67a",
+}: {
+  distribution: Record<number, number>;
+  total: number;
+  barColor?: string;
+}) {
+  return (
+    <div className="space-y-2">
+      {[5, 4, 3, 2, 1].map((rating) => {
+        const count = distribution[rating] ?? 0;
+        const percentage = total > 0 ? (count / total) * 100 : 0;
+        return (
+          <div key={rating} className="flex items-center gap-2 text-sm">
+            <span className="w-4 text-muted-foreground">{rating}</span>
+            <Star className="size-3 fill-current" style={{ color: barColor }} />
+            <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all"
+                style={{ width: `${percentage}%`, backgroundColor: barColor }}
+              />
+            </div>
+            <span className="w-8 text-right text-muted-foreground">{count}</span>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
 
-  // Use Trustpilot's trustScore when available, else calculate from distribution
-  const avgRating =
-    safeStats.trustScore != null
-      ? safeStats.trustScore
-      : total > 0
-        ? Object.entries(distribution).reduce(
-          (acc, [rating, count]) => acc + Number(rating) * count,
-          0
-        ) / total
+export function ReviewsStatsSection({ statsBySource }: ReviewsStatsSectionProps) {
+  const hasTrustpilot = !!statsBySource.trustpilot;
+  const hasGoogle = !!statsBySource.google;
+
+  const trustpilotStats = statsBySource.trustpilot ?? {
+    total: 0,
+    trustScore: null,
+    distribution: { ...DEFAULT_DISTRIBUTION },
+  };
+  const googleStats = statsBySource.google ?? {
+    total: 0,
+    trustScore: null,
+    distribution: { ...DEFAULT_DISTRIBUTION },
+  };
+
+  const avgFromStats = (s: SourceStats) =>
+    s.trustScore != null
+      ? s.trustScore
+      : s.total > 0
+        ? Object.entries(s.distribution ?? {}).reduce(
+            (acc, [rating, count]) => acc + Number(rating) * count,
+            0
+          ) / s.total
         : 0;
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Average rating</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <span className="text-3xl font-bold">{avgRating.toFixed(1)}</span>
-            <StarRating rating={Math.round(avgRating)} />
-          </div>
-          <Typography variant="description" className="mt-1">
-            {total} total reviews
-          </Typography>
-        </CardContent>
-      </Card>
+      {hasTrustpilot && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Image
+                src="/images/trustpilot-logo.svg"
+                alt="Trustpilot"
+                width={70}
+                height={18}
+                className="hidden object-contain dark:block"
+              />
+              <Image
+                src="/images/trustpilot-logo-dark.svg"
+                alt="Trustpilot"
+                width={70}
+                height={18}
+                className="object-contain dark:hidden"
+              />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <span className="text-3xl font-bold">
+                {avgFromStats(trustpilotStats).toFixed(1)}
+              </span>
+              <StarRating rating={Math.round(avgFromStats(trustpilotStats))} starColor="#00b67a" />
+            </div>
+            <Typography variant="description" className="mt-1">
+              {trustpilotStats.total} reviews
+            </Typography>
+          </CardContent>
+        </Card>
+      )}
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Distribution</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {[5, 4, 3, 2, 1].map((rating) => {
-              const count = distribution[rating] ?? 0;
-              const percentage = total > 0 ? (count / total) * 100 : 0;
-              return (
-                <div key={rating} className="flex items-center gap-2 text-sm">
-                  <span className="w-4 text-muted-foreground">{rating}</span>
-                  <Star className="size-3 fill-[#00b67a] text-[#00b67a]" />
-                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-[#00b67a] rounded-full transition-all"
-                      style={{ width: `${percentage}%` }}
-                    />
-                  </div>
-                  <span className="w-8 text-right text-muted-foreground">
-                    {count}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
+      {hasGoogle && (
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium flex items-center gap-2">
+              <Image
+                src="/images/google-logo.svg"
+                alt="Google Maps"
+                width={70}
+                height={18}
+                className="object-contain"
+              />
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center gap-2">
+              <span className="text-3xl font-bold">
+                {avgFromStats(googleStats).toFixed(1)}
+              </span>
+              <StarRating rating={Math.round(avgFromStats(googleStats))} starColor="#4285f4" />
+            </div>
+            <Typography variant="description" className="mt-1">
+              {googleStats.total} reviews
+            </Typography>
+          </CardContent>
+        </Card>
+      )}
 
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Source</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <Image
-              src="/images/trustpilot-logo.svg"
-              alt="Trustpilot"
-              width={80}
-              height={20}
-              className="hidden object-contain dark:block"
+      {/* Distribution card - Trustpilot only (Google doesn't provide distribution data) */}
+      {hasTrustpilot && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium">Distribution</CardTitle>
+            <Typography variant="description" className="text-xs">
+              Trustpilot rating distribution
+            </Typography>
+          </CardHeader>
+          <CardContent>
+            <DistributionBar
+              distribution={trustpilotStats.distribution ?? DEFAULT_DISTRIBUTION}
+              total={trustpilotStats.total}
+              barColor="#00b67a"
             />
-            <Image
-              src="/images/trustpilot-logo-dark.svg"
-              alt="Trustpilot"
-              width={80}
-              height={20}
-              className=" object-contain dark:hidden"
-            />
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

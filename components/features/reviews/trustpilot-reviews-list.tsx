@@ -2,9 +2,9 @@
 
 import { ReviewsList } from "./reviews-list";
 
-/** @deprecated Use ReviewsList with source="trustpilot" instead */
+/** @deprecated Use ReviewsList directly - shows unified reviews with optional platform filter */
 export function TrustpilotReviewsList() {
-  return <ReviewsList source="trustpilot" />;
+  return <ReviewsList hasTrustpilot={true} hasGoogle={false} />;
 }
 
 export default TrustpilotReviewsList;

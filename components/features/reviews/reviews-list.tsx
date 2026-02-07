@@ -34,27 +34,14 @@ import {
   reviewsColumns,
   type TrustpilotReview,
 } from "./reviews-columns";
-import { ReviewsStatsSection } from "./reviews-stats-section";
 
-export type ReviewSource = "trustpilot" | "google";
+export type ReviewSourceFilter = "all" | "trustpilot" | "google";
 
-const SOURCE_CONFIG: Record<
-  ReviewSource,
-  { apiPath: string; queryKey: string; label: string; noAccountMessage: string }
-> = {
-  trustpilot: {
-    apiPath: "reviews/trustpilot/reviews",
-    queryKey: "trustpilot-reviews",
-    label: "Trustpilot",
-    noAccountMessage: "No Trustpilot account connected",
-  },
-  google: {
-    apiPath: "reviews/google/reviews",
-    queryKey: "google-reviews",
-    label: "Google Maps",
-    noAccountMessage: "No Google Maps reviews account connected",
-  },
-};
+const SOURCE_OPTIONS: { value: ReviewSourceFilter; label: string }[] = [
+  { value: "all", label: "All platforms" },
+  { value: "trustpilot", label: "Trustpilot" },
+  { value: "google", label: "Google Maps" },
+];
 
 /** Returns page numbers and ellipsis to display (e.g. [1, "ellipsis", 4, 5, 6, "ellipsis", 10]) */
 function getPaginationItems(page: number, totalPages: number): (number | "ellipsis")[] {
@@ -81,21 +68,18 @@ interface ReviewsResponse {
     totalCount: number;
     totalPages: number;
   };
-  stats: {
-    total: number;
-    trustScore: number | null;
-    distribution: Record<number, number>;
-  };
   countries: string[];
 }
 
 interface ReviewsListProps {
-  source: ReviewSource;
+  /** Optional - when provided, shows source filter only if user has multiple platforms */
+  hasTrustpilot?: boolean;
+  hasGoogle?: boolean;
 }
 
-export function ReviewsList({ source }: ReviewsListProps) {
-  const config = SOURCE_CONFIG[source];
+export function ReviewsList({ hasTrustpilot, hasGoogle }: ReviewsListProps) {
   const [page, setPage] = useState(1);
+  const [sourceFilter, setSourceFilter] = useState<ReviewSourceFilter>("all");
   const [ratingFilter, setRatingFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [countryFilter, setCountryFilter] = useState<string[]>([]);
@@ -103,6 +87,8 @@ export function ReviewsList({ source }: ReviewsListProps) {
   const [search, setSearch] = useState("");
   const [searchDebounced, setSearchDebounced] = useState("");
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showSourceFilter = (hasTrustpilot ?? false) && (hasGoogle ?? false);
 
   useEffect(() => {
     searchTimeoutRef.current = setTimeout(() => {
@@ -116,7 +102,8 @@ export function ReviewsList({ source }: ReviewsListProps) {
 
   const { data, isLoading, isFetching, isError, error } = useQuery({
     queryKey: [
-      config.queryKey,
+      "reviews",
+      sourceFilter,
       page,
       ratingFilter,
       statusFilter,
@@ -130,6 +117,7 @@ export function ReviewsList({ source }: ReviewsListProps) {
         limit: "15",
         sortOrder,
       });
+      if (sourceFilter !== "all") params.set("source", sourceFilter);
       if (ratingFilter !== "all") params.set("rating", ratingFilter);
       if (statusFilter === "answered") params.set("status", "answered");
       if (statusFilter === "pending") params.set("status", "pending");
@@ -141,7 +129,7 @@ export function ReviewsList({ source }: ReviewsListProps) {
           params.set("country", alpha2Codes.join(","));
       }
       if (searchDebounced) params.set("search", searchDebounced);
-      return getAll<ReviewsResponse>(`${config.apiPath}?${params.toString()}`);
+      return getAll<ReviewsResponse>(`reviews?${params.toString()}`);
     },
     placeholderData: keepPreviousData,
   });
@@ -165,14 +153,16 @@ export function ReviewsList({ source }: ReviewsListProps) {
         <Card className="border-destructive">
           <CardContent className="py-12 text-center">
             {error instanceof Error &&
-            error.message.includes(config.noAccountMessage) ? (
+            (error.message.includes("No review account") ||
+              error.message.includes("No Trustpilot account") ||
+              error.message.includes("No Google Maps")) ? (
               <>
                 <Typography variant="h3" className="mb-2">
-                  {config.noAccountMessage}
+                  No review account connected
                 </Typography>
                 <Typography variant="description" className="mb-4">
-                  Connect your {config.label} account in the Connections page to
-                  import your reviews.
+                  Connect your Trustpilot or Google Maps account in the
+                  Connections page to import your reviews.
                 </Typography>
                 <Button asChild>
                   <a href="/connections">Go to Connections</a>
@@ -192,7 +182,7 @@ export function ReviewsList({ source }: ReviewsListProps) {
           const hasNoData = !data.reviews?.length;
           return (
             <>
-              <ReviewsStatsSection stats={data.stats} />
+              {/* Stats are rendered by the parent page via /api/reviews/stats */}
 
               <Card>
                 <CardContent className="flex flex-col gap-4">
@@ -251,6 +241,27 @@ export function ReviewsList({ source }: ReviewsListProps) {
                         </SelectContent>
                       </Select>
 
+                      {showSourceFilter && (
+                        <Select
+                          value={sourceFilter}
+                          onValueChange={(v) => {
+                            setSourceFilter(v as ReviewSourceFilter);
+                            setPage(1);
+                          }}
+                        >
+                          <SelectTrigger className="w-[140px]" disabled={hasNoData}>
+                            <SelectValue placeholder="Platform" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {SOURCE_OPTIONS.map((opt) => (
+                              <SelectItem key={opt.value} value={opt.value}>
+                                {opt.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+
                       <CountryDropdown
                         placeholder="Select countries"
                         defaultValue={countryFilter}
@@ -290,7 +301,7 @@ export function ReviewsList({ source }: ReviewsListProps) {
                           ))}
                         </div>
                       </div>
-                      {data.pagination.totalPages > 1 && (
+                      {data.pagination && data.pagination.totalPages > 1 && (
                         <Pagination className="justify-end">
                           <PaginationContent>
                             <PaginationItem>
@@ -363,7 +374,7 @@ export function ReviewsList({ source }: ReviewsListProps) {
                         </Pagination>
                       )}
                     </>
-                  ) : !data.reviews || data.reviews.length === 0 ? (
+                  ) : !data.reviews?.length ? (
                     <Card className="border-dashed">
                       <CardContent className="flex flex-col items-center justify-center py-12">
                         <Typography variant="h3" className="mb-2">
@@ -372,12 +383,14 @@ export function ReviewsList({ source }: ReviewsListProps) {
                         <Typography variant="description">
                           {ratingFilter !== "all" ||
                           statusFilter !== "all" ||
+                          sourceFilter !== "all" ||
                           countryFilter.length > 0
                             ? "No reviews match your filters."
-                            : `Your ${config.label} reviews will appear here once synced.`}
+                            : "Your reviews will appear here once synced."}
                         </Typography>
                         {ratingFilter === "all" &&
                           statusFilter === "all" &&
+                          sourceFilter === "all" &&
                           countryFilter.length === 0 && (
                             <Button asChild className="mt-4">
                               <a href="/connections">Go to Connections</a>
@@ -393,7 +406,7 @@ export function ReviewsList({ source }: ReviewsListProps) {
                         disablePagination
                       />
 
-                      {data.pagination.totalPages > 1 && (
+                      {data.pagination && data.pagination.totalPages > 1 && (
                         <Pagination className="justify-end">
                           <PaginationContent>
                             <PaginationItem>

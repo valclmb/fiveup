@@ -1,79 +1,52 @@
 "use client";
 
+import { ReviewsList } from "@/components/features/reviews/reviews-list";
 import {
-  ReviewsList,
-  type ReviewSource,
-} from "@/components/features/reviews/reviews-list";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+  ReviewsStatsSection,
+  type SourceStats,
+} from "@/components/features/reviews/reviews-stats-section";
 import { useQuery } from "@tanstack/react-query";
 import { getAll } from "@/lib/fetch";
-import { useState } from "react";
-import Image from "next/image";
+
+interface StatsResponse {
+  statsBySource: {
+    trustpilot?: SourceStats;
+    google?: SourceStats;
+  };
+}
+
+const emptyStats: SourceStats = {
+  total: 0,
+  trustScore: null,
+  distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
+};
 
 export default function ReviewsPage() {
-  const [source, setSource] = useState<ReviewSource>("trustpilot");
-
-  const { data: trustpilotAccount } = useQuery({
-    queryKey: ["trustpilot-account"],
-    queryFn: () => getAll<{ connected: boolean }>("reviews/trustpilot/account"),
+  const { data: statsData } = useQuery({
+    queryKey: ["reviews-stats"],
+    queryFn: () => getAll<StatsResponse>("reviews/stats"),
   });
 
-  const { data: googleAccount } = useQuery({
-    queryKey: ["google-reviews-account"],
-    queryFn: () => getAll<{ connected: boolean }>("reviews/google/account"),
-  });
+  const statsBySource = statsData?.statsBySource ?? {};
+  const hasTrustpilot = !!statsBySource.trustpilot;
+  const hasGoogle = !!statsBySource.google;
 
-  const hasTrustpilot = trustpilotAccount?.connected ?? false;
-  const hasGoogle = googleAccount?.connected ?? false;
+  const normalizedStatsBySource = {
+    ...(hasTrustpilot
+      ? { trustpilot: statsBySource.trustpilot ?? emptyStats }
+      : {}),
+    ...(hasGoogle ? { google: statsBySource.google ?? emptyStats } : {}),
+  };
 
-  const effectiveSource: ReviewSource =
-    hasTrustpilot && hasGoogle
-      ? source
-      : hasGoogle
-        ? "google"
-        : "trustpilot";
+  const hasAnyStats = hasTrustpilot || hasGoogle;
 
   return (
     <div className="space-y-6">
-      {hasTrustpilot && hasGoogle && (
-        <Tabs
-          value={source}
-          onValueChange={(v) => setSource(v as ReviewSource)}
-          className="w-full"
-        >
-          <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="trustpilot" className="gap-2">
-              <Image
-                src="/images/trustpilot-logo.svg"
-                alt="Trustpilot"
-                width={20}
-                height={14}
-                className="hidden object-contain dark:block"
-              />
-              <Image
-                src="/images/trustpilot-logo-dark.svg"
-                alt="Trustpilot"
-                width={20}
-                height={14}
-                className="object-contain dark:hidden"
-              />
-              Trustpilot
-            </TabsTrigger>
-            <TabsTrigger value="google" className="gap-2">
-              <Image
-                src="/images/google-logo.svg"
-                alt="Google Maps"
-                width={20}
-                height={14}
-                className="object-contain"
-              />
-              Google Maps
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+      {hasAnyStats && (
+        <ReviewsStatsSection statsBySource={normalizedStatsBySource} />
       )}
 
-      <ReviewsList source={effectiveSource} />
+      <ReviewsList hasTrustpilot={hasTrustpilot} hasGoogle={hasGoogle} />
     </div>
   );
 }

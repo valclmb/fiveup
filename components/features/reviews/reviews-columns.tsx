@@ -19,6 +19,7 @@ import {
   PenLine,
   Star,
 } from "lucide-react";
+import Image from "next/image";
 
 /** Convert ISO country code (e.g. FR, GB) to emoji flag - exported for filter */
 export function countryCodeToFlag(code: string | null): string {
@@ -32,6 +33,7 @@ export function countryCodeToFlag(code: string | null): string {
 
 export interface TrustpilotReview {
   id: string;
+  source?: "TRUSTPILOT" | "GOOGLE";
   trustpilotId: string;
   rating: number;
   title: string | null;
@@ -51,6 +53,26 @@ export interface TrustpilotReview {
 
 
 export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
+  {
+    accessorKey: "source",
+    header: "Source",
+    cell: ({ row }) => {
+      const source = row.original.source ?? "TRUSTPILOT";
+      return (<div className="flex justify-center">
+        {source === "GOOGLE" ? (
+          <Image
+            src="/images/google-icon.svg"
+            alt="Google Maps"
+            width={24}
+            height={24}
+            className="object-contain"
+          />
+        ) : (
+          <StarIcon size={24} color="#00b67a" />
+        )}
+      </div>)
+    },
+  },
   {
     accessorKey: "authorName",
     header: "Customer",
@@ -229,7 +251,7 @@ export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
       const hasReply = !!row.original.replyText;
       return hasReply ? (
         <Badge
-          variant="outline"
+          variant="landing"
           className="border-green-500/50 bg-green-500/10 text-green-700 dark:text-green-400"
         >
           <CheckCircle className="mr-1 size-3" />
@@ -237,7 +259,7 @@ export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
         </Badge>
       ) : (
         <Badge
-          variant="outline"
+          variant="landing"
           className="border-orange-500/50 bg-orange-500/10 text-orange-700 dark:text-orange-400"
         >
           <PenLine className="mr-1 size-3" />
