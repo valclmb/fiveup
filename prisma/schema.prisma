@@ -21,6 +21,7 @@ model User {
   shopifyStores         ShopifyStore[]
   subscriptions         Subscription[]
   googleBusinessAccount GoogleBusinessAccount?
+  reviewAccounts        ReviewAccount[]
   feedbacks              Feedback[]
   globalStyles            GlobalStyles?
   reviewPageCustomization     ReviewPageCustomization?
@@ -240,4 +241,93 @@ model OrderReviewRequest {
   @@index([storeId])
   @@index([status])
   @@map("order_review_request")
+}
+
+// ============ REVIEWS (TRUSTPILOT + GOOGLE) ============
+
+enum ReviewSource {
+  TRUSTPILOT
+  GOOGLE
+}
+
+/** Compte connecté pour récupérer des avis (Trustpilot ou Google Maps) */
+model ReviewAccount {
+  id                  String        @id @default(cuid())
+  userId              String
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source              ReviewSource  // TRUSTPILOT | GOOGLE
+  sourceId            String        // Domaine Trustpilot ou placeId Google
+  name                String?       // Nom entreprise / lieu
+  businessUrl         String?
+  isConnected         Boolean       @default(true)
+  trustScore          Float?
+  totalReviews        Int?
+  profileImageUrl     String?
+  statsTotal          Int?
+  statsOne            Int?
+  statsTwo            Int?
+  statsThree          Int?
+  statsFour           Int?
+  statsFive           Int?
+  lastSyncAt          DateTime?
+  lastDomainChangeAt  DateTime?
+  sourceMetadata      Json?         // Données spécifiques (address, placeId...)
+  syncs               ReviewSync[]
+  reviews             Review[]
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  @@unique([userId, source])
+  @@index([userId])
+  @@map("review_account")
+}
+
+/** Job de synchronisation Apify (Trustpilot ou Google) */
+model ReviewSync {
+  id             String       @id @default(cuid())
+  accountId      String
+  account        ReviewAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  apifyRunId     String?
+  apifyDatasetId String?
+  status         String       @default("PENDING")
+  error          String?
+  reviewsCount   Int?
+  startedAt      DateTime     @default(now())
+  finishedAt     DateTime?
+
+  @@index([accountId])
+  @@index([status])
+  @@map("review_sync")
+}
+
+/** Avis stockés (Trustpilot ou Google Maps) */
+model Review {
+  id                String       @id @default(cuid())
+  accountId         String
+  account           ReviewAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  source            ReviewSource  // Dénormalisé pour filtrage
+  sourceId          String        // trustpilotId ou reviewId
+  rating            Int           // Note (1-5)
+  title             String?       // Trustpilot uniquement
+  text              String?
+  language          String?
+  authorName        String?
+  authorImageUrl    String?
+  authorCountry     String?       // Code ISO (FR, US...)
+  isVerified        Boolean      @default(false) // Trustpilot: vérifié | Google: Local Guide
+  experiencedAt     DateTime?
+  publishedAt       DateTime?
+  replyText         String?
+  replyPublishedAt  DateTime?
+  reviewUrl         String?       // Lien vers l'avis
+  sourceMetadata    Json?         // reviewImageUrls, textTranslated, likesCount...
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  @@unique([accountId, sourceId])
+  @@index([accountId])
+  @@index([source])
+  @@index([rating])
+  @@index([publishedAt])
+  @@map("review")
 }
