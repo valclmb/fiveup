@@ -23,6 +23,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -76,13 +77,13 @@ export function DataTable<TData, TValue>({
           />
         </div>
       )}
-      <div className="overflow-x-auto rounded-md border">
+      <div className="overflow-x-auto rounded-xl  border">
         <Table>
-          <TableHeader>
+          <TableHeader >
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead key={header.id} className="first:pl-4 py-2 ">
                     {header.isPlaceholder
                       ? null
                       : flexRender(
@@ -104,9 +105,11 @@ export function DataTable<TData, TValue>({
                   {row.getVisibleCells().map((cell) => (
                     <TableCell
                       key={cell.id}
-                      className={
+                      className={cn(
                         (cell.column.columnDef.meta as { cellClassName?: string })
-                          ?.cellClassName
+                          ?.cellClassName,
+                        "last:pr-4"
+                      )
                       }
                     >
                       {flexRender(

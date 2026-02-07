@@ -21,7 +21,7 @@ model User {
   shopifyStores         ShopifyStore[]
   subscriptions         Subscription[]
   googleBusinessAccount GoogleBusinessAccount?
-  trustpilotAccount     TrustpilotAccount?
+  reviewAccounts        ReviewAccount[]
   feedbacks              Feedback[]
   globalStyles            GlobalStyles?
   reviewPageCustomization     ReviewPageCustomization?
@@ -243,79 +243,91 @@ model OrderReviewRequest {
   @@map("order_review_request")
 }
 
-// ============ TRUSTPILOT INTEGRATION ============
+// ============ REVIEWS (TRUSTPILOT + GOOGLE) ============
 
-/** Compte Trustpilot connecté par l'utilisateur */
-model TrustpilotAccount {
-  id                  String             @id @default(cuid())
-  userId              String             @unique
-  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  businessUrl         String             // URL Trustpilot (ex: "https://trustpilot.com/review/example.com")
-  businessDomain      String             // Domaine (ex: "example.com")
-  isConnected         Boolean            @default(true) // false = déconnecté mais données conservées
-  companyName         String?            // Nom de l'entreprise
-  trustScore          Float?             // Score Trustpilot (ex: 4.8)
-  totalReviews        Int?               // Nombre total d'avis sur Trustpilot
-  profileImageUrl     String?            // Logo de l'entreprise
-  // Stats originales Trustpilot (distribution des étoiles)
-  statsTotal          Int?               // Total des avis (stats.total)
-  statsOne            Int?               // Nombre d'avis 1 étoile
-  statsTwo            Int?               // Nombre d'avis 2 étoiles
-  statsThree          Int?               // Nombre d'avis 3 étoiles
-  statsFour           Int?               // Nombre d'avis 4 étoiles
-  statsFive           Int?               // Nombre d'avis 5 étoiles
-  lastSyncAt          DateTime?          // Dernière synchronisation réussie
-  lastDomainChangeAt  DateTime?          // Dernier changement de domaine (limite: 1x/mois)
-  syncs               TrustpilotSync[]
-  reviews             TrustpilotReview[]
-  createdAt           DateTime           @default(now())
-  updatedAt           DateTime           @updatedAt
-
-  @@map("trustpilot_account")
+enum ReviewSource {
+  TRUSTPILOT
+  GOOGLE
 }
 
-/** Job de synchronisation Apify pour récupérer les avis Trustpilot */
-model TrustpilotSync {
-  id                String            @id @default(cuid())
-  accountId         String
-  account           TrustpilotAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  apifyRunId        String?           // ID du run Apify
-  apifyDatasetId    String?           // ID du dataset Apify (pour récupérer les résultats)
-  status            String            @default("PENDING") // PENDING, RUNNING, SUCCEEDED, FAILED
-  error             String?           // Message d'erreur si échec
-  reviewsCount      Int?              // Nombre d'avis récupérés
-  startedAt         DateTime          @default(now())
-  finishedAt        DateTime?
+/** Compte connecté pour récupérer des avis (Trustpilot ou Google Maps) */
+model ReviewAccount {
+  id                  String        @id @default(cuid())
+  userId              String
+  user                User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  source              ReviewSource  // TRUSTPILOT | GOOGLE
+  sourceId            String        // Domaine Trustpilot ou placeId Google
+  name                String?       // Nom entreprise / lieu
+  businessUrl         String?
+  isConnected         Boolean       @default(true)
+  trustScore          Float?
+  totalReviews        Int?
+  profileImageUrl     String?
+  statsTotal          Int?
+  statsOne            Int?
+  statsTwo            Int?
+  statsThree          Int?
+  statsFour           Int?
+  statsFive           Int?
+  lastSyncAt          DateTime?
+  lastDomainChangeAt  DateTime?
+  sourceMetadata      Json?         // Données spécifiques (address, placeId...)
+  syncs               ReviewSync[]
+  reviews             Review[]
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  @@unique([userId, source])
+  @@index([userId])
+  @@map("review_account")
+}
+
+/** Job de synchronisation Apify (Trustpilot ou Google) */
+model ReviewSync {
+  id             String       @id @default(cuid())
+  accountId      String
+  account        ReviewAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  apifyRunId     String?
+  apifyDatasetId String?
+  status         String       @default("PENDING")
+  error          String?
+  reviewsCount   Int?
+  startedAt      DateTime     @default(now())
+  finishedAt     DateTime?
 
   @@index([accountId])
   @@index([status])
-  @@map("trustpilot_sync")
+  @@map("review_sync")
 }
 
-/** Avis Trustpilot stockés localement */
-model TrustpilotReview {
-  id                String            @id @default(cuid())
+/** Avis stockés (Trustpilot ou Google Maps) */
+model Review {
+  id                String       @id @default(cuid())
   accountId         String
-  account           TrustpilotAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
-  trustpilotId      String            // ID unique Trustpilot de l'avis
-  rating            Int               // Note (1-5)
-  title             String?           // Titre de l'avis
-  text              String?           // Contenu de l'avis
-  language          String?           // Langue de l'avis
-  authorName        String?           // Nom de l'auteur
-  authorImageUrl    String?           // Photo de profil (consumer.imageUrl Apify)
-  authorCountry     String?           // Pays de l'auteur
-  isVerified        Boolean           @default(false) // Avis vérifié
-  experiencedAt     DateTime?         // Date de l'expérience
-  publishedAt       DateTime?         // Date de publication
-  replyText         String?           // Réponse de l'entreprise
-  replyPublishedAt  DateTime?         // Date de la réponse
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
+  account           ReviewAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  source            ReviewSource  // Dénormalisé pour filtrage
+  sourceId          String        // trustpilotId ou reviewId
+  rating            Int           // Note (1-5)
+  title             String?       // Trustpilot uniquement
+  text              String?
+  language          String?
+  authorName        String?
+  authorImageUrl    String?
+  authorCountry     String?       // Code ISO (FR, US...)
+  isVerified        Boolean      @default(false) // Trustpilot: vérifié | Google: Local Guide
+  experiencedAt     DateTime?
+  publishedAt       DateTime?
+  replyText         String?
+  replyPublishedAt  DateTime?
+  reviewUrl         String?       // Lien vers l'avis
+  sourceMetadata    Json?         // reviewImageUrls, textTranslated, likesCount...
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
 
-  @@unique([accountId, trustpilotId])
+  @@unique([accountId, sourceId])
   @@index([accountId])
+  @@index([source])
   @@index([rating])
   @@index([publishedAt])
-  @@map("trustpilot_review")
+  @@map("review")
 }

@@ -21,7 +21,7 @@ export default async function LandingLayout({
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
       <SidebarProvider>
         <AppSidebar variant="inset" />
-        <SidebarInset className="border">
+        <SidebarInset className="border overflow-hidden">
           <SiteHeader />
           <div className="p-5">
             {children}

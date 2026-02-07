@@ -35,7 +35,7 @@ export const LandingBlock = ({ children, badge, title, bg = false, className, ..
 
       <AnimatedLandingHeader>
         <AnimatedLandingItem>
-          <Badge variant="secondary">{badge}</Badge>
+          <Badge variant="landing">{badge}</Badge>
         </AnimatedLandingItem>
         <AnimatedLandingItem>
           <Typography variant="h2">{title}</Typography>

@@ -1,11 +1,9 @@
 /**
- * Maps Apify dataset items to Prisma TrustpilotReview format
+ * Maps Apify dataset items to Prisma Review format
  */
 import type { ApifyDatasetItem } from "@/lib/apify";
 
-const BATCH_SIZE = 50;
-
-export function parseReviewFromApify(
+export function parseTrustpilotReviewFromApify(
   item: ApifyDatasetItem & { id: string; rating: number }
 ) {
   return {
@@ -28,12 +26,4 @@ export function parseReviewFromApify(
       ? new Date(item.reply.publishedDate)
       : null,
   };
-}
-
-export function createBatchChunks<T>(array: T[], size: number = BATCH_SIZE): T[][] {
-  const chunks: T[][] = [];
-  for (let i = 0; i < array.length; i += size) {
-    chunks.push(array.slice(i, i + size));
-  }
-  return chunks;
 }

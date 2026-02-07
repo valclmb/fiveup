@@ -15,10 +15,11 @@ import {
   ArrowUpDown,
   CheckCircle,
   ChevronDown,
-  ExternalLink,
+  Eye,
   PenLine,
-  Star,
+  Star
 } from "lucide-react";
+import Image from "next/image";
 
 /** Convert ISO country code (e.g. FR, GB) to emoji flag - exported for filter */
 export function countryCodeToFlag(code: string | null): string {
@@ -32,6 +33,7 @@ export function countryCodeToFlag(code: string | null): string {
 
 export interface TrustpilotReview {
   id: string;
+  source?: "TRUSTPILOT" | "GOOGLE";
   trustpilotId: string;
   rating: number;
   title: string | null;
@@ -52,28 +54,23 @@ export interface TrustpilotReview {
 
 export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
   {
-    accessorKey: "authorName",
-    header: "Customer",
+    accessorKey: "source",
+    header: "Source",
     cell: ({ row }) => {
-      const name: string = String(row.getValue("authorName") ?? "Anonymous");
-      const imageUrl = row.original.authorImageUrl;
-      const initials = row.original.authorName
-        ? String(row.original.authorName)
-          .split(" ")
-          .map((n) => n[0])
-          .join("")
-          .slice(0, 2)
-          .toUpperCase()
-        : "?";
-      return (
-        <div className="flex items-center gap-2">
-          <Avatar className="size-6">
-            {imageUrl ? <AvatarImage src={imageUrl} alt={String(name)} /> : null}
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
-          <span className="font-medium">{name}</span>
-        </div>
-      );
+      const source = row.original.source ?? "TRUSTPILOT";
+      return (<div className="flex justify-center">
+        {source === "GOOGLE" ? (
+          <Image
+            src="/images/google-icon.svg"
+            alt="Google Maps"
+            width={24}
+            height={24}
+            className="object-contain"
+          />
+        ) : (
+          <StarIcon size={24} color="var(--primary)" />
+        )}
+      </div>)
     },
   },
   {
@@ -105,7 +102,7 @@ export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
       </Button>
     ),
     cell: ({ row }) => (
-      <div className="flex items-center gap-1 text-md font-bold ">
+      <div className="flex items-center  justify-center gap-1 text-md font-bold ">
         {row.getValue("rating")}
         <StarIcon
           size={20}
@@ -115,6 +112,31 @@ export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
 
       </div>
     ),
+  },
+  {
+    accessorKey: "authorName",
+    header: "Customer",
+    cell: ({ row }) => {
+      const name: string = String(row.getValue("authorName") ?? "Anonymous");
+      const imageUrl = row.original.authorImageUrl;
+      const initials = row.original.authorName
+        ? String(row.original.authorName)
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .slice(0, 2)
+          .toUpperCase()
+        : "?";
+      return (
+        <div className="flex items-center gap-2">
+          <Avatar className="size-6">
+            {imageUrl ? <AvatarImage src={imageUrl} alt={String(name)} /> : null}
+            <AvatarFallback>{initials}</AvatarFallback>
+          </Avatar>
+          <span className="font-medium">{name}</span>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "text",
@@ -229,7 +251,7 @@ export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
       const hasReply = !!row.original.replyText;
       return hasReply ? (
         <Badge
-          variant="outline"
+          variant="landing"
           className="border-green-500/50 bg-green-500/10 text-green-700 dark:text-green-400"
         >
           <CheckCircle className="mr-1 size-3" />
@@ -237,7 +259,7 @@ export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
         </Badge>
       ) : (
         <Badge
-          variant="outline"
+          variant="landing"
           className="border-orange-500/50 bg-orange-500/10 text-orange-700 dark:text-orange-400"
         >
           <PenLine className="mr-1 size-3" />
@@ -254,15 +276,15 @@ export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
         row.original.reviewUrl ??
         `https://www.trustpilot.com/reviews/${row.original.trustpilotId}`;
       return (
-        <Button variant="outline" size="sm" asChild>
+        <Button variant="outline" size="icon" asChild>
           <a
             href={reviewUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1.5"
           >
-            <ExternalLink className="size-4" />
-            View review
+            <Eye className="size-4" />
+
           </a>
         </Button>
       );

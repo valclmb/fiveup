@@ -5,9 +5,6 @@ import "./globals.css";
 import { Providers } from "./providers";
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
-
-
-
 export const metadata: Metadata = {
   title: "Five Up Review",
   description: "Transformez chaque client en avis 5⭐️",

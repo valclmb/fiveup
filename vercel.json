@@ -1,0 +1,12 @@
+{
+  "crons": [
+    {
+      "path": "/api/reviews/trustpilot/cron",
+      "schedule": "0 3 * * 0"
+    },
+    {
+      "path": "/api/reviews/google/cron",
+      "schedule": "0 4 * * 0"
+    }
+  ]
+}

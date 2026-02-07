@@ -6,15 +6,13 @@ import {
   getApifyRunStatus,
 } from "@/lib/apify";
 import { prisma } from "@/lib/prisma";
-import {
-  createBatchChunks,
-  parseReviewFromApify,
-} from "@/lib/trustpilot/apify-mapper";
+import { createBatchChunks } from "@/lib/reviews/utils";
+import { parseTrustpilotReviewFromApify } from "@/lib/reviews/trustpilot/apify-mapper";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * GET /api/trustpilot/status
+ * GET /api/reviews/trustpilot/status
  * Get the status of the current/latest sync
  */
 export async function GET(request: NextRequest) {
@@ -29,8 +27,10 @@ export async function GET(request: NextRequest) {
     const syncId = searchParams.get("syncId");
 
     // Get Trustpilot account
-    const account = await prisma.trustpilotAccount.findUnique({
-      where: { userId: session.user.id },
+    const account = await prisma.reviewAccount.findUnique({
+      where: {
+        userId_source: { userId: session.user.id, source: "TRUSTPILOT" },
+      },
     });
 
     if (!account) {
@@ -42,10 +42,10 @@ export async function GET(request: NextRequest) {
 
     // Get sync record
     const sync = syncId
-      ? await prisma.trustpilotSync.findFirst({
+      ? await prisma.reviewSync.findFirst({
           where: { id: syncId, accountId: account.id },
         })
-      : await prisma.trustpilotSync.findFirst({
+      : await prisma.reviewSync.findFirst({
           where: { accountId: account.id },
           orderBy: { startedAt: "desc" },
         });
@@ -77,7 +77,7 @@ export async function GET(request: NextRequest) {
       }
 
       if (["FAILED", "ABORTED", "TIMED-OUT"].includes(newStatus)) {
-        await prisma.trustpilotSync.update({
+        await prisma.reviewSync.update({
           where: { id: sync.id },
           data: {
             status: "FAILED",
@@ -138,10 +138,10 @@ async function processApifyResults(
 
     // Update account with company info and stats
     if (company || stats) {
-      await prisma.trustpilotAccount.update({
+      await prisma.reviewAccount.update({
         where: { id: accountId },
         data: {
-          companyName: company?.displayName,
+          name: company?.displayName,
           trustScore: company?.trustScore,
           totalReviews: company?.numberOfReviews,
           profileImageUrl: company?.profileImageUrl,
@@ -168,18 +168,19 @@ async function processApifyResults(
 
     for (const chunk of chunks) {
       const upserts = chunk.map((review) => {
-        const data = parseReviewFromApify(review);
-        return prisma.trustpilotReview.upsert({
+        const data = parseTrustpilotReviewFromApify(review);
+        return prisma.review.upsert({
           where: {
-            accountId_trustpilotId: {
+            accountId_sourceId: {
               accountId,
-              trustpilotId: review.id,
+              sourceId: review.id,
             },
           },
           create: {
             accountId,
+            source: "TRUSTPILOT",
+            sourceId: review.id,
             ...data,
-            trustpilotId: review.id,
           },
           update: data,
         });
@@ -189,7 +190,7 @@ async function processApifyResults(
     }
 
     // Update sync record
-    await prisma.trustpilotSync.update({
+    await prisma.reviewSync.update({
       where: { id: syncId },
       data: {
         status: "SUCCEEDED",
@@ -207,7 +208,7 @@ async function processApifyResults(
   } catch (error) {
     console.error("Error processing Apify results:", error);
 
-    await prisma.trustpilotSync.update({
+    await prisma.reviewSync.update({
       where: { id: syncId },
       data: {
         status: "FAILED",

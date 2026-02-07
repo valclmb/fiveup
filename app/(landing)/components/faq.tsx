@@ -36,7 +36,7 @@ const Faq = () => {
   return (
     <section className="space-y-6 w-full py-16 flex flex-col md:flex-row gap-10">
       <AnimatedSection fromLeft={true} className="w-full md:w-1/2">
-        <Badge variant="secondary">FAQ</Badge>
+        <Badge variant="landing">FAQ</Badge>
         <Typography variant="h2" className="mb-4">Frequently asked questions</Typography>
         <Typography variant="p"> If you don't find your answer here, you can reach us directly at <a href="mailto:info@fiveup-review.com" className={buttonVariants({ variant: "link", className: "pl-0 pr-0" })}>info@fiveup-review.com</a>. Our team will be happy to help you set up FiveUp, connect your tools and get more 5★ reviews.</Typography>
       </AnimatedSection>

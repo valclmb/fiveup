@@ -1,16 +1,16 @@
 import { startTrustpilotScrape } from "@/lib/apify";
 import { prisma } from "@/lib/prisma";
-import { TRUSTPILOT_CONSTANTS } from "@/lib/trustpilot/constants";
+import { TRUSTPILOT_CONSTANTS } from "@/lib/reviews/trustpilot/constants";
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * GET /api/trustpilot/cron
+ * GET /api/reviews/trustpilot/cron
  * Weekly cron job to sync all Trustpilot accounts
- * 
+ *
  * Add to vercel.json:
  * {
  *   "crons": [{
- *     "path": "/api/trustpilot/cron",
+ *     "path": "/api/reviews/trustpilot/cron",
  *     "schedule": "0 3 * * 0"  // Every Sunday at 3 AM UTC
  *   }]
  * }
@@ -31,9 +31,9 @@ export async function GET(request: NextRequest) {
         TRUSTPILOT_CONSTANTS.AUTO_SYNC_INTERVAL_DAYS * 24 * 60 * 60 * 1000
     );
 
-    const accountsToSync = await prisma.trustpilotAccount.findMany({
+    const accountsToSync = await prisma.reviewAccount.findMany({
       where: {
-        // Only sync connected accounts (isConnected !== false, including null for legacy)
+        source: "TRUSTPILOT",
         NOT: { isConnected: false },
         OR: [
           { lastSyncAt: { lt: cutoffDate } },
@@ -65,12 +65,12 @@ export async function GET(request: NextRequest) {
         // Start incremental sync (only new reviews since last sync)
         const newerThan = account.lastSyncAt ?? undefined;
 
-        const apifyRun = await startTrustpilotScrape(account.businessUrl, {
+        const apifyRun = await startTrustpilotScrape(account.businessUrl!, {
           newerThan,
         });
 
         // Create sync record
-        await prisma.trustpilotSync.create({
+        await prisma.reviewSync.create({
           data: {
             accountId: account.id,
             apifyRunId: apifyRun.data.id,
@@ -81,14 +81,14 @@ export async function GET(request: NextRequest) {
 
         results.push({
           accountId: account.id,
-          domain: account.businessDomain,
+          domain: account.sourceId,
           status: "started",
         });
       } catch (error) {
         console.error(`Failed to sync account ${account.id}:`, error);
         results.push({
           accountId: account.id,
-          domain: account.businessDomain,
+          domain: account.sourceId,
           status: "error",
           error: error instanceof Error ? error.message : "Unknown error",
         });
