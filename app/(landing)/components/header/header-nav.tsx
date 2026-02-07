@@ -16,8 +16,8 @@ export const Nav = ({ className, linkClassName }: { className?: string, linkClas
       href: '/ancre-3'
     },
     {
-      label: 'ANCRE 4',
-      href: '/ancre-4'
+      label: 'Book a Demo',
+      href: '/meet'
     }
   ];
 
