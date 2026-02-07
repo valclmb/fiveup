@@ -4,6 +4,17 @@ import { ConnectionCard } from "@/components/features/connections/connection-car
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -90,26 +101,60 @@ export function ConnectShopify() {
             className="object-contain"
           />
         </ConnectionCard.Logo>
-        {store && (
-          <ConnectionCard.Content>
-            <Typography variant="p" className="font-bold">
-              <Link
-                href={`https://${store.shop}`}
-                target="_blank"
-                className="hover:underline"
-              >
-                {store.shop}
-              </Link>
-            </Typography>
-          </ConnectionCard.Content>
-        )}
         <ConnectionCard.Actions>
           {isLoading ? (
             <Skeleton className="h-9 w-24" />
           ) : store ? (
-            <Badge variant="outline">
-              <div className="size-2 bg-primary rounded-full" /> Connected
-            </Badge>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Badge variant="outline" className="cursor-pointer">
+                  <div className="size-2 bg-primary rounded-full" /> Connected
+                </Badge>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Shopify</DialogTitle>
+                  <DialogDescription>
+                    Your Shopify store is connected.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <Typography variant="p" className="font-bold">
+                    <Link
+                      href={`https://${store.shop}`}
+                      target="_blank"
+                      className="hover:underline"
+                    >
+                      {store.shop}
+                    </Link>
+                  </Typography>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="destructive" className="w-full">
+                        Disconnect
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Five Up will be disconnected from your store.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          variant="destructive"
+                          onClick={() => disconnect.mutate(store.id)}
+                        >
+                          Yes, disconnect
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              </DialogContent>
+            </Dialog>
           ) : (
             <Dialog open={modalOpen} onOpenChange={setModalOpen}>
               <DialogTrigger asChild>
@@ -157,13 +202,6 @@ export function ConnectShopify() {
           )}
         </ConnectionCard.Actions>
       </ConnectionCard.Root>
-      {store && (
-        <ConnectionCard.DisconnectButton
-          onDisconnect={() => disconnect.mutate(store.id)}
-          confirmTitle="Are you sure?"
-          confirmDescription="Five Up will be disconnected from your store."
-        />
-      )}
     </div>
   );
 }

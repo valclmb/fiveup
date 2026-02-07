@@ -34,7 +34,7 @@ function ConnectionCardRoot({
     <Item
       variant="outline"
       className={cn(
-        "w-full flex items-center justify-between bg-background z-20",
+        "relative overflow-hidden w-full flex items-center justify-between bg-background z-20",
         className
       )}
       {...props}
