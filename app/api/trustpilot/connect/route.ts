@@ -5,6 +5,7 @@ import {
   startTrustpilotScrape,
 } from "@/lib/apify";
 import { prisma } from "@/lib/prisma";
+import { TRUSTPILOT_CONSTANTS } from "@/lib/trustpilot/constants";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
@@ -12,9 +13,6 @@ import { z } from "zod";
 const connectSchema = z.object({
   url: z.string().min(1, "URL is required"),
 });
-
-// Minimum days between domain changes
-const DOMAIN_CHANGE_COOLDOWN_DAYS = 30;
 
 /**
  * POST /api/trustpilot/connect
@@ -100,8 +98,9 @@ export async function POST(request: NextRequest) {
         (Date.now() - lastChange.getTime()) / (1000 * 60 * 60 * 24)
       );
 
-      if (daysSinceLastChange < DOMAIN_CHANGE_COOLDOWN_DAYS) {
-        const daysRemaining = DOMAIN_CHANGE_COOLDOWN_DAYS - daysSinceLastChange;
+      if (daysSinceLastChange < TRUSTPILOT_CONSTANTS.DOMAIN_CHANGE_COOLDOWN_DAYS) {
+        const daysRemaining =
+          TRUSTPILOT_CONSTANTS.DOMAIN_CHANGE_COOLDOWN_DAYS - daysSinceLastChange;
         return NextResponse.json(
           {
             error: `Domain change not allowed. Wait ${daysRemaining} day(s) or reconnect "${existingAccount.businessDomain}".`,

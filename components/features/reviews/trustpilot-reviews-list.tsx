@@ -1,10 +1,18 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import {
   Select,
   SelectContent,
@@ -16,16 +24,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Typography from "@/components/ui/typography";
 import { getAll } from "@/lib/fetch";
-import { cn } from "@/lib/utils";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Filter,
-  Search,
-  Star,
-} from "lucide-react";
-import Image from "next/image";
+import { Filter, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { CountryDropdown } from "@/components/ui/country-dropdown";
@@ -34,6 +34,24 @@ import {
   reviewsColumns,
   type TrustpilotReview
 } from "./reviews-columns";
+import { ReviewsStatsSection } from "./reviews-stats-section";
+
+/** Returns page numbers and ellipsis to display (e.g. [1, "ellipsis", 4, 5, 6, "ellipsis", 10]) */
+function getPaginationItems(page: number, totalPages: number): (number | "ellipsis")[] {
+  if (totalPages <= 5) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+  const items: (number | "ellipsis")[] = [1];
+  if (page > 3) items.push("ellipsis");
+  const start = Math.max(2, page - 1);
+  const end = Math.min(totalPages - 1, page + 1);
+  for (let i = start; i <= end; i++) {
+    items.push(i);
+  }
+  if (page < totalPages - 2) items.push("ellipsis");
+  if (totalPages > 1 && items[items.length - 1] !== totalPages) items.push(totalPages);
+  return items;
+}
 
 interface ReviewsResponse {
   reviews: TrustpilotReview[];
@@ -49,120 +67,6 @@ interface ReviewsResponse {
     distribution: Record<number, number>;
   };
   countries: string[];
-}
-
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div className="flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <Star
-          key={star}
-          className={cn(
-            "size-4",
-            star <= rating
-              ? "fill-[#00b67a] text-[#00b67a]"
-              : "fill-muted text-muted"
-          )}
-        />
-      ))}
-    </div>
-  );
-}
-
-const DEFAULT_STATS: ReviewsResponse["stats"] = {
-  total: 0,
-  trustScore: null,
-  distribution: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 },
-};
-
-function StatsSection({ stats }: { stats?: ReviewsResponse["stats"] | null }) {
-  const safeStats = stats ?? DEFAULT_STATS;
-  const total = safeStats.total ?? 0;
-  const distribution = safeStats.distribution ?? DEFAULT_STATS.distribution;
-
-  // Use Trustpilot's trustScore when available, else calculate from distribution
-  const avgRating =
-    safeStats.trustScore != null
-      ? safeStats.trustScore
-      : total > 0
-        ? Object.entries(distribution).reduce(
-          (acc, [rating, count]) => acc + Number(rating) * count,
-          0
-        ) / total
-        : 0;
-
-  return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Average rating</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <span className="text-3xl font-bold">{avgRating.toFixed(1)}</span>
-            <StarRating rating={Math.round(avgRating)} />
-          </div>
-          <Typography variant="description" className="mt-1">
-            {total} total reviews
-          </Typography>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Distribution</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            {[5, 4, 3, 2, 1].map((rating) => {
-              const count = distribution[rating] ?? 0;
-              const percentage = total > 0 ? (count / total) * 100 : 0;
-              return (
-                <div key={rating} className="flex items-center gap-2 text-sm">
-                  <span className="w-4 text-muted-foreground">{rating}</span>
-                  <Star className="size-3 fill-[#00b67a] text-[#00b67a]" />
-                  <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-[#00b67a] rounded-full transition-all"
-                      style={{ width: `${percentage}%` }}
-                    />
-                  </div>
-                  <span className="w-8 text-right text-muted-foreground">
-                    {count}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Source</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <Image
-              src="/images/trustpilot-logo.svg"
-              alt="Trustpilot"
-              width={80}
-              height={20}
-              className="object-contain dark:hidden"
-            />
-            <Image
-              src="/images/trustpilot-logo-dark.svg"
-              alt="Trustpilot"
-              width={80}
-              height={20}
-              className="hidden object-contain dark:block"
-            />
-            <Badge variant="secondary">Trustpilot</Badge>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
 }
 
 export function TrustpilotReviewsList() {
@@ -263,7 +167,7 @@ export function TrustpilotReviewsList() {
         const hasNoData = !data.reviews?.length;
         return (
           <>
-            <StatsSection stats={data.stats} />
+            <ReviewsStatsSection stats={data.stats} />
 
             <Card>
               <CardContent className="flex flex-col gap-4">
@@ -321,7 +225,7 @@ export function TrustpilotReviewsList() {
                     <CountryDropdown
                       placeholder="Select countries"
                       defaultValue={countryFilter}
-                      onChange={() => {}}
+                      onChange={() => { }}
                       onApply={(countries) => {
                         setCountryFilter(countries.map((c) => c.alpha3));
                         setPage(1);
@@ -359,31 +263,55 @@ export function TrustpilotReviewsList() {
                       </div>
                     </div>
                     {data.pagination.totalPages > 1 && (
-                      <div className="flex items-center justify-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => setPage((p) => Math.max(1, p - 1))}
-                          disabled={page === 1 || isFetching}
-                        >
-                          <ChevronLeft className="size-4" />
-                        </Button>
-                        <Typography variant="description">
-                          Page {page} of {data.pagination.totalPages}
-                        </Typography>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() =>
-                            setPage((p) =>
-                              Math.min(data.pagination.totalPages, p + 1)
+                      <Pagination className="justify-end">
+                        <PaginationContent>
+                          <PaginationItem>
+                            <PaginationPrevious
+                              href="#"
+                              aria-disabled={page === 1 || isFetching}
+                              className={page === 1 || isFetching ? "pointer-events-none opacity-50" : ""}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                if (page === 1 || isFetching) return;
+                                setPage((p) => Math.max(1, p - 1));
+                              }}
+                            />
+                          </PaginationItem>
+                          {getPaginationItems(page, data.pagination.totalPages).map((item, i) =>
+                            item === "ellipsis" ? (
+                              <PaginationItem key={`ellipsis-${i}`}>
+                                <PaginationEllipsis />
+                              </PaginationItem>
+                            ) : (
+                              <PaginationItem key={item}>
+                                <PaginationLink
+                                  href="#"
+                                  isActive={page === item}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    if (isFetching) return;
+                                    setPage(item);
+                                  }}
+                                >
+                                  {item}
+                                </PaginationLink>
+                              </PaginationItem>
                             )
-                          }
-                          disabled={page === data.pagination.totalPages || isFetching}
-                        >
-                          <ChevronRight className="size-4" />
-                        </Button>
-                      </div>
+                          )}
+                          <PaginationItem>
+                            <PaginationNext
+                              href="#"
+                              aria-disabled={page === data.pagination.totalPages || isFetching}
+                              className={page === data.pagination.totalPages || isFetching ? "pointer-events-none opacity-50" : ""}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                if (page === data.pagination.totalPages || isFetching) return;
+                                setPage((p) => Math.min(data.pagination.totalPages, p + 1));
+                              }}
+                            />
+                          </PaginationItem>
+                        </PaginationContent>
+                      </Pagination>
                     )}
                   </>
                 ) : !data.reviews || data.reviews.length === 0 ? (
@@ -418,31 +346,54 @@ export function TrustpilotReviewsList() {
 
                     {/* Server-side pagination */}
                     {data.pagination.totalPages > 1 && (
-                      <div className="flex items-center justify-center gap-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => setPage((p) => Math.max(1, p - 1))}
-                          disabled={page === 1}
-                        >
-                          <ChevronLeft className="size-4" />
-                        </Button>
-                        <Typography variant="description">
-                          Page {page} of {data.pagination.totalPages}
-                        </Typography>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() =>
-                            setPage((p) =>
-                              Math.min(data.pagination.totalPages, p + 1)
+                      <Pagination className="justify-end">
+                        <PaginationContent>
+                          <PaginationItem>
+                            <PaginationPrevious
+                              href="#"
+                              aria-disabled={page === 1}
+                              className={page === 1 ? "pointer-events-none opacity-50" : ""}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                if (page === 1) return;
+                                setPage((p) => Math.max(1, p - 1));
+                              }}
+                            />
+                          </PaginationItem>
+                          {getPaginationItems(page, data.pagination.totalPages).map((item, i) =>
+                            item === "ellipsis" ? (
+                              <PaginationItem key={`ellipsis-${i}`}>
+                                <PaginationEllipsis />
+                              </PaginationItem>
+                            ) : (
+                              <PaginationItem key={item}>
+                                <PaginationLink
+                                  href="#"
+                                  isActive={page === item}
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    setPage(item);
+                                  }}
+                                >
+                                  {item}
+                                </PaginationLink>
+                              </PaginationItem>
                             )
-                          }
-                          disabled={page === data.pagination.totalPages}
-                        >
-                          <ChevronRight className="size-4" />
-                        </Button>
-                      </div>
+                          )}
+                          <PaginationItem>
+                            <PaginationNext
+                              href="#"
+                              aria-disabled={page === data.pagination.totalPages}
+                              className={page === data.pagination.totalPages ? "pointer-events-none opacity-50" : ""}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                if (page === data.pagination.totalPages) return;
+                                setPage((p) => Math.min(data.pagination.totalPages, p + 1));
+                              }}
+                            />
+                          </PaginationItem>
+                        </PaginationContent>
+                      </Pagination>
                     )}
                   </>
                 )}

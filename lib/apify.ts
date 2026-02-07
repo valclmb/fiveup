@@ -2,6 +2,8 @@
  * Apify API client for Trustpilot scraping
  */
 
+import { TRUSTPILOT_CONSTANTS } from "@/lib/trustpilot/constants";
+
 const APIFY_BASE_URL = "https://api.apify.com/v2";
 const APIFY_ACTOR_ID = "memo23~trustpilot-scraper-ppe";
 
@@ -120,7 +122,10 @@ export async function startTrustpilotScrape(
   const token = getApifyToken();
 
   // Calculate date filter (default: last year)
-  const newerThan = options?.newerThan ?? new Date(Date.now() - 365 * 24 * 60 * 60 * 1000);
+  const lookbackMs =
+    TRUSTPILOT_CONSTANTS.DEFAULT_LOOKBACK_DAYS * 24 * 60 * 60 * 1000;
+  const newerThan =
+    options?.newerThan ?? new Date(Date.now() - lookbackMs);
   const newerThanStr = newerThan.toISOString().split("T")[0]; // YYYY-MM-DD
 
   const input = {
@@ -132,7 +137,7 @@ export async function startTrustpilotScrape(
     includeCompanyDetails: true,
     includeStatistics: true,
     includeStats: true,
-    maxItems: options?.maxItems ?? 1000,
+    maxItems: options?.maxItems ?? TRUSTPILOT_CONSTANTS.DEFAULT_MAX_ITEMS,
     newerThan: newerThanStr,
   };
 

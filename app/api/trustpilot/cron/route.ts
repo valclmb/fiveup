@@ -1,9 +1,7 @@
 import { startTrustpilotScrape } from "@/lib/apify";
 import { prisma } from "@/lib/prisma";
+import { TRUSTPILOT_CONSTANTS } from "@/lib/trustpilot/constants";
 import { NextRequest, NextResponse } from "next/server";
-
-// Minimum days between automatic syncs
-const AUTO_SYNC_INTERVAL_DAYS = 7;
 
 /**
  * GET /api/trustpilot/cron
@@ -27,9 +25,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Find connected accounts that need sync (last sync > 7 days ago)
+    // Find connected accounts that need sync
     const cutoffDate = new Date(
-      Date.now() - AUTO_SYNC_INTERVAL_DAYS * 24 * 60 * 60 * 1000
+      Date.now() -
+        TRUSTPILOT_CONSTANTS.AUTO_SYNC_INTERVAL_DAYS * 24 * 60 * 60 * 1000
     );
 
     const accountsToSync = await prisma.trustpilotAccount.findMany({

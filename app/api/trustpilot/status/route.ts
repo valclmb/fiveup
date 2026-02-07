@@ -1,11 +1,15 @@
 import { auth } from "@/auth";
 import {
-  ApifyDatasetItem,
+  type ApifyDatasetItem,
   deleteApifyDataset,
   getApifyDatasetItems,
   getApifyRunStatus,
 } from "@/lib/apify";
 import { prisma } from "@/lib/prisma";
+import {
+  createBatchChunks,
+  parseReviewFromApify,
+} from "@/lib/trustpilot/apify-mapper";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -137,12 +141,10 @@ async function processApifyResults(
       await prisma.trustpilotAccount.update({
         where: { id: accountId },
         data: {
-          // Company info
           companyName: company?.displayName,
           trustScore: company?.trustScore,
           totalReviews: company?.numberOfReviews,
           profileImageUrl: company?.profileImageUrl,
-          // Original Trustpilot stats (star distribution)
           statsTotal: stats?.total,
           statsOne: stats?.one,
           statsTwo: stats?.two,
@@ -160,54 +162,30 @@ async function processApifyResults(
         !!item.id && typeof item.rating === "number"
     );
 
-    // Upsert reviews
+    // Batch upsert reviews (parallel for performance)
+    const chunks = createBatchChunks(reviews);
     let reviewsCount = 0;
-    for (const review of reviews) {
-      await prisma.trustpilotReview.upsert({
-        where: {
-          accountId_trustpilotId: {
+
+    for (const chunk of chunks) {
+      const upserts = chunk.map((review) => {
+        const data = parseReviewFromApify(review);
+        return prisma.trustpilotReview.upsert({
+          where: {
+            accountId_trustpilotId: {
+              accountId,
+              trustpilotId: review.id,
+            },
+          },
+          create: {
             accountId,
+            ...data,
             trustpilotId: review.id,
           },
-        },
-        create: {
-          accountId,
-          trustpilotId: review.id,
-          rating: review.rating,
-          title: review.title,
-          text: review.text,
-          language: review.language,
-          authorName: review.consumer?.displayName,
-          authorImageUrl: review.consumer?.imageUrl,
-          authorCountry: review.consumer?.countryCode,
-          isVerified: review.labels?.verification?.isVerified ?? false,
-          experiencedAt: review.dates?.experiencedDate
-            ? new Date(review.dates.experiencedDate)
-            : null,
-          publishedAt: review.dates?.publishedDate
-            ? new Date(review.dates.publishedDate)
-            : null,
-          replyText: review.reply?.message,
-          replyPublishedAt: review.reply?.publishedDate
-            ? new Date(review.reply.publishedDate)
-            : null,
-        },
-        update: {
-          rating: review.rating,
-          title: review.title,
-          text: review.text,
-          language: review.language,
-          authorName: review.consumer?.displayName,
-          authorImageUrl: review.consumer?.imageUrl,
-          authorCountry: review.consumer?.countryCode,
-          isVerified: review.labels?.verification?.isVerified ?? false,
-          replyText: review.reply?.message,
-          replyPublishedAt: review.reply?.publishedDate
-            ? new Date(review.reply.publishedDate)
-            : null,
-        },
+          update: data,
+        });
       });
-      reviewsCount++;
+      await Promise.all(upserts);
+      reviewsCount += chunk.length;
     }
 
     // Update sync record

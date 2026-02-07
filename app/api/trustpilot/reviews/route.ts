@@ -21,7 +21,11 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status"); // "answered" | "pending"
     const countryParam = searchParams.get("country"); // ISO codes: single "FR" or comma-separated "FR,GB,US"
     const search = searchParams.get("search")?.trim();
-    const sortBy = searchParams.get("sortBy") ?? "publishedAt";
+    const sortByParam = searchParams.get("sortBy");
+    const sortBy =
+      sortByParam === "rating" || sortByParam === "publishedAt"
+        ? sortByParam
+        : "publishedAt";
     const sortOrder = searchParams.get("sortOrder") === "asc" ? "asc" : "desc";
 
     // Get Trustpilot account
@@ -37,17 +41,19 @@ export async function GET(request: NextRequest) {
     }
 
     // Build filters
-    const where: {
+    type ReviewWhere = {
       accountId: string;
       rating?: number;
-      authorCountry?: string;
+      authorCountry?: string | { in: string[] };
       replyText?: { not: null } | null;
       OR?: Array<
         | { text?: { contains: string; mode: "insensitive" } }
         | { title?: { contains: string; mode: "insensitive" } }
         | { authorName?: { contains: string; mode: "insensitive" } }
       >;
-    } = {
+    };
+
+    const where: ReviewWhere = {
       accountId: account.id,
     };
 

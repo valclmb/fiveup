@@ -22,54 +22,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Clock, Star, Unplug } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
+import {
+  TRUSTPILOT_CONSTANTS,
+  type TrustpilotAccountResponse,
+  type TrustpilotConnectResponse,
+  type TrustpilotStatusResponse,
+} from "@/lib/trustpilot";
 import { toast } from "sonner";
-
-interface TrustpilotAccount {
-  id: string;
-  businessUrl: string;
-  businessDomain: string;
-  companyName: string | null;
-  trustScore: number | null;
-  totalReviews: number | null;
-  profileImageUrl: string | null;
-  lastSyncAt: string | null;
-  reviewsStored: number;
-  stats?: { total: number | null } | null;
-}
-
-interface TrustpilotSync {
-  id: string;
-  status: "PENDING" | "RUNNING" | "SUCCEEDED" | "FAILED";
-  reviewsCount: number | null;
-  startedAt: string;
-  finishedAt: string | null;
-  error: string | null;
-}
-
-interface AccountResponse {
-  connected: boolean;
-  hasAccount: boolean;
-  account?: TrustpilotAccount & {
-    canChangeDomain: boolean;
-    daysUntilDomainChange: number;
-  };
-  latestSync?: TrustpilotSync | null;
-}
-
-interface ConnectResponse {
-  success: boolean;
-  syncId?: string;
-  status: string;
-  reviewsCount?: number;
-  message?: string;
-}
-
-interface StatusResponse {
-  syncId: string;
-  status: string;
-  error?: string;
-  reviewsCount?: number;
-}
 
 export function ConnectTrustpilot() {
   const queryClient = useQueryClient();
@@ -80,7 +39,7 @@ export function ConnectTrustpilot() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["trustpilot-account"],
-    queryFn: () => getAll<AccountResponse>("/trustpilot/account"),
+    queryFn: () => getAll<TrustpilotAccountResponse>("trustpilot/account"),
   });
 
   const account = data?.account;
@@ -104,7 +63,7 @@ export function ConnectTrustpilot() {
 
     try {
       const response = await fetch(`/api/trustpilot/status?syncId=${syncId}`);
-      const data: StatusResponse = await response.json();
+      const data: TrustpilotStatusResponse = await response.json();
 
       if (data.status === "SUCCEEDED") {
         setIsPolling(false);
@@ -127,7 +86,10 @@ export function ConnectTrustpilot() {
   useEffect(() => {
     if (!isPolling || !syncId) return;
 
-    const interval = setInterval(pollStatus, 6000);
+    const interval = setInterval(
+      pollStatus,
+      TRUSTPILOT_CONSTANTS.SYNC_POLL_INTERVAL_MS
+    );
     return () => clearInterval(interval);
   }, [isPolling, syncId, pollStatus]);
 
@@ -142,7 +104,7 @@ export function ConnectTrustpilot() {
         const error = await response.json();
         throw new Error(error.error || "Failed to connect");
       }
-      return response.json() as Promise<ConnectResponse>;
+      return response.json() as Promise<TrustpilotConnectResponse>;
     },
     onSuccess: (data) => {
       setDialogOpen(false);
