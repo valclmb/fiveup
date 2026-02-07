@@ -16,10 +16,6 @@ export const Nav = ({ className, linkClassName }: { className?: string, linkClas
       label: 'Book a demo',
       href: '/book-a-demo'
     },
-    {
-      label: 'Book a Demo',
-      href: '/meet'
-    }
   ];
 
   return (

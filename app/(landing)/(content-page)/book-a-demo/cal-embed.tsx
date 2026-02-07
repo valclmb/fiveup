@@ -1,8 +1,8 @@
 "use client";
 
+import Typography from "@/components/ui/typography";
 import Cal, { getCalApi } from "@calcom/embed-react";
 import { useEffect, useState } from "react";
-import Typography from "@/components/ui/typography";
 
 export type CalEmbedTheme = "light" | "dark" | "system";
 
@@ -19,15 +19,15 @@ type CalEmbedProps = {
  * Intégration Cal.com via @calcom/embed-react : vue mois, slots sur mobile.
  * calLink : identifiant Cal.com (ex. "fiveup-lucas/30min").
  */
-export function CalEmbed({ 
-  calLink, 
-  namespace = "30min", 
-  theme = "light", 
-  className 
+export function CalEmbed({
+  calLink,
+  namespace = "30min",
+  theme = "light",
+  className
 }: CalEmbedProps) {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Le package n'expose que "light" | "dark" ; pour "system" on ne passe pas theme (défaut embed).
   const themeForCal = theme === "system" ? undefined : theme;
 
@@ -64,6 +64,7 @@ export function CalEmbed({
               brandColor: "#000000",
             },
           },
+
         });
 
         cal("on", {
