@@ -276,7 +276,7 @@ export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
         row.original.reviewUrl ??
         `https://www.trustpilot.com/reviews/${row.original.trustpilotId}`;
       return (
-        <Button variant="outline" size="sm" asChild>
+        <Button variant="outline" size="icon" asChild>
           <a
             href={reviewUrl}
             target="_blank"
@@ -284,7 +284,7 @@ export const reviewsColumns: ColumnDef<TrustpilotReview>[] = [
             className="flex items-center gap-1.5"
           >
             <Eye className="size-4" />
-            View review
+
           </a>
         </Button>
       );
