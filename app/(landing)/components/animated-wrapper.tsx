@@ -228,7 +228,7 @@ export const AnimatedSection = ({ children, fromLeft, delay = 0, className = "" 
   const x = useTransform(
     scrollYProgress,
     [start, end],
-    [fromLeft ? -300 : 300, 0]
+    [fromLeft ? -180 : 180, 0]
   );
 
   // Sur mobile, utiliser whileInView au lieu de scroll progress

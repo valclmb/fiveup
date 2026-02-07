@@ -12,6 +12,7 @@ import { VideoPreview } from "./components/video-preview";
 export default function LandingPage() {
   return (
     <>
+
       <Hero />
 
       {/* Presentation video */}

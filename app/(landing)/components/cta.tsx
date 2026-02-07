@@ -9,7 +9,7 @@ import { AnimatedFadeUp } from "./animated-wrapper";
 
 const Cta = () => {
   return (
-    <AnimatedFadeUp className="bg-card relative flex h-82 w-full items-center justify-center overflow-hidden rounded-lg border p-20">
+    <AnimatedFadeUp className="z-80 bg-card relative flex h-82 w-full items-center justify-center overflow-hidden rounded-lg border p-20">
       <AnimatedGridPattern
         width={115}
         height={115}

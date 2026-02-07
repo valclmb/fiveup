@@ -34,7 +34,7 @@ export function ContentPageTemplate({
   badgeVariant = "landing",
 }: ContentPageTemplateProps) {
   return (
-    <div className="space-y-32">
+    <div className="space-y-40 z-80 relative">
       <div className="text-center space-y-8">
         <div className="flex flex-col items-center gap-5 -mt-4">
           <Badge variant={badgeVariant} className="-mt-2">

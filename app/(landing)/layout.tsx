@@ -1,4 +1,4 @@
-import AnimatedBackground from "./components/animated-background";
+import ConditionalAnimatedBackground from "./components/conditional-animated-background";
 import Footer from "./components/footer";
 import Header from "./components/header/header";
 
@@ -8,7 +8,7 @@ export default function LandingLayout({
   children: React.ReactNode;
 }) {
   return (<>
-    <AnimatedBackground />
+    <ConditionalAnimatedBackground />
     <div className="flex flex-col min-h-screen items-center justify-center bg-background font-sans">
       <Header />
 
