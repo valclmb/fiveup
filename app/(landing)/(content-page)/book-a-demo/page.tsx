@@ -1,16 +1,11 @@
 import Typography, { headingFontClassName } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
 import { ContentPageTemplate } from "../../components/content-page-template";
-import { CalEmbed, type CalEmbedTheme } from "./cal-embed";
+import { CalEmbed } from "./cal-embed";
 import { CallAgenda } from "./call-agenda";
 import { HighlightedTextFlip } from "./highlighted-text-flip";
 
 const CALCOM_LINK = process.env.NEXT_PUBLIC_CALCOM_LINK ?? "";
-const CALCOM_NAMESPACE = process.env.NEXT_PUBLIC_CALCOM_NAMESPACE ?? "30min";
-
-const CALCOM_THEME = (process.env.NEXT_PUBLIC_CALCOM_THEME ?? "light") as CalEmbedTheme;
-const themeOk: CalEmbedTheme[] = ["light", "dark", "system"];
-const calcomTheme: CalEmbedTheme = themeOk.includes(CALCOM_THEME) ? CALCOM_THEME : "light";
 
 export default function MeetPage() {
   return (
@@ -24,7 +19,10 @@ export default function MeetPage() {
           <HighlightedTextFlip
             words={["Get more reviews.", "Build more trust.", "Sell more."]}
             interval={3500}
-            className={cn(headingFontClassName, "text-4xl md:text-5xl font-bold tracking-tight")}
+            className={cn(
+              headingFontClassName,
+              "text-4xl md:text-5xl font-bold tracking-tight"
+            )}
             highlighterAction="underline"
             highlighterColor="var(--primary)"
           />
@@ -33,15 +31,10 @@ export default function MeetPage() {
       description="Automate review requests. Capture feedback at the perfect moment and turn satisfied customers into 5-star reviews."
     >
       <div className="grid grid-cols-1 lg:grid-cols-[400px_1fr] gap-8 items-start">
-        <div>
-          <CallAgenda />
-        </div>
-        <div className="min-w-0 lg:sticky lg:top-28">
-          <CalEmbed
-            calLink={CALCOM_LINK}
-            namespace={CALCOM_NAMESPACE}
-            theme={calcomTheme}
-          />
+        <CallAgenda />
+
+        <div className="lg:sticky lg:top-28">
+          <CalEmbed calLink={CALCOM_LINK} />
         </div>
       </div>
     </ContentPageTemplate>

@@ -1,9 +1,10 @@
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Inter, Poppins } from "next/font/google";
+import { Cal_Sans, Inter, Poppins } from "next/font/google";
 import React from "react";
 
 const poppins = Poppins({ weight: ['400', '500', '600', '700'], subsets: ['latin'], variable: '--font-poppins' });
+//const poppins = Cal_Sans({ weight: '400', subsets: ['latin'], variable: '--font-cal-sans' });
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 export const headingFontClassName = poppins.className;
