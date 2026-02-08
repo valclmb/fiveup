@@ -32,27 +32,27 @@ export function DashboardOverview() {
 
   if (isLoading) {
     return (
-      <div className="grid grid-cols-[2fr_1fr] grid-rows-[1fr_1fr] gap-6 min-h-[600px]">
-        <div className="min-h-0 animate-pulse rounded-lg bg-muted" />
-        <div className="min-h-0 animate-pulse rounded-lg bg-muted" />
-        <div className="min-h-0 animate-pulse rounded-lg bg-muted" />
-        <div className="min-h-0 animate-pulse rounded-lg bg-muted" />
+      <div className="grid grid-cols-1 min-[1200px]:grid-cols-[2fr_1fr] min-[1200px]:grid-rows-[1fr_1fr] gap-6 min-[1200px]:min-h-[600px]">
+        <div className="min-h-[200px] min-[1200px]:min-h-0 animate-pulse rounded-lg bg-muted" />
+        <div className="min-h-[200px] min-[1200px]:min-h-0 animate-pulse rounded-lg bg-muted" />
+        <div className="min-h-[200px] min-[1200px]:min-h-0 animate-pulse rounded-lg bg-muted" />
+        <div className="min-h-[200px] min-[1200px]:min-h-0 animate-pulse rounded-lg bg-muted" />
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-[2fr_1fr] grid-rows-[1fr_1fr] gap-6 min-h-[600px]">
-      <div className="min-h-0 flex flex-col [&>div]:flex-1">
+    <div className="grid grid-cols-1 min-[1200px]:grid-cols-[2fr_1fr] min-[1200px]:grid-rows-[1fr_1fr] gap-6 min-[1200px]:min-h-[600px]">
+      <div className="min-h-0 flex flex-col min-[1200px]:[&>div]:flex-1">
         <ReviewsChart
           data={data?.data ?? null}
           error={error?.message ?? null}
         />
       </div>
-      <div className="min-h-0 flex flex-col [&>div]:flex-1">
+      <div className="min-h-0 flex flex-col min-[1200px]:[&>div]:flex-1">
         <Sources statsBySource={data?.statsBySource ?? {}} />
       </div>
-      <div className="min-h-0 flex flex-col [&>div]:flex-1">
+      <div className="min-h-0 flex flex-col min-[1200px]:[&>div]:flex-1">
         <RecentReviews reviews={data?.recentReviews ?? []} />
       </div>
       <div className="min-h-0 rounded-lg border border-dashed border-muted-foreground/30 bg-muted/20" />

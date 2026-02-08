@@ -48,7 +48,7 @@ export function RecentReviews({ reviews }: { reviews: RecentReview[] }) {
           <Link href="/reviews">Voir tout</Link>
         </Button>
       </CardHeader>
-      <CardContent>
+      <CardContent className="overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>

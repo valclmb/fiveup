@@ -107,7 +107,7 @@ export function Sources({ statsBySource }: { statsBySource: StatsBySource }) {
         </Button>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3">
           {connectedSources.map(({ key, label, logo, reviewsUrl }) => {
             const stats = statsBySource[key]!;
             const avg = avgFromStats(stats);
@@ -115,7 +115,7 @@ export function Sources({ statsBySource }: { statsBySource: StatsBySource }) {
               totalReviews > 0 ? Math.round((stats.total / totalReviews) * 100) : 0;
 
             return (
-              <Card key={key} className="flex-1 min-w-[160px]">
+              <Card key={key} className="flex-1 min-w-0 sm:min-w-[160px]">
                 <CardContent className=" space-y-4">
                   <div className="flex items-center gap-2">{logo}</div>
                   <div className="space-y-3">
