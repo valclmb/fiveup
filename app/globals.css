@@ -164,6 +164,13 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  ::selection {
+    background-color: color-mix(in oklch, var(--primary) 50%, transparent);
+  }
+
+  ::-moz-selection {
+    background-color: color-mix(in oklch, var(--primary) 50%, transparent);
+  }
 }
 
 @layer utilities {
