@@ -1,9 +1,9 @@
-import { LayoutTextFlip } from "@/components/ui/layout-text-flip";
 import Typography, { headingFontClassName } from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
 import { ContentPageTemplate } from "../../components/content-page-template";
 import { CalEmbed, type CalEmbedTheme } from "./cal-embed";
 import { CallAgenda } from "./call-agenda";
+import { HighlightedTextFlip } from "./highlighted-text-flip";
 
 const CALCOM_LINK = process.env.NEXT_PUBLIC_CALCOM_LINK ?? "";
 const CALCOM_NAMESPACE = process.env.NEXT_PUBLIC_CALCOM_NAMESPACE ?? "30min";
@@ -21,10 +21,12 @@ export default function MeetPage() {
           <Typography variant="h1" className="text-4xl md:text-5xl font-bold">
             See how we help you
           </Typography>
-          <LayoutTextFlip
+          <HighlightedTextFlip
             words={["Get more reviews.", "Build more trust.", "Sell more."]}
             interval={3500}
             className={cn(headingFontClassName, "text-4xl md:text-5xl font-bold tracking-tight")}
+            highlighterAction="underline"
+            highlighterColor="var(--primary)"
           />
         </>
       }
