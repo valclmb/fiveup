@@ -5,7 +5,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "cursor-pointer focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 rounded-lg border border-transparent bg-clip-padding text-sm font-medium focus-visible:ring-[3px] aria-invalid:ring-[3px] [&_svg:not([class*='size-'])]:size-4 inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none shrink-0 [&_svg]:shrink-0 outline-none group/button select-none  ",
+  "hover:scale-105 transition-[transform]  text-rendering-optimize-legibility duration-200 cursor-pointer focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:aria-invalid:border-destructive/50 rounded-lg border border-transparent bg-clip-padding text-sm font-medium focus-visible:ring-[3px] aria-invalid:ring-[3px] [&_svg:not([class*='size-'])]:size-4 inline-flex items-center justify-center whitespace-nowrap transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none shrink-0 [&_svg]:shrink-0 outline-none group/button select-none  ",
   {
     variants: {
       variant: {
@@ -13,8 +13,8 @@ const buttonVariants = cva(
           "after:content-[''] after:absolute after:inset-0 after:-z-10 after:rounded-[inherit] " +
           "after:bg-linear-to-r after:from-primary after:via-primary-gradient after:to-primary " +
           "after:[background-size:200%_100%] after:[background-position:0%_50%] " +
-          "after:transition-[background-position] after:duration-500 after:ease-in-out " +
-          "hover:after:[background-position:100%_50%] ",
+          "after:transition-[background-position] after:duration-300 after:ease-in-out " +
+          "hover:after:[background-position:100%_50%]   ",
         // Fond via ::after (pratique pour animer le background sans impacter le contenu)
         default:
           "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
