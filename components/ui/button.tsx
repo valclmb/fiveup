@@ -11,7 +11,7 @@ const buttonVariants = cva(
       variant: {
         landing: "relative isolate overflow-hidden bg-transparent text-primary-foreground " +
           "after:content-[''] after:absolute after:inset-0 after:-z-10 after:rounded-[inherit] " +
-          "after:bg-linear-to-r after:from-primary-gradient after:via-primary after:to-primary-gradient " +
+          "after:bg-linear-to-r after:from-primary after:via-primary-gradient after:to-primary " +
           "after:[background-size:200%_100%] after:[background-position:0%_50%] " +
           "after:transition-[background-position] after:duration-500 after:ease-in-out " +
           "hover:after:[background-position:100%_50%] ",
