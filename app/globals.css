@@ -129,7 +129,7 @@ body {
   --popover: oklch(0.2389 0.0145 272.49);
   --popover-foreground: oklch(0.985 0 0);
   --primary: oklch(0.8684 0.1795 166.31);
-  --primary-gradient: oklch(0.923 0.15 163);
+  --primary-gradient: #95ffd6;
   --primary-foreground: oklch(0.1679 0.047 261.14);
   --secondary: #1d1f26;
   --secondary-foreground: oklch(0.985 0 0);

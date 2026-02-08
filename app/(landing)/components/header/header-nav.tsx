@@ -1,7 +1,12 @@
+"use client";
+
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export const Nav = ({ className, linkClassName }: { className?: string, linkClassName?: string }) => {
+  const pathname = usePathname();
+
   const links = [
     { label: "Features", href: "#features" },
     {
@@ -18,11 +23,26 @@ export const Nav = ({ className, linkClassName }: { className?: string, linkClas
     },
   ];
 
+  const isActive = (href: string) => {
+    if (href.startsWith('#')) {
+      return pathname === '/' || pathname === '';
+    }
+    return pathname === href || pathname.startsWith(href + '/');
+  };
+
   return (
     <nav>
-      <ul className={cn('flex  md:flex-row items-center gap-2 text-xs md:text-sm font-semibold  ', className)}>
+      <ul className={cn('flex  md:flex-row items-center gap-2 text-xs md:text-sm font-semibold', className)}>
         {links.map((link) => (
-          <li key={link.href} className={cn('px-6 py-1 rounded-md hover:cursor-pointer hover:text-primary transition-all duration-500 hover:bg-tertiary/50', linkClassName)}>
+          <li
+            key={link.href}
+            className={cn(
+              'px-6 py-1 rounded-md hover:cursor-pointer transition-all duration-500',
+              'hover:text-primary hover:bg-tertiary/50',
+              isActive(link.href) && 'text-primary ',
+              linkClassName
+            )}
+          >
             <Link href={link.href}>{link.label}</Link>
           </li>
         ))}

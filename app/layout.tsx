@@ -28,6 +28,14 @@ export default function RootLayout({
           data-cookie_duration='4'
           strategy='afterInteractive'
         />
+        <Script
+          type="text/javascript"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `window.$crisp=[];window.CRISP_WEBSITE_ID="90853af1-14d6-4f8d-b13b-c3ad50ae74ae";(function(){var d=document;var s=d.createElement("script");s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);})();`,
+          }}
+        />
+
       </head>
       <body className="antialiased relative">
         <Providers>{children}</Providers>
