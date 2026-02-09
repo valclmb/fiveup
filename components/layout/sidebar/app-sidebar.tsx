@@ -34,7 +34,7 @@ const data = {
     },
     {
       title: "Campaigns",
-      url: "#",
+      url: "/campaigns",
       icon: Megaphone,
     },
     {
