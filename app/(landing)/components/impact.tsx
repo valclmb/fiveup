@@ -40,7 +40,7 @@ const Impact = () => {
           </AnimatedImpactItem>
           <AnimatedImpactItem delay={0.3}>
             <div className="space-y-2">
-              <Typography variant="h3" className="flex flex-wrap items-center gap-2">Find the real reasons behind 1–3<StarIcon className="size-5 md:size-auto" /> reviews</Typography>
+              <Typography variant="h3" className="flex flex-wrap items-center gap-2">Find the real reasons behind 1–3<StarIcon className="size-5 md:size-auto" color="var(--color-primary)" /> reviews</Typography>
               <Typography variant="description" className="text-muted-foreground">Group low ratings by product, carrier or issue so you instantly see what’s broken and fix it before it tanks satisfaction.</Typography>
             </div>
           </AnimatedImpactItem>

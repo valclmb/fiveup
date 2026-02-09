@@ -25,6 +25,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Typography from "@/components/ui/typography";
 import { getAll } from "@/lib/fetch";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import { Filter, Search } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -78,8 +79,15 @@ interface ReviewsListProps {
 }
 
 export function ReviewsList({ hasTrustpilot, hasGoogle }: ReviewsListProps) {
+  const searchParams = useSearchParams();
+  const sourceFromUrl = searchParams.get("source");
+  const initialSource =
+    sourceFromUrl === "trustpilot" || sourceFromUrl === "google"
+      ? sourceFromUrl
+      : "all";
+
   const [page, setPage] = useState(1);
-  const [sourceFilter, setSourceFilter] = useState<ReviewSourceFilter>("all");
+  const [sourceFilter, setSourceFilter] = useState<ReviewSourceFilter>(initialSource);
   const [ratingFilter, setRatingFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [countryFilter, setCountryFilter] = useState<string[]>([]);

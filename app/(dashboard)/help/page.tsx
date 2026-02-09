@@ -147,7 +147,7 @@ export default function HelpPage() {
                   onDragOver={onDragOver}
                   onDragLeave={onDragLeave}
                   className={cn(
-                    "flex flex-col items-center justify-center rounded-md border-2 border-dashed border-input bg-muted/30 px-4 py-8 text-center transition-colors",
+                    "flex flex-col items-center justify-center rounded-md border-2 border-dashed border-input-border bg-muted/30 px-4 py-8 text-center transition-colors",
                     isDragging && "border-primary/50 bg-primary/5"
                   )}
                 >

@@ -397,7 +397,7 @@ export const ProtectReputation = () => {
             }
           }}
         >
-          <StarIcon className="" size={18} />
+          <StarIcon className="" size={18} color="var(--color-primary)" />
           <span className="text-white text-sm hidden xl:inline">Trustpilot</span>
         </motion.div>
       </div>

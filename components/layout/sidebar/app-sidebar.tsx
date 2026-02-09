@@ -64,8 +64,8 @@ export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
 
   const { resolvedTheme } = useTheme()
   const logoSrc = mounted && resolvedTheme === "dark"
-    ? "/logos/logo-white-baseline.svg"
-    : "/logos/logo-black-baseline.svg"
+    ? "/logos/logo-white.svg"
+    : "/logos/logo-black.svg"
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -75,9 +75,9 @@ export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
               <Image
                 src={logoSrc}
                 alt="logo"
-                width={180}
+                width={100}
                 height={100}
-                className="my-6 pl-2"
+                className="my-6 pl-2 "
               />
             </a>
           </SidebarMenuItem>

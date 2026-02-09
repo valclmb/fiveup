@@ -140,7 +140,7 @@ const CountryDropdownComponent = (
   );
 
   const triggerClasses = cn(
-    "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 dark:bg-input/30 dark:hover:bg-input/50",
+    "flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input-border bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 dark:bg-input/30 dark:hover:bg-input/50",
     slim === true && "gap-1 w-min",
     inline && "rounded-r-none border-r-0 gap-1 pr-1 w-min",
     className

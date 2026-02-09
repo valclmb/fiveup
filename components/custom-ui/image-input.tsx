@@ -130,7 +130,7 @@ export function ImageInput({
           type="button"
           onClick={triggerInput}
           className={cn(
-            "group relative flex items-center justify-center overflow-hidden rounded-lg border border-dashed border-input bg-muted/30 transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer",
+            "group relative flex items-center justify-center overflow-hidden rounded-lg border border-dashed border-input-border bg-muted/30 transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer",
             isAvatar && shape === "circle" && "rounded-full",
             variant === "avatar" && "w-24 h-24 shrink-0",
             variant === "logo" && "w-full min-h-50 max-w-xs",
