@@ -5,6 +5,8 @@ import {
   getApifyRunStatus,
 } from "@/lib/apify";
 import { prisma } from "@/lib/prisma";
+import { scheduleNextReviewSync } from "@/lib/qstash";
+import { userHasActiveSubscription } from "@/lib/subscription";
 import { createBatchChunks } from "@/lib/reviews/utils";
 import {
   parseGoogleReviewFromApify,
@@ -189,6 +191,15 @@ async function processGoogleResults(
     });
 
     await deleteApifyDataset(datasetId);
+
+    // Schedule next periodic sync via QStash (7 days from now) - only for paid users
+    const account = await prisma.reviewAccount.findUnique({
+      where: { id: accountId },
+      select: { userId: true },
+    });
+    if (account && (await userHasActiveSubscription(account.userId))) {
+      await scheduleNextReviewSync(accountId);
+    }
 
     console.log(
       `[Google] Sync ${syncId} completed: ${reviewsCount} reviews processed`

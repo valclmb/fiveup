@@ -1,7 +1,8 @@
 import type { ShopifyOrder } from "@/app/api/shopify/webhooks/route";
 import { prisma } from "@/lib/prisma";
 import { scheduleReviewMessage } from "@/lib/qstash";
-import { getScheduledAt, ORDER_REVIEW_STATUS, REVIEW_REQUEST_DELAY_HOURS } from "@/lib/review-request";
+import { ORDER_REVIEW_REQUEST_SLUG } from "@/lib/campaigns";
+import { getScheduledAt, ORDER_REVIEW_STATUS } from "@/lib/review-request";
 
 interface WebhookContext {
   order: ShopifyOrder;
@@ -12,7 +13,7 @@ interface WebhookContext {
   };
 }
 
-/** Récupère le numéro de téléphone de la commande (checkout, livraison, facturation ou client). */
+/** Gets the order phone number (checkout, shipping, billing or customer). */
 export function getOrderPhone(order: ShopifyOrder): string | null {
   const raw =
     order.phone ??
@@ -24,7 +25,7 @@ export function getOrderPhone(order: ShopifyOrder): string | null {
   return trimmed || null;
 }
 
-/** Récupère l'email du client (commande ou profil). */
+/** Gets the customer email (order or profile). */
 export function getOrderEmail(order: ShopifyOrder): string | null {
   const raw = order.email ?? order.customer?.email ?? null;
   const trimmed = typeof raw === "string" ? raw.trim() : "";
@@ -32,25 +33,51 @@ export function getOrderEmail(order: ShopifyOrder): string | null {
 }
 
 /**
- * Appelé à chaque nouvelle commande (orders/create).
- * Étape B : sauvegarde en BDD (status: pending).
- * Étape C : délai configuré (pour l'instant 1h via REVIEW_REQUEST_DELAY_HOURS).
+ * Called on each new order (orders/create).
+ * Checks if an active UserCampaign exists for this store, otherwise skips.
+ * Step B: save to DB (status: pending).
+ * Step C: delay and channel from UserCampaign.
  */
 export async function onNewOrder({ order, store }: WebhookContext) {
   const phone = getOrderPhone(order);
   const email = getOrderEmail(order);
 
-  console.log(`🛒 Nouvelle commande ${order.name} sur ${store.shop}`);
+  console.log(`🛒 New order ${order.name} on ${store.shop}`);
 
-  if (phone) {
-    console.log(`📱 Téléphone client: ${phone}`);
-  } else {
-    console.log("📱 Aucun numéro de téléphone dans cette commande");
+  // Check if user has active campaign for this store (trigger: purchase = orders/create)
+  const userCampaign = await prisma.userCampaign.findFirst({
+    where: {
+      storeId: store.id,
+      campaignSlug: ORDER_REVIEW_REQUEST_SLUG,
+      status: "active",
+      triggerType: "purchase",
+    },
+  });
+
+  if (!userCampaign) {
+    console.log(`⏭️ No active "order_review_request" campaign for ${store.shop}, skip`);
+    return;
   }
 
-  // Étape B : sauvegarder la commande en BDD (status: pending)
-  // Étape C : délai = 1h pour l'instant (config marchand à venir)
-  const scheduledAt = getScheduledAt();
+  const { delayHours, channel } = userCampaign;
+
+  // Validate channel vs available contact
+  if (channel === "email" && !email) {
+    console.log(`⏭️ Email channel selected but no customer email, skip`);
+    return;
+  }
+  if ((channel === "sms" || channel === "whatsapp") && !phone) {
+    console.log(`⏭️ ${channel} channel selected but no customer phone, skip`);
+    return;
+  }
+
+  if (phone) {
+    console.log(`📱 Customer phone: ${phone}`);
+  } else {
+    console.log("📱 No phone number in this order");
+  }
+
+  const scheduledAt = getScheduledAt(delayHours);
 
   const reviewRequest = await prisma.orderReviewRequest.upsert({
     where: {
@@ -64,71 +91,108 @@ export async function onNewOrder({ order, store }: WebhookContext) {
       shopifyOrderId: String(order.id),
       customerPhone: phone ?? undefined,
       customerEmail: email ?? undefined,
+      channel,
       scheduledAt,
       status: ORDER_REVIEW_STATUS.PENDING,
     },
     update: {
       customerPhone: phone ?? undefined,
       customerEmail: email ?? undefined,
+      channel,
       scheduledAt,
       status: ORDER_REVIEW_STATUS.PENDING,
     },
   });
 
   console.log(
-    `📋 OrderReviewRequest enregistré: id=${reviewRequest.id}, scheduledAt=${scheduledAt.toISOString()}, status=${reviewRequest.status}`,
+    `📋 OrderReviewRequest saved: id=${reviewRequest.id}, channel=${channel}, scheduledAt=${scheduledAt.toISOString()}, status=${reviewRequest.status}`,
   );
 
-  // Étape D : programmer l'appel à /api/send-review-message via QStash
-  // En local : QSTASH_DEV_DELAY=2m pour tester sans attendre 24h
   const delay =
-    process.env.QSTASH_DEV_DELAY ?? `${REVIEW_REQUEST_DELAY_HOURS}h`;
+    process.env.QSTASH_DEV_DELAY ?? `${delayHours}h`;
   const messageId = await scheduleReviewMessage(reviewRequest.id, delay);
   if (messageId) {
-    console.log(`⏰ QStash job programmé: messageId=${messageId}, delay=${delay}`);
+    console.log(`⏰ QStash job scheduled: messageId=${messageId}, delay=${delay}`);
   } else {
-    console.warn("⏰ QStash: job non programmé (token ou URL manquants)");
+    console.warn("⏰ QStash: job not scheduled (token or URL missing)");
   }
 
-  // Exemple : log des infos
   console.log(order);
 }
 
 
+/** Same logic as onNewOrder but for shipment/receipt triggers (orders/fulfilled). */
 export async function onOrderFulfilled({ order, store }: WebhookContext) {
-  console.log(`📦 Commande livrée ${order.name} sur ${store.shop}`);
-
-  const customerEmail = order.email || order.customer?.email;
-  const customerName = order.customer?.first_name || "Client";
   const phone = getOrderPhone(order);
+  const email = getOrderEmail(order);
 
-  if (!customerEmail) {
-    console.log("Pas d'email client, impossible d'envoyer une demande d'avis");
+  console.log(`📦 Order shipped/fulfilled ${order.name} on ${store.shop}`);
+
+  // Check if user has active campaign with shipment or receipt trigger
+  const userCampaign = await prisma.userCampaign.findFirst({
+    where: {
+      storeId: store.id,
+      campaignSlug: ORDER_REVIEW_REQUEST_SLUG,
+      status: "active",
+      triggerType: { in: ["shipment", "receipt"] },
+    },
+  });
+
+  if (!userCampaign) {
+    console.log(
+      `⏭️ No active "order_review_request" (shipment/receipt) campaign for ${store.shop}, skip`
+    );
     return;
   }
 
-  // TODO: Ajoute ta logique de demande d'avis ici
-  // Exemples :
-  // - Envoyer un email de demande d'avis
-  // - Programmer l'envoi dans X jours avec une queue
-  // - Créer un lien de review unique
+  const { delayHours, channel } = userCampaign;
 
-  console.log(`📧 Envoyer demande d'avis à ${customerName} (${customerEmail})${phone ? ` — Tél: ${phone}` : ""}`);
+  if (channel === "email" && !email) {
+    console.log(`⏭️ Email channel selected but no customer email, skip`);
+    return;
+  }
+  if ((channel === "sms" || channel === "whatsapp") && !phone) {
+    console.log(`⏭️ ${channel} channel selected but no customer phone, skip`);
+    return;
+  }
 
-  // Exemple avec les produits achetés
-  const products = order.line_items.map((item) => ({
-    id: item.product_id,
-    name: item.title,
-    quantity: item.quantity,
-  }));
+  const scheduledAt = getScheduledAt(delayHours);
 
-  console.log("Produits à reviewer:", products);
+  const reviewRequest = await prisma.orderReviewRequest.upsert({
+    where: {
+      storeId_shopifyOrderId: {
+        storeId: store.id,
+        shopifyOrderId: String(order.id),
+      },
+    },
+    create: {
+      store: { connect: { id: store.id } },
+      shopifyOrderId: String(order.id),
+      customerPhone: phone ?? undefined,
+      customerEmail: email ?? undefined,
+      channel,
+      scheduledAt,
+      status: ORDER_REVIEW_STATUS.PENDING,
+    },
+    update: {
+      customerPhone: phone ?? undefined,
+      customerEmail: email ?? undefined,
+      channel,
+      scheduledAt,
+      status: ORDER_REVIEW_STATUS.PENDING,
+    },
+  });
 
-  // await sendReviewRequestEmail({
-  //   to: customerEmail,
-  //   customerName,
-  //   orderNumber: order.name,
-  //   products,
-  //   storeId: store.id,
-  // });
+  console.log(
+    `📋 OrderReviewRequest (fulfilled): id=${reviewRequest.id}, channel=${channel}, scheduledAt=${scheduledAt.toISOString()}`
+  );
+
+  const delay =
+    process.env.QSTASH_DEV_DELAY ?? `${delayHours}h`;
+  const messageId = await scheduleReviewMessage(reviewRequest.id, delay);
+  if (messageId) {
+    console.log(`⏰ QStash job scheduled: messageId=${messageId}, delay=${delay}`);
+  } else {
+    console.warn(`⏰ QStash: job not scheduled (token or URL missing)`);
+  }
 }

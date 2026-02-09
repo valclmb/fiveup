@@ -159,6 +159,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Stocker ou mettre à jour la boutique en BDD
+  // On met à jour userId lors d'une reconnexion pour réassigner la boutique à l'utilisateur actuel
   await prisma.shopifyStore.upsert({
     where: { shop },
     create: {
@@ -168,6 +169,7 @@ export async function GET(request: NextRequest) {
       scope: scope || "",
     },
     update: {
+      userId: session.user.id,
       accessToken: access_token,
       scope: scope || "",
       updatedAt: new Date(),

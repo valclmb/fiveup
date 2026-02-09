@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "prisma generate && next build",
+    "setup:qstash": "node --env-file=.env scripts/setup-qstash-schedule.mjs",
     "postinstall": "prisma generate",
     "start": "next start",
     "lint": "eslint"

@@ -27,6 +27,7 @@ model User {
   reviewPageCustomization     ReviewPageCustomization?
   redirectionPageCustomization RedirectionPageCustomization?
   feedbackPageCustomization   FeedbackPageCustomization?
+  userCampaigns         UserCampaign[]
 
   @@map("user")
 }
@@ -179,11 +180,38 @@ model ShopifyStore {
   accessToken          String               // Token d'accès Shopify
   scope                String               // Scopes accordés
   orderReviewRequests  OrderReviewRequest[]
+  userCampaigns        UserCampaign[]
   createdAt            DateTime             @default(now())
   updatedAt            DateTime             @updatedAt
 
   @@index([userId])
   @@map("shopify_store")
+}
+
+// ============ CAMPAIGNS ============
+// Campaigns are defined in code (lib/campaigns.ts). UserCampaign stores user config per store.
+
+/** Activation + config par utilisateur, par store. */
+model UserCampaign {
+  id            String         @id @default(cuid())
+  userId        String
+  campaignSlug  String         // "order_review_request" - from campaigns config in code
+  storeId       String         // Campaign activated per store
+  status        String         @default("active") // active | paused | cancelled
+  triggerType   String         @default("purchase") // purchase | shipment | receipt
+  delayHours    Int            @default(24)
+  channel       String         // "whatsapp" | "sms" | "email"
+  messageContent String?       // WhatsApp/SMS template content, personalization
+  activatedAt   DateTime       @default(now())
+
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store    ShopifyStore  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@unique([storeId, campaignSlug])
+  @@index([userId])
+  @@index([campaignSlug])
+  @@index([storeId])
+  @@map("user_campaign")
 }
 
 model RateLimit {
@@ -232,6 +260,7 @@ model OrderReviewRequest {
   shopifyOrderId  String        // ID Shopify de la commande (pour retrouver la commande)
   customerPhone   String?
   customerEmail   String?
+  channel         String        @default("email") // "whatsapp" | "sms" | "email" - from UserCampaign
   scheduledAt     DateTime      // Heure à laquelle QStash doit appeler /api/send-review-message
   status          String        @default("pending") // pending | sent | failed
   createdAt       DateTime      @default(now())

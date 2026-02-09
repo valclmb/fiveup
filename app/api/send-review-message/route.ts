@@ -66,9 +66,10 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    // TODO: Envoyer email / WhatsApp ici (customerEmail, customerPhone, store, etc.)
+    // TODO: Envoyer via channel choisi (email / WhatsApp / SMS) - customerEmail, customerPhone, store, customizations
+    const { channel, customerEmail, customerPhone } = reviewRequest;
     console.log(
-      `send-review-message: envoi demandé pour orderReviewRequestId=${orderReviewRequestId}, store=${reviewRequest.store.shop}, email=${reviewRequest.customerEmail ?? "—"}, phone=${reviewRequest.customerPhone ?? "—"}`,
+      `send-review-message: envoi demandé pour orderReviewRequestId=${orderReviewRequestId}, store=${reviewRequest.store.shop}, channel=${channel}, email=${customerEmail ?? "—"}, phone=${customerPhone ?? "—"}`,
     );
 
     await prisma.orderReviewRequest.update({
