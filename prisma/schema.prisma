@@ -201,8 +201,10 @@ model UserCampaign {
   triggerType   String         @default("purchase") // purchase | shipment | receipt
   delayHours    Int            @default(24)
   channel       String         // "whatsapp" | "sms" | "email"
-  messageContent String?       // WhatsApp/SMS template content, personalization
-  activatedAt   DateTime       @default(now())
+  messageContent       String?  // WhatsApp/SMS template content, personalization
+  thanksMessageEnabled Boolean  @default(true) // Show thank-you message after customer leaves review
+  thanksMessageContent String?   // Custom message shown after review submission
+  activatedAt          DateTime @default(now())
 
   user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   store    ShopifyStore  @relation(fields: [storeId], references: [id], onDelete: Cascade)

@@ -1,26 +1,22 @@
 "use client";
 
+
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Drawer,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import { Label } from "@/components/ui/label";
+import { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import Typography from "@/components/ui/typography";
 import { valueAndUnitToHours } from "@/lib/campaigns";
 import { deleteOne, getAll, patch } from "@/lib/fetch";
+import { cn } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
   CampaignConfigForm,
-  type CampaignConfigFormValues,
+  type CampaignConfigFormValues
 } from "./campaign-config-form";
 import { CampaignSkeleton } from "./campaign-skeleton";
 import { CampaignSummaryTags } from "./campaign-summary-tags";
@@ -32,6 +28,8 @@ export type OrderReviewCampaignResponse = {
     delayHours: number;
     channel: string;
     messageContent: string | null;
+    thanksMessageEnabled?: boolean;
+    thanksMessageContent: string | null;
     triggerType?: string;
   } | null;
   storeId: string | null;
@@ -56,6 +54,8 @@ export function OrderReviewCampaignCard() {
       delayHours?: number;
       channel?: string;
       messageContent?: string;
+      thanksMessageEnabled?: boolean;
+      thanksMessageContent?: string;
     }) => {
       const res = await patch("campaigns/order-review-request", payload);
       if (res?.error) throw new Error(res.error);
@@ -71,7 +71,9 @@ export function OrderReviewCampaignCard() {
         variables.triggerType !== undefined ||
         variables.delayHours !== undefined ||
         variables.channel !== undefined ||
-        variables.messageContent !== undefined
+        variables.messageContent !== undefined ||
+        variables.thanksMessageEnabled !== undefined ||
+        variables.thanksMessageContent !== undefined
       ) {
         toast.success("Campaign saved");
       }
@@ -115,6 +117,8 @@ export function OrderReviewCampaignCard() {
       delayHours,
       channel: formData.channel,
       messageContent: formData.messageContent,
+      thanksMessageEnabled: formData.thanksMessageEnabled,
+      thanksMessageContent: formData.thanksMessageContent,
     });
     setDrawerOpen(false);
   };
@@ -123,23 +127,36 @@ export function OrderReviewCampaignCard() {
   if (!hasStore) return <NoStoreCard />;
 
   return (
-    <Card className="max-w-4xl">
-      <CardContent className="p-6">
-        <section className="flex items-center justify-between gap-4">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2
-            ">
-              <Switch
-                id="campaign-switch"
-                checked={isActive}
-                onCheckedChange={handleSwitchChange}
-                disabled={patchMutation.isPending || deleteMutation.isPending}
-              />
-              <Label htmlFor="campaign-switch">Review after purchases</Label>
-            </div>
-            <Typography variant="description" affects="muted">
-              Automatically send a review request after a purchase.
-            </Typography>
+    <Card className="relative w-full max-w-sm pt-0 rounded-3xl">
+      <div className="relative">
+        <img
+          src="https://avatar.vercel.sh/shadcn1"
+          alt="Event cover"
+          className={cn("h-40 w-full object-cover brightness-40 blur-2xl transition-all duration-300", isActive && "brightness-60")}
+        />
+
+      </div>
+      <CardAction className="absolute top-3 right-3">
+        <Badge variant="secondary" className="flex items-center justify-end rounded-full border border-white/10 gap-2 pr-1 pl-2 py-3 bg-background/40 backdrop-blur-3xl">
+          <span className="w-14 text-center">{isActive ? "Active" : "Disabled"}</span>
+          <Switch
+            id="campaign-switch"
+            checked={isActive}
+            onCheckedChange={handleSwitchChange}
+            disabled={patchMutation.isPending || deleteMutation.isPending}
+          /></Badge>
+      </CardAction>
+
+      <CardHeader className="flex flex-col gap-4">
+
+        <CardTitle className={cn("transition-all duration-300", isActive ? "opacity-100" : "opacity-50 translate-y-12")}>Review after purchases</CardTitle>
+        <div className="flex justify-between items-center min-h-7">
+          <div
+            className={cn(
+              "transition-opacity duration-800",
+              isActive && userCampaign ? "opacity-100" : "opacity-0"
+            )}
+          >
             {isActive && userCampaign && (
               <CampaignSummaryTags
                 delayHours={userCampaign.delayHours}
@@ -148,33 +165,42 @@ export function OrderReviewCampaignCard() {
               />
             )}
           </div>
-          <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} direction="right">
-            <DrawerTrigger asChild>
-              <Button variant="outline" disabled={!isActive}>
-                Configure campaign
-              </Button>
-            </DrawerTrigger>
+        </div>
+      </CardHeader>
+      <CardContent>
 
-            <DrawerContent className="min-w-xl p-8">
-              <DrawerHeader className="p-0">
-                <DrawerTitle>
-                  <Typography variant="h3" className="font-semibold">
-                    Configure campaign
-                  </Typography>
-                </DrawerTitle>
-              </DrawerHeader>
-              <Separator className="my-6" />
-              <CampaignConfigForm
-                userCampaign={userCampaign ?? null}
-                step={step}
-                onStepChange={setStep}
-                onSave={handleSaveConfig}
-                isSaving={patchMutation.isPending}
-              />
-            </DrawerContent>
-          </Drawer>
-        </section>
+        <CardDescription className={isActive ? "opacity-100" : "opacity-50"}>
+          Automatically send a review request after a purchase.
+        </CardDescription>
       </CardContent>
+
+      <CardFooter>
+        <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} direction="right">
+          <DrawerTrigger asChild>
+            <Button className="w-full" variant="outline" disabled={!isActive}>
+              Configure campaign
+            </Button>
+          </DrawerTrigger>
+
+          <DrawerContent className="min-w-xl p-8">
+            <DrawerHeader className="p-0">
+              <DrawerTitle>
+                <Typography variant="h3" className="font-semibold">
+                  Configure campaign
+                </Typography>
+              </DrawerTitle>
+            </DrawerHeader>
+            <Separator className="my-6" />
+            <CampaignConfigForm
+              userCampaign={userCampaign ?? null}
+              step={step}
+              onStepChange={setStep}
+              onSave={handleSaveConfig}
+              isSaving={patchMutation.isPending}
+            />
+          </DrawerContent>
+        </Drawer>
+      </CardFooter>
     </Card>
   );
 }

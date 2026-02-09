@@ -64,6 +64,8 @@ export async function PATCH(request: Request) {
   const delayHours = body.delayHours as number | undefined;
   const channel = body.channel as "email" | "sms" | "whatsapp" | undefined;
   const messageContent = body.messageContent as string | undefined;
+  const thanksMessageEnabled = body.thanksMessageEnabled as boolean | undefined;
+  const thanksMessageContent = body.thanksMessageContent as string | undefined;
 
   const userCampaign = await prisma.userCampaign.upsert({
     where: {
@@ -81,6 +83,8 @@ export async function PATCH(request: Request) {
       delayHours: delayHours ?? 24,
       channel: channel ?? "email",
       messageContent: messageContent ?? undefined,
+      thanksMessageEnabled: thanksMessageEnabled ?? true,
+      thanksMessageContent: thanksMessageContent ?? undefined,
     },
     update: {
       ...(status !== undefined && { status }),
@@ -88,6 +92,8 @@ export async function PATCH(request: Request) {
       ...(delayHours !== undefined && { delayHours }),
       ...(channel !== undefined && { channel }),
       ...(messageContent !== undefined && { messageContent }),
+      ...(thanksMessageEnabled !== undefined && { thanksMessageEnabled }),
+      ...(thanksMessageContent !== undefined && { thanksMessageContent }),
     },
   });
 

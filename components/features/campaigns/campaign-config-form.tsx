@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import {
   DELAY_UNITS,
@@ -49,6 +50,8 @@ const campaignConfigSchema = z.object({
     .string()
     .min(1, "Message cannot be empty")
     .refine((val) => val.trim().length > 0, "Message cannot be empty or only whitespace"),
+  thanksMessageEnabled: z.boolean(),
+  thanksMessageContent: z.string(),
 });
 
 export type CampaignConfigFormValues = z.infer<typeof campaignConfigSchema>;
@@ -58,6 +61,8 @@ export interface CampaignConfigFormProps {
     delayHours: number;
     channel: string;
     messageContent: string | null;
+    thanksMessageEnabled?: boolean;
+    thanksMessageContent: string | null;
     triggerType?: string;
   } | null;
   step: number;
@@ -69,6 +74,9 @@ export interface CampaignConfigFormProps {
 const DEFAULT_MESSAGE =
   "Hi {{customer_first_name}}, thank you for your order {{order_number}}! Share your experience: {{review_link}}";
 
+const DEFAULT_THANKS_MESSAGE =
+  "Thank you for your feedback! Your review helps us improve and helps other customers make informed decisions.";
+
 function getDefaultValues(userCampaign: CampaignConfigFormProps["userCampaign"]): CampaignConfigFormValues {
   const defaultDelay = hoursToValueAndUnit(userCampaign?.delayHours ?? 24);
   return {
@@ -78,6 +86,9 @@ function getDefaultValues(userCampaign: CampaignConfigFormProps["userCampaign"])
     channel: (userCampaign?.channel as ChannelValue) ?? "email",
     messageContent:
       (userCampaign?.messageContent ?? "").trim() || DEFAULT_MESSAGE,
+    thanksMessageEnabled: userCampaign?.thanksMessageEnabled ?? true,
+    thanksMessageContent:
+      (userCampaign?.thanksMessageContent ?? "").trim() || DEFAULT_THANKS_MESSAGE,
   };
 }
 
@@ -102,7 +113,7 @@ export function CampaignConfigForm({
     form.reset(getDefaultValues(userCampaign));
   }, [userCampaign, form]);
 
-  const accordionValues = ["time", "channel", "message"] as const;
+  const accordionValues = ["time", "channel", "message", "thanks-message"] as const;
 
   const insertVariable = (variable: string) => {
     const el = textareaRef.current;
@@ -293,7 +304,7 @@ export function CampaignConfigForm({
           <div className="flex size-8 items-center justify-center rounded-full bg-accent text-accent-foreground text-lg font-bold">
             3
           </div>
-          Message
+          Review request message
         </AccordionTrigger>
         <AccordionContent className="space-y-4 pt-2">
           <FieldGroup>
@@ -321,6 +332,9 @@ export function CampaignConfigForm({
                   {fieldState.invalid && (
                     <FieldError errors={[fieldState.error]} />
                   )}
+                  <FieldDescription className="mb-0! pt-2">
+                    Click to insert a variable into your message.
+                  </FieldDescription>
                   <div className="flex flex-wrap gap-2">
                     {MESSAGE_VARIABLES.map((v) => (
                       <Button
@@ -334,15 +348,107 @@ export function CampaignConfigForm({
                       </Button>
                     ))}
                   </div>
-                  <FieldDescription>
-                    Click to insert a variable into your message.
-                  </FieldDescription>
+
                 </Field>
               )}
             />
           </FieldGroup>
           <div className="flex justify-end gap-2">
             <Button variant="outline" type="button" onClick={() => onStepChange(1)}>
+              Back
+            </Button>
+            <Button type="button" onClick={() => onStepChange(3)}>
+              Next <ArrowRight className="size-4" />
+            </Button>
+          </div>
+        </AccordionContent>
+      </AccordionItem>
+
+      <AccordionItem value="thanks-message">
+        <AccordionTrigger className="flex items-center gap-2">
+          <div className="flex size-8 items-center justify-center rounded-full bg-accent text-accent-foreground text-lg font-bold">
+            4
+          </div>
+          Post-review thank you message
+        </AccordionTrigger>
+        <AccordionContent className="space-y-4 pt-2">
+
+
+          <FieldGroup>
+            <Field>
+              <FieldDescription>
+                Sent via the same channel after the customer submits their review.
+              </FieldDescription>
+              <Controller
+                name="thanksMessageEnabled"
+                control={form.control}
+                render={({ field }) => (
+                  <Field className="flex-row">
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                    <FieldLabel>Enable</FieldLabel>
+                  </Field>
+                )}
+              />
+            </Field>
+
+
+            <Controller
+              name="thanksMessageContent"
+              control={form.control}
+              render={({ field }) => (
+                <Field>
+                  <FieldLabel htmlFor="campaign-thanks-message-content">
+                    Thank you message content
+                  </FieldLabel>
+                  <Textarea
+                    id="campaign-thanks-message-content"
+                    placeholder={DEFAULT_THANKS_MESSAGE}
+                    value={field.value}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    className="min-h-32"
+                    disabled={!form.watch("thanksMessageEnabled")}
+                  />
+                  <FieldDescription className="mb-0! pt-2">
+                    Click to insert a variable into your message.
+                  </FieldDescription>
+                  <div className="flex flex-wrap gap-2 mt-0">
+
+                    {MESSAGE_VARIABLES.map((v) => (
+                      <Button
+                        key={v.key}
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const el = document.getElementById("campaign-thanks-message-content") as HTMLTextAreaElement | null;
+                          if (!el || !form.watch("thanksMessageEnabled")) return;
+                          const start = el.selectionStart;
+                          const end = el.selectionEnd;
+                          const text = form.getValues("thanksMessageContent");
+                          const newText = text.slice(0, start) + v.key + text.slice(end);
+                          form.setValue("thanksMessageContent", newText);
+                          el.focus();
+                          setTimeout(() => {
+                            el.setSelectionRange(start + v.key.length, start + v.key.length);
+                          }, 0);
+                        }}
+                        disabled={!form.watch("thanksMessageEnabled")}
+                      >
+                        {v.label}
+                      </Button>
+                    ))}
+                  </div>
+
+                </Field>
+              )}
+            />
+          </FieldGroup>
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" type="button" onClick={() => onStepChange(2)}>
               Back
             </Button>
             <Button onClick={handleSave} disabled={isSaving}>
@@ -355,6 +461,6 @@ export function CampaignConfigForm({
           </div>
         </AccordionContent>
       </AccordionItem>
-    </Accordion>
+    </Accordion >
   );
 }
