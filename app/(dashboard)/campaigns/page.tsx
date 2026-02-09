@@ -1,14 +1,21 @@
 "use client";
 
-import { OrderReviewCampaignCard } from "@/components/features/campaigns";
-
-
+import {
+  DelayedDeliveryCard,
+  LoyalCustomerCard,
+  LongDeliveryReassuranceCard,
+  OrderReviewCampaignCard,
+  WhatsAppMarketingCard,
+} from "@/components/features/campaigns";
 
 export default function CampaignsPage() {
   return (
-    <div className="space-y-6 flex items-start gap-6">
+    <div className="flex flex-wrap gap-6">
       <OrderReviewCampaignCard />
-
+      <DelayedDeliveryCard />
+      <WhatsAppMarketingCard />
+      <LongDeliveryReassuranceCard />
+      <LoyalCustomerCard />
     </div>
   );
 }

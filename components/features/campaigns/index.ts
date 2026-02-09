@@ -1,3 +1,9 @@
+export { CampaignCard } from "./campaign-card";
+export type { CampaignCardProps } from "./campaign-card";
+export { DelayedDeliveryCard } from "./placeholder-campaign-cards";
+export { LoyalCustomerCard } from "./placeholder-campaign-cards";
+export { LongDeliveryReassuranceCard } from "./placeholder-campaign-cards";
+export { WhatsAppMarketingCard } from "./placeholder-campaign-cards";
 export { CampaignConfigForm } from "./campaign-config-form";
 export type {
   CampaignConfigFormProps,
