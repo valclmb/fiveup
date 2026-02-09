@@ -30,7 +30,9 @@ async function main() {
       destination: url,
       cron: "0 3 * * *", // Every day at 3 AM UTC
     });
-    console.log("✅ QStash schedule 'reviews-sync-catchup' created successfully");
+    console.log(
+      "✅ QStash schedule 'reviews-sync-catchup' created successfully",
+    );
     console.log(`   URL: ${url}`);
     console.log(`   Cron: 0 3 * * * (daily at 3 AM UTC)`);
   } catch (err) {

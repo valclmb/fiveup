@@ -7,6 +7,7 @@ import {
 } from "@/lib/apify";
 import { prisma } from "@/lib/prisma";
 import { scheduleNextReviewSync } from "@/lib/qstash";
+import { REVIEWS_CONSTANTS } from "@/lib/reviews/constants";
 import { userHasActiveSubscription } from "@/lib/subscription";
 import { createBatchChunks } from "@/lib/reviews/utils";
 import { parseTrustpilotReviewFromApify } from "@/lib/reviews/trustpilot/apify-mapper";
@@ -210,7 +211,7 @@ async function processApifyResults(
       select: { userId: true },
     });
     if (account && (await userHasActiveSubscription(account.userId))) {
-      await scheduleNextReviewSync(accountId);
+      await scheduleNextReviewSync(accountId, REVIEWS_CONSTANTS.AUTO_SYNC_QSTASH_DELAY);
     }
 
     console.log(

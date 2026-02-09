@@ -1,4 +1,5 @@
 import { Client } from "@upstash/qstash";
+import { REVIEWS_CONSTANTS } from "@/lib/reviews/constants";
 
 function getQStashClient(): Client | null {
   const token = process.env.QSTASH_TOKEN;
@@ -23,12 +24,12 @@ type QStashDelay = number | `${number}s` | `${number}m` | `${number}h` | `${numb
  * Each account syncs exactly X days after its last sync (user-centric).
  *
  * @param accountId - ReviewAccount id
- * @param delay - Delay until next sync (default: "7d")
+ * @param delay - Delay until next sync (default: from REVIEWS_CONSTANTS.AUTO_SYNC_QSTASH_DELAY)
  * @returns messageId if scheduled, null if QStash not configured
  */
 export async function scheduleNextReviewSync(
   accountId: string,
-  delay: QStashDelay | string = "7d",
+  delay: QStashDelay | string = REVIEWS_CONSTANTS.AUTO_SYNC_QSTASH_DELAY,
 ): Promise<string | null> {
   const client = getQStashClient();
   if (!client) {

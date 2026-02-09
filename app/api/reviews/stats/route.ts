@@ -30,6 +30,7 @@ export async function GET() {
         statsThree: true,
         statsFour: true,
         statsFive: true,
+        lastSyncAt: true,
       },
     });
 
@@ -41,11 +42,13 @@ export async function GET() {
         total: number;
         trustScore: number | null;
         distribution: Record<number, number>;
+        lastSyncAt: string | null;
       };
       google?: {
         total: number;
         trustScore: number | null;
         distribution: Record<number, number>;
+        lastSyncAt: string | null;
       };
     } = {};
 
@@ -53,6 +56,7 @@ export async function GET() {
       statsBySource.trustpilot = {
         total: trustpilotAccount.statsTotal ?? 0,
         trustScore: trustpilotAccount.trustScore ?? null,
+        lastSyncAt: trustpilotAccount.lastSyncAt?.toISOString() ?? null,
         distribution: {
           1: trustpilotAccount.statsOne ?? 0,
           2: trustpilotAccount.statsTwo ?? 0,
@@ -70,6 +74,7 @@ export async function GET() {
       statsBySource.google = {
         total,
         trustScore: googleAccount.trustScore ?? null,
+        lastSyncAt: googleAccount.lastSyncAt?.toISOString() ?? null,
         distribution: {
           1: googleAccount.statsOne ?? 0,
           2: googleAccount.statsTwo ?? 0,
