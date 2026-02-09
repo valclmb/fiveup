@@ -11,7 +11,7 @@ const Header = async () => {
     <header className="sticky top-0 z-100 pt-1 max-w-7xl w-full mx-auto">
       <AnimatedHeaderWrapper
         className={cn(
-          "origin-top m-2  p-4 border-[0.1px] border-card  bg-card/80 backdrop-blur-2xl flex items-center justify-between rounded-2xl",
+          "origin-top my-2 mx-[12px] p-4 border-[0.1px] border-card bg-card/80 backdrop-blur-2xl flex items-center justify-between rounded-2xl",
           "transition-colors duration-300",
         )}
       >

@@ -24,12 +24,12 @@ export const HeaderDrawer = () => {
         </Button>
       </DrawerTrigger>
 
-      <DrawerContent className="z-110 m-2 rounded-t-2xl border-card bg-background/80 backdrop-blur-3xl after:bg-transparent! ">
-        <DrawerHeader className="flex items-center justify-center pt-9">
+      <DrawerContent className="z-110 m-3 rounded-t-lg border-card bg-background/80 backdrop-blur-3xl after:bg-transparent! ">
+        <DrawerHeader className="flex items-center justify-center pt-9 pb-2">
           <Image src="/logos/logo-white.svg" alt="Logo" width={80} height={10} />
         </DrawerHeader>
 
-        <Nav className='flex flex-col md:hidden gap-2 py-4' linkClassName="w-11/12 mx-auto text-lg font-medium text-center py-3 " />
+        <Nav key={isOpen ? 'open' : 'closed'} drawer className="md:hidden px-6 pt-18 pb-2" />
 
         <HeaderCta className='w-full flex items-center justify-center p-5 pt-2' />
 
