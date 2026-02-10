@@ -203,7 +203,7 @@ export function CampaignConfigForm({
             />
             <Field>
               <FieldLabel>Delay</FieldLabel>
-              <div className="flex gap-2">
+              <div className="flex items-center gap-2">
                 <Controller
                   name="delayValue"
                   control={form.control}
@@ -254,6 +254,7 @@ export function CampaignConfigForm({
                     </Select>
                   )}
                 />
+                after {form.watch("triggerType")}
               </div>
             </Field>
           </FieldGroup>

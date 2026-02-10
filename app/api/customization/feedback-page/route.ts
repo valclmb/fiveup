@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { feedbackPagePatchSchema } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
@@ -86,54 +87,51 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
 
-  const mapTogglable = (obj: unknown) =>
-    typeof obj === "object" && obj !== null
-      ? {
-          content: (obj as { content?: string }).content ?? undefined,
-          enabled: (obj as { enabled?: boolean }).enabled ?? undefined,
-        }
-      : {};
+  const parsed = feedbackPagePatchSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid request data", details: parsed.error.flatten() },
+      { status: 400 },
+    );
+  }
 
-  const helpText = mapTogglable(body.helpText);
-  const reviewTag = mapTogglable(body.reviewTag);
-  const reviewTitle = mapTogglable(body.reviewTitle);
-  const reviewComment = mapTogglable(body.reviewComment);
-
-  const reviewTagOptions =
-    Array.isArray(body.reviewTagOptions) && body.reviewTagOptions.every((x: unknown) => typeof x === "string")
-      ? (body.reviewTagOptions as string[]).slice(0, 5)
-      : undefined;
-
-  const data = {
-    title: body.title ?? undefined,
-    ...(Object.keys(helpText).length && {
-      helpText: helpText.content,
-      helpTextEnabled: helpText.enabled,
-    }),
-    ...(Object.keys(reviewTag).length && {
-      reviewTag: reviewTag.content,
-      reviewTagEnabled: reviewTag.enabled,
-    }),
-    ...(reviewTagOptions !== undefined && { reviewTagOptions }),
-    ...(Object.keys(reviewTitle).length && {
-      reviewTitle: reviewTitle.content,
-      reviewTitleEnabled: reviewTitle.enabled,
-    }),
-    ...(Object.keys(reviewComment).length && {
-      reviewComment: reviewComment.content,
-      reviewCommentEnabled: reviewComment.enabled,
-    }),
+  const d = parsed.data;
+  const data: Parameters<typeof prisma.feedbackPageCustomization.upsert>[0]["create"] = {
+    userId: session.user.id,
   };
+  if (d.title !== undefined) data.title = d.title;
+  if (d.helpText !== undefined) {
+    data.helpText = d.helpText.content;
+    data.helpTextEnabled = d.helpText.enabled;
+  }
+  if (d.reviewTag !== undefined) {
+    data.reviewTag = d.reviewTag.content;
+    data.reviewTagEnabled = d.reviewTag.enabled;
+  }
+  if (d.reviewTagOptions !== undefined) data.reviewTagOptions = d.reviewTagOptions;
+  if (d.reviewTitle !== undefined) {
+    data.reviewTitle = d.reviewTitle.content;
+    data.reviewTitleEnabled = d.reviewTitle.enabled;
+  }
+  if (d.reviewComment !== undefined) {
+    data.reviewComment = d.reviewComment.content;
+    data.reviewCommentEnabled = d.reviewComment.enabled;
+  }
+
+  const updateData = { ...data };
+  delete (updateData as { userId?: string }).userId;
 
   const updated = await prisma.feedbackPageCustomization.upsert({
     where: { userId: session.user.id },
-    create: {
-      userId: session.user.id,
-      ...data,
-    },
-    update: data,
+    create: { ...updateData, userId: session.user.id },
+    update: updateData,
   });
 
   return NextResponse.json(mapRow(updated));

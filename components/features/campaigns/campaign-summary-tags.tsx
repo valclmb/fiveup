@@ -30,8 +30,8 @@ function ChannelIcon({ channel, className }: { channel: ChannelValue; className?
         <Image
           src="/images/whatsapp-logo.svg"
           alt="WhatsApp"
-          width={32}
-          height={32}
+          width={16}
+          height={16}
           className={className}
         />
       );
@@ -59,7 +59,7 @@ export function CampaignSummaryTags({
 
   const TriggerIcon = TRIGGER_ICONS[triggerType as TriggerType] ?? ShoppingBag;
 
-  const iconWrapperClass = "flex size-8 shrink-0 items-center justify-center [&>svg]:!size-5  [&>img]:!size-8";
+  const iconWrapperClass = "flex size-8 shrink-0 items-center justify-center [&>svg]:!size-5  [&>img]:!size-5";
 
   return (
     <div className={cn("flex flex-wrap gap-2", className)}>

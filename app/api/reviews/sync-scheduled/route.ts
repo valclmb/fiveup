@@ -1,4 +1,5 @@
 import { startGoogleMapsScrape, startTrustpilotScrape } from "@/lib/apify";
+import { syncScheduledBodySchema } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
 import { userHasActiveSubscription } from "@/lib/subscription";
 import { NextRequest } from "next/server";
@@ -46,17 +47,21 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Invalid signature" }, { status: 401 });
   }
 
-  let body: { accountId?: string };
+  let parsedBody: unknown;
   try {
-    body = JSON.parse(rawBody) as { accountId?: string };
+    parsedBody = JSON.parse(rawBody);
   } catch {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const accountId = body.accountId;
-  if (!accountId || typeof accountId !== "string") {
-    return Response.json({ error: "Missing accountId" }, { status: 400 });
+  const parsed = syncScheduledBodySchema.safeParse(parsedBody);
+  if (!parsed.success) {
+    return Response.json(
+      { error: "Invalid request data", details: parsed.error.flatten() },
+      { status: 400 },
+    );
   }
+  const { accountId } = parsed.data;
 
   const account = await prisma.reviewAccount.findUnique({
     where: { id: accountId },

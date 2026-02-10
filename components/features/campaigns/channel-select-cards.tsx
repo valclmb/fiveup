@@ -10,9 +10,9 @@ const CHANNEL_CONFIG: Record<
   ChannelValue,
   { label: string; icon: "mail" | "message-square" | "whatsapp" }
 > = {
-  email: { label: "Email", icon: "mail" },
-  sms: { label: "SMS", icon: "message-square" },
   whatsapp: { label: "WhatsApp", icon: "whatsapp" },
+  sms: { label: "SMS", icon: "message-square" },
+  email: { label: "Email", icon: "mail" },
 };
 
 export function ChannelSelectCards({

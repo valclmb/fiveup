@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import { ORDER_REVIEW_REQUEST_SLUG } from "@/lib/campaigns";
+import { orderReviewRequestPatchSchema } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
@@ -57,16 +58,22 @@ export async function PATCH(request: Request) {
     );
   }
 
-  const body = await request.json();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
 
-  const status = body.status as "active" | "paused" | undefined;
-  const triggerType = body.triggerType as "purchase" | "shipment" | "receipt" | undefined;
-  const delayHours = body.delayHours as number | undefined;
-  const channel = body.channel as "email" | "sms" | "whatsapp" | undefined;
-  const messageContent = body.messageContent as string | undefined;
-  const thanksMessageEnabled = body.thanksMessageEnabled as boolean | undefined;
-  const thanksMessageContent = body.thanksMessageContent as string | undefined;
+  const parsed = orderReviewRequestPatchSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid request data", details: parsed.error.flatten() },
+      { status: 400 },
+    );
+  }
 
+  const data = parsed.data;
   const userCampaign = await prisma.userCampaign.upsert({
     where: {
       storeId_campaignSlug: {
@@ -78,22 +85,22 @@ export async function PATCH(request: Request) {
       userId: session.user.id,
       campaignSlug: ORDER_REVIEW_REQUEST_SLUG,
       storeId: store.id,
-      status: status ?? "active",
-      triggerType: triggerType ?? "purchase",
-      delayHours: delayHours ?? 24,
-      channel: channel ?? "email",
-      messageContent: messageContent ?? undefined,
-      thanksMessageEnabled: thanksMessageEnabled ?? true,
-      thanksMessageContent: thanksMessageContent ?? undefined,
+      status: data.status ?? "active",
+      triggerType: data.triggerType ?? "purchase",
+      delayHours: data.delayHours ?? 24,
+      channel: data.channel ?? "email",
+      messageContent: data.messageContent ?? undefined,
+      thanksMessageEnabled: data.thanksMessageEnabled ?? true,
+      thanksMessageContent: data.thanksMessageContent ?? undefined,
     },
     update: {
-      ...(status !== undefined && { status }),
-      ...(triggerType !== undefined && { triggerType }),
-      ...(delayHours !== undefined && { delayHours }),
-      ...(channel !== undefined && { channel }),
-      ...(messageContent !== undefined && { messageContent }),
-      ...(thanksMessageEnabled !== undefined && { thanksMessageEnabled }),
-      ...(thanksMessageContent !== undefined && { thanksMessageContent }),
+      ...(data.status !== undefined && { status: data.status }),
+      ...(data.triggerType !== undefined && { triggerType: data.triggerType }),
+      ...(data.delayHours !== undefined && { delayHours: data.delayHours }),
+      ...(data.channel !== undefined && { channel: data.channel }),
+      ...(data.messageContent !== undefined && { messageContent: data.messageContent }),
+      ...(data.thanksMessageEnabled !== undefined && { thanksMessageEnabled: data.thanksMessageEnabled }),
+      ...(data.thanksMessageContent !== undefined && { thanksMessageContent: data.thanksMessageContent }),
     },
   });
 

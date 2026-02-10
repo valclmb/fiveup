@@ -1,3 +1,4 @@
+import { sendReviewMessageBodySchema } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
 import { ORDER_REVIEW_STATUS } from "@/lib/review-request";
 import { Receiver } from "@upstash/qstash";
@@ -39,17 +40,21 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Invalid signature" }, { status: 401 });
   }
 
-  let body: { orderReviewRequestId?: string };
+  let parsedBody: unknown;
   try {
-    body = JSON.parse(rawBody) as { orderReviewRequestId?: string };
+    parsedBody = JSON.parse(rawBody);
   } catch {
     return Response.json({ error: "Invalid JSON body" }, { status: 400 });
   }
 
-  const orderReviewRequestId = body.orderReviewRequestId;
-  if (!orderReviewRequestId || typeof orderReviewRequestId !== "string") {
-    return Response.json({ error: "Missing orderReviewRequestId" }, { status: 400 });
+  const parsed = sendReviewMessageBodySchema.safeParse(parsedBody);
+  if (!parsed.success) {
+    return Response.json(
+      { error: "Invalid request data", details: parsed.error.flatten() },
+      { status: 400 },
+    );
   }
+  const { orderReviewRequestId } = parsed.data;
 
   const reviewRequest = await prisma.orderReviewRequest.findUnique({
     where: { id: orderReviewRequestId },

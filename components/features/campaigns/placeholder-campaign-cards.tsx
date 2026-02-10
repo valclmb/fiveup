@@ -1,19 +1,19 @@
 "use client";
 
-import { useState } from "react";
 import { CampaignCard } from "./campaign-card";
 
-/** Placeholder cards for upcoming campaigns. Generic state, no real logic. */
+/** Placeholder cards for upcoming campaigns. Not activatable, COMING SOON. */
+function noop() {}
+
 export function DelayedDeliveryCard() {
-  const [isActive, setIsActive] = useState(false);
   return (
     <CampaignCard
       imageIndex={2}
       title="Delayed Delivery Message"
-      allowConfigureWhenDisabled
+      comingSoon
       description="Automatically notify customers when a delivery is delayed, with a message you can fully customize."
-      isActive={isActive}
-      onSwitchChange={setIsActive}
+      isActive={false}
+      onSwitchChange={noop}
       drawerTitle="Configure Delayed Delivery"
       drawerContent={
         <div className="space-y-6 text-sm text-muted-foreground">
@@ -34,15 +34,14 @@ export function DelayedDeliveryCard() {
 }
 
 export function WhatsAppMarketingCard() {
-  const [isActive, setIsActive] = useState(false);
   return (
     <CampaignCard
       imageIndex={3}
       title="WhatsApp Marketing Campaign"
-      allowConfigureWhenDisabled
+      comingSoon
       description="Send a promotional WhatsApp message to selected customers with a configurable discount."
-      isActive={isActive}
-      onSwitchChange={setIsActive}
+      isActive={false}
+      onSwitchChange={noop}
       drawerTitle="Configure WhatsApp Marketing"
       drawerContent={
         <div className="space-y-6 text-sm text-muted-foreground">
@@ -61,15 +60,14 @@ export function WhatsAppMarketingCard() {
 }
 
 export function LongDeliveryReassuranceCard() {
-  const [isActive, setIsActive] = useState(false);
   return (
     <CampaignCard
       imageIndex={4}
       title="Long Delivery Reassurance Flow"
-      allowConfigureWhenDisabled
+      comingSoon
       description="A fully customizable multi-step reassurance flow to reduce anxiety for long shipping times."
-      isActive={isActive}
-      onSwitchChange={setIsActive}
+      isActive={false}
+      onSwitchChange={noop}
       drawerTitle="Configure Long Delivery Flow"
       drawerContent={
         <div className="space-y-6 text-sm text-muted-foreground">
@@ -90,15 +88,14 @@ export function LongDeliveryReassuranceCard() {
 }
 
 export function LoyalCustomerCard() {
-  const [isActive, setIsActive] = useState(false);
   return (
     <CampaignCard
       imageIndex={5}
       title="Loyal Customer Reward Campaign"
-      allowConfigureWhenDisabled
+      comingSoon
       description="Reward recurring customers automatically based on your own rules (orders + timeline)."
-      isActive={isActive}
-      onSwitchChange={setIsActive}
+      isActive={false}
+      onSwitchChange={noop}
       drawerTitle="Configure Loyal Customer Rewards"
       drawerContent={
         <div className="space-y-6 text-sm text-muted-foreground">

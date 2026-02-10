@@ -51,8 +51,8 @@ export interface CampaignCardProps {
   | ((props: { closeDrawer: () => void }) => React.ReactNode);
   /** Configure button label */
   configureButtonLabel?: string;
-  /** Allow opening the drawer when campaign is disabled (e.g. for placeholder/coming soon) */
-  allowConfigureWhenDisabled?: boolean;
+  /** Coming soon: no switch, badge shows "COMING SOON", card not activatable, drawer not openable */
+  comingSoon?: boolean;
 }
 
 export function CampaignCard({
@@ -68,7 +68,7 @@ export function CampaignCard({
   drawerTitle,
   drawerContent,
   configureButtonLabel = "Configure campaign",
-  allowConfigureWhenDisabled = false,
+  comingSoon = false,
 }: CampaignCardProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const src = imageSrc ?? `https://avatar.vercel.sh/shadcn${imageIndex}`;
@@ -81,16 +81,17 @@ export function CampaignCard({
           alt={imageAlt}
           className={cn(
             "h-40 w-full object-cover brightness-40 blur-2xl transition-all duration-300",
-            isActive && "brightness-60"
+            isActive && !comingSoon && "brightness-60"
           )}
         />
       </div>
+      {comingSoon && <div className="absolute left-1/2 -translate-x-1/2 top-30 text-foreground/50 text-2xl ">COMING SOON</div>}
       <CardAction className="absolute top-3 right-3">
         <Badge
           variant="secondary"
           className="flex items-center justify-end rounded-full border border-white/10 gap-2 pr-1 pl-2 py-3 bg-background/40 backdrop-blur-3xl"
         >
-          <span className={cn("w-14 text-center transition-all duration-300", isActive ? "opacity-100" : "opacity-50")}>
+          <span className={cn("text-center transition-all duration-300", isActive ? "opacity-100" : "opacity-50", !comingSoon && "w-14")}>
             {isActive ? "Active" : "Disabled"}
           </span>
           <Switch
@@ -134,7 +135,7 @@ export function CampaignCard({
             <Button
               className="w-full"
               variant="outline"
-              disabled={!isActive && !allowConfigureWhenDisabled}
+              disabled={!isActive || comingSoon}
             >
               {configureButtonLabel}
             </Button>

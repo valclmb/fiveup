@@ -1,14 +1,10 @@
 // app/api/feedback/route.ts
 import { auth } from "@/auth";
+import { feedbackPostSchema } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
 import { FEEDBACK_CONSTANTS, FEEDBACK_ERRORS } from "@/lib/feedback";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
-
-interface FeedbackBody {
-  message?: string;
-  pageUrl?: string;
-}
 
 async function validateSession() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -18,29 +14,6 @@ async function validateSession() {
   }
 
   return { userId: session.user.id };
-}
-
-function validateInput(body: FeedbackBody) {
-  const message = body.message?.trim() || "";
-  const pageUrl = body.pageUrl?.trim() || "";
-
-  if (!message) {
-    return { error: NextResponse.json({ error: FEEDBACK_ERRORS.MESSAGE_REQUIRED }, { status: 400 }) };
-  }
-
-  if (message.length > FEEDBACK_CONSTANTS.MAX_MESSAGE_LENGTH) {
-    return { error: NextResponse.json({ error: FEEDBACK_ERRORS.MESSAGE_TOO_LONG }, { status: 400 }) };
-  }
-
-  if (!pageUrl) {
-    return { error: NextResponse.json({ error: FEEDBACK_ERRORS.PAGE_URL_REQUIRED }, { status: 400 }) };
-  }
-
-  if (pageUrl.length > FEEDBACK_CONSTANTS.MAX_PAGE_URL_LENGTH) {
-    return { error: NextResponse.json({ error: FEEDBACK_ERRORS.PAGE_URL_TOO_LONG }, { status: 400 }) };
-  }
-
-  return { message, pageUrl };
 }
 
 async function checkRateLimit(userId: string) {
@@ -61,18 +34,22 @@ export async function POST(request: NextRequest) {
   if ("error" in sessionResult) return sessionResult.error;
   const { userId } = sessionResult;
 
-  // 2. Parser le body
-  let body: FeedbackBody;
+  // 2. Parse and validate body (strict server-side validation)
+  let rawBody: unknown;
   try {
-    body = await request.json();
+    rawBody = await request.json();
   } catch {
     return NextResponse.json({ error: FEEDBACK_ERRORS.INVALID_JSON }, { status: 400 });
   }
 
-  // 3. Valider l'input
-  const validationResult = validateInput(body);
-  if ("error" in validationResult) return validationResult.error;
-  const { message, pageUrl } = validationResult;
+  const parsed = feedbackPostSchema.safeParse(rawBody);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid request data", details: parsed.error.flatten() },
+      { status: 400 },
+    );
+  }
+  const { message, pageUrl } = parsed.data;
 
   // 4. Vérifier le rate limit
   const rateLimitResult = await checkRateLimit(userId);

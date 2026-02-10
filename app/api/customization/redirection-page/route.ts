@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { redirectionPagePatchSchema } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
@@ -47,15 +48,28 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
-  const desc = body.description;
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
 
+  const parsed = redirectionPagePatchSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid request data", details: parsed.error.flatten() },
+      { status: 400 },
+    );
+  }
+
+  const d = parsed.data;
   const data = {
-    title: body.title ?? undefined,
-    buttonText: body.buttonText ?? undefined,
-    ...(typeof desc === "object" && desc !== null && {
-      description: desc.content ?? undefined,
-      descriptionEnabled: desc.enabled ?? undefined,
+    ...(d.title !== undefined && { title: d.title }),
+    ...(d.buttonText !== undefined && { buttonText: d.buttonText }),
+    ...(d.description !== undefined && {
+      description: d.description.content,
+      descriptionEnabled: d.description.enabled,
     }),
   };
 

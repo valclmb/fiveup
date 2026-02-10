@@ -1,3 +1,4 @@
+import { shopifyWebhookOrderSchema, type ShopifyWebhookOrder } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
 import { onNewOrder, onOrderFulfilled } from "@/lib/shopify-hooks";
 import crypto from "crypto";
@@ -40,10 +41,25 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Missing shop header" }, { status: 400 });
   }
 
-  const order: ShopifyOrder = JSON.parse(body);
+  let order: ShopifyWebhookOrder | null = null;
+  if (topic === "orders/create" || topic === "orders/fulfilled") {
+    let parsedBody: unknown;
+    try {
+      parsedBody = JSON.parse(body);
+    } catch {
+      return Response.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+    const parsed = shopifyWebhookOrderSchema.safeParse(parsedBody);
+    if (!parsed.success) {
+      return Response.json(
+        { error: "Invalid webhook payload", details: parsed.error.flatten() },
+        { status: 400 },
+      );
+    }
+    order = parsed.data;
+  }
 
   try {
-    // Trouver le store associé pour avoir le userId
     const store = await prisma.shopifyStore.findUnique({
       where: { shop },
       select: { id: true, userId: true, shop: true },
@@ -54,14 +70,13 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: "Store not found" }, { status: 404 });
     }
 
-    // Gérer les différents types de webhooks
     switch (topic) {
       case "orders/create":
-        await onNewOrder({ order, store });
+        if (order) await onNewOrder({ order: order as ShopifyOrder, store });
         break;
 
       case "orders/fulfilled":
-        await onOrderFulfilled({ order, store });
+        if (order) await onOrderFulfilled({ order: order as ShopifyOrder, store });
         break;
 
       case "app/uninstalled":

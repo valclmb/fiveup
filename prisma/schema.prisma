@@ -197,7 +197,7 @@ model UserCampaign {
   userId        String
   campaignSlug  String         // "order_review_request" - from campaigns config in code
   storeId       String         // Campaign activated per store
-  status        String         @default("active") // active | paused | cancelled
+  status        String         @default("active") // active | inactive
   triggerType   String         @default("purchase") // purchase | shipment | receipt
   delayHours    Int            @default(24)
   channel       String         // "whatsapp" | "sms" | "email"

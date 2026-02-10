@@ -40,7 +40,7 @@ export function OrderReviewCampaignCard() {
 
   const patchMutation = useMutation({
     mutationFn: async (payload: {
-      status?: "active" | "paused";
+      status?: "active" | "inactive";
       triggerType?: "purchase" | "shipment" | "receipt";
       delayHours?: number;
       channel?: string;
@@ -58,6 +58,8 @@ export function OrderReviewCampaignCard() {
       });
       if (variables.status === "active") {
         toast.success("Campaign activated");
+      } else if (variables.status === "inactive") {
+        toast.success("Campaign disabled");
       } else if (
         variables.triggerType !== undefined ||
         variables.delayHours !== undefined ||
@@ -92,9 +94,11 @@ export function OrderReviewCampaignCard() {
   const handleSwitchChange = async (checked: boolean) => {
     if (!hasStore) return;
     if (checked) {
+      // Reactivate: if a record exists (inactive), just set status; otherwise create with defaults
       await patchMutation.mutateAsync({ status: "active" });
     } else {
-      await deleteMutation.mutateAsync();
+      // Disable by setting inactive so we keep delay, channel, triggerType, etc. (do not DELETE)
+      await patchMutation.mutateAsync({ status: "inactive" });
     }
   };
 
