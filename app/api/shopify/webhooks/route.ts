@@ -59,29 +59,103 @@ export async function POST(request: NextRequest) {
     order = parsed.data;
   }
 
+  const isComplianceWebhook =
+    topic === "customers/redact" || topic === "shop/redact" || topic === "customers/data_request";
+
   try {
     const store = await prisma.shopifyStore.findUnique({
       where: { shop },
       select: { id: true, userId: true, shop: true },
     });
 
-    if (!store) {
+    if (!store && !isComplianceWebhook) {
       console.error(`Store not found: ${shop}`);
       return Response.json({ error: "Store not found" }, { status: 404 });
     }
 
     switch (topic) {
       case "orders/create":
-        if (order) await onNewOrder({ order: order as ShopifyOrder, store });
+        if (order && store) await onNewOrder({ order: order as ShopifyOrder, store });
         break;
 
       case "orders/fulfilled":
-        if (order) await onOrderFulfilled({ order: order as ShopifyOrder, store });
+        if (order && store) await onOrderFulfilled({ order: order as ShopifyOrder, store });
         break;
 
       case "app/uninstalled":
-        await prisma.shopifyStore.delete({ where: { shop } });
+        if (store) await prisma.shopifyStore.delete({ where: { shop } });
         console.log(`App uninstalled from ${shop}`);
+        break;
+
+      case "customers/redact": {
+        // GDPR: store owner requested deletion of customer data. Payload: shop_id, shop_domain, customer { id, email, phone }, orders_to_redact
+        try {
+          const payload = JSON.parse(body) as {
+            shop_domain?: string;
+            customer?: { id?: number; email?: string; phone?: string };
+            orders_to_redact?: number[];
+          };
+          const shopDomain = payload.shop_domain ?? shop;
+          const storeForRedact = await prisma.shopifyStore.findUnique({
+            where: { shop: shopDomain },
+            select: { id: true },
+          });
+          if (storeForRedact) {
+            const orderIds = (payload.orders_to_redact ?? []).map(String);
+            const customerEmail = payload.customer?.email;
+            const customerPhone = payload.customer?.phone;
+            if (orderIds.length > 0) {
+              await prisma.orderReviewRequest.updateMany({
+                where: {
+                  storeId: storeForRedact.id,
+                  shopifyOrderId: { in: orderIds },
+                },
+                data: { customerEmail: null, customerPhone: null },
+              });
+            } else if (customerEmail || customerPhone) {
+              await prisma.orderReviewRequest.updateMany({
+                where: {
+                  storeId: storeForRedact.id,
+                  ...(customerEmail && customerPhone
+                    ? { OR: [{ customerEmail: customerEmail }, { customerPhone: customerPhone }] }
+                    : customerEmail
+                      ? { customerEmail: customerEmail }
+                      : { customerPhone: customerPhone }),
+                },
+                data: { customerEmail: null, customerPhone: null },
+              });
+            }
+          }
+        } catch (e) {
+          console.error("customers/redact handling error:", e);
+        }
+        break;
+      }
+
+      case "shop/redact": {
+        // GDPR: 48h after uninstall. Payload: shop_id, shop_domain – erase all shop data
+        try {
+          const payload = JSON.parse(body) as { shop_domain?: string };
+          const shopDomain = payload.shop_domain ?? shop;
+          const storeForRedact = await prisma.shopifyStore.findUnique({
+            where: { shop: shopDomain },
+            select: { id: true },
+          });
+          if (storeForRedact) {
+            await prisma.orderReviewRequest.updateMany({
+              where: { storeId: storeForRedact.id },
+              data: { customerEmail: null, customerPhone: null },
+            });
+          }
+        } catch (e) {
+          console.error("shop/redact handling error:", e);
+        }
+        break;
+      }
+
+      case "customers/data_request":
+        // GDPR: customer requested to view their data. Payload: shop_id, shop_domain, customer, orders_requested, data_request.id
+        // We store only order review request PII; no separate export flow – acknowledge receipt with 200
         break;
 
       default:

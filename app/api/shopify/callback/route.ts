@@ -22,10 +22,15 @@ async function registerWebhooks(shop: string, accessToken: string) {
 
   const webhookUrl = `${baseUrl}/api/shopify/webhooks`;
 
+  // Mandatory compliance webhooks (GDPR/CPRA): https://shopify.dev/docs/apps/build/compliance/privacy-law-compliance
+  // If using Shopify CLI, also add in shopify.app.toml: [webhooks] → subscriptions with compliance_topics
   const webhooksToRegister = [
     { topic: "orders/create", address: webhookUrl },
     { topic: "orders/fulfilled", address: webhookUrl },
     { topic: "app/uninstalled", address: webhookUrl },
+    { topic: "customers/redact", address: webhookUrl },
+    { topic: "shop/redact", address: webhookUrl },
+    { topic: "customers/data_request", address: webhookUrl },
   ];
 
   for (const webhook of webhooksToRegister) {
