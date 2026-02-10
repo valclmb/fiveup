@@ -1,7 +1,7 @@
 import { startGoogleMapsScrape, startTrustpilotScrape } from "@/lib/apify";
 import { syncScheduledBodySchema } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
-import { userHasActiveSubscription } from "@/lib/subscription";
+import { getActivePlanForUser } from "@/lib/subscription";
 import { NextRequest } from "next/server";
 import { Receiver } from "@upstash/qstash";
 
@@ -82,8 +82,8 @@ export async function POST(request: NextRequest) {
     return Response.json({ ok: true, skipped: true, reason: "Account disconnected" });
   }
 
-  const hasSubscription = await userHasActiveSubscription(account.userId);
-  if (!hasSubscription) {
+  const plan = await getActivePlanForUser(account.userId);
+  if (plan === "free") {
     console.log(`[sync-scheduled] Account ${accountId} user has no active subscription (free), skip`);
     return Response.json({ ok: true, skipped: true, reason: "Free user - no subscription" });
   }

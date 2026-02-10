@@ -8,7 +8,7 @@ import {
 import { prisma } from "@/lib/prisma";
 import { scheduleNextReviewSync } from "@/lib/qstash";
 import { REVIEWS_CONSTANTS } from "@/lib/reviews/constants";
-import { userHasActiveSubscription } from "@/lib/subscription";
+import { getActivePlanForUser } from "@/lib/subscription";
 import { createBatchChunks } from "@/lib/reviews/utils";
 import { parseTrustpilotReviewFromApify } from "@/lib/reviews/trustpilot/apify-mapper";
 import { headers } from "next/headers";
@@ -210,7 +210,7 @@ async function processApifyResults(
       where: { id: accountId },
       select: { userId: true },
     });
-    if (account && (await userHasActiveSubscription(account.userId))) {
+    if (account && (await getActivePlanForUser(account.userId)) !== "free") {
       await scheduleNextReviewSync(accountId, REVIEWS_CONSTANTS.AUTO_SYNC_QSTASH_DELAY);
     }
 

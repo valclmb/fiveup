@@ -14,6 +14,7 @@ import Image from "next/image"
 import * as React from "react"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
+import { UpgradeCta } from "./upgrade-cta"
 
 const data = {
   user: {
@@ -61,6 +62,8 @@ export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
   React.useEffect(() => setMounted(true), [])
   const { data: session, isPending } = authClient.useSession()
   const user = session?.user
+  const plan = user?.plan ?? "free"
+  const isFreePlan = !isPending && plan === "free"
 
   const { resolvedTheme } = useTheme()
   const logoSrc = mounted && resolvedTheme === "dark"
@@ -85,11 +88,9 @@ export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        {/* <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
       </SidebarContent>
       <SidebarFooter>
+        {isFreePlan && <UpgradeCta />}
         <NavUser user={user} isPending={isPending} />
       </SidebarFooter>
     </Sidebar>
