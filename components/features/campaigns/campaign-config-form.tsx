@@ -24,6 +24,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  DEFAULT_ORDER_REVIEW_MESSAGE,
   DELAY_UNITS,
   DELAY_VALUES,
   MESSAGE_VARIABLES,
@@ -71,9 +72,6 @@ export interface CampaignConfigFormProps {
   isSaving: boolean;
 }
 
-const DEFAULT_MESSAGE =
-  "Hi {{customer_first_name}}, thank you for your order {{order_number}}! Share your experience: {{review_link}}";
-
 const DEFAULT_THANKS_MESSAGE =
   "Thank you for your feedback! Your review helps us improve and helps other customers make informed decisions.";
 
@@ -85,7 +83,8 @@ function getDefaultValues(userCampaign: CampaignConfigFormProps["userCampaign"])
     triggerType: (userCampaign?.triggerType as TriggerType) ?? "purchase",
     channel: (userCampaign?.channel as ChannelValue) ?? "email",
     messageContent:
-      (userCampaign?.messageContent ?? "").trim() || DEFAULT_MESSAGE,
+      (userCampaign?.messageContent ?? "").trim() ||
+      DEFAULT_ORDER_REVIEW_MESSAGE,
     thanksMessageEnabled: userCampaign?.thanksMessageEnabled ?? true,
     thanksMessageContent:
       (userCampaign?.thanksMessageContent ?? "").trim() || DEFAULT_THANKS_MESSAGE,
@@ -323,7 +322,7 @@ export function CampaignConfigForm({
                       field.ref(el);
                       textareaRef.current = el;
                     }}
-                    placeholder={DEFAULT_MESSAGE}
+                    placeholder={DEFAULT_ORDER_REVIEW_MESSAGE}
                     value={field.value}
                     onChange={field.onChange}
                     onBlur={field.onBlur}

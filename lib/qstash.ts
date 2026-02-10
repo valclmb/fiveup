@@ -96,7 +96,18 @@ export async function scheduleReviewMessage(
     const messageId = Array.isArray(res) ? res[0]?.messageId : (res as { messageId?: string }).messageId;
     return messageId ?? null;
   } catch (err) {
+    const cause = err instanceof Error ? err.cause : undefined;
+    const isRefused =
+      cause instanceof Error &&
+      "code" in cause &&
+      (cause as NodeJS.ErrnoException).code === "ECONNREFUSED" &&
+      String((cause as NodeJS.ErrnoException).address).startsWith("127.0.0.1");
     console.error("QStash schedule error:", err);
+    if (isRefused) {
+      console.warn(
+        "QStash: local dev server not reachable. Start it with: npx @upstash/qstash-cli dev - or unset QSTASH_URL to use Upstash cloud.",
+      );
+    }
     return null;
   }
 }

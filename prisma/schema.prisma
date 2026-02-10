@@ -262,6 +262,7 @@ model OrderReviewRequest {
   shopifyOrderId  String        // ID Shopify de la commande (pour retrouver la commande)
   customerPhone   String?
   customerEmail   String?
+  customerFirstName String?     // For {{customer_first_name}} in message template (from order)
   channel         String        @default("email") // "whatsapp" | "sms" | "email" - from UserCampaign
   scheduledAt     DateTime      // Heure à laquelle QStash doit appeler /api/send-review-message
   status          String        @default("pending") // pending | sent | failed

@@ -32,6 +32,10 @@ export function getCampaignBySlug(slug: string): CampaignDefinition | undefined 
   return CAMPAIGNS.find((c) => c.slug === slug);
 }
 
+/** Default message template when campaign messageContent is not set. */
+export const DEFAULT_ORDER_REVIEW_MESSAGE =
+  "Hi {{customer_first_name}}, thank you for your order {{order_number}}! Share your experience: {{review_link}}";
+
 /** Message variables for order_review_request campaign. */
 export const MESSAGE_VARIABLES = [
   { key: "{{customer_first_name}}", label: "Customer first name" },

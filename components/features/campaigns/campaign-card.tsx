@@ -74,7 +74,7 @@ export function CampaignCard({
   const src = imageSrc ?? `https://avatar.vercel.sh/shadcn${imageIndex}`;
 
   return (
-    <Card className="relative w-full max-w-sm pt-0  rounded-3xl">
+    <Card className="relative w-full max-w-sm pt-0 rounded-3xl">
       <div className="relative">
         <img
           src={src}
@@ -85,7 +85,7 @@ export function CampaignCard({
           )}
         />
       </div>
-      {comingSoon && <div className="absolute left-1/2 -translate-x-1/2 top-30 text-foreground/50 text-2xl ">COMING SOON</div>}
+      {comingSoon && <div className="absolute left-1/2 -translate-x-1/2 top-30 text-white/50 dark:text-foreground/50 text-2xl ">COMING SOON</div>}
       <CardAction className="absolute top-3 right-3">
         <Badge
           variant="secondary"
@@ -124,7 +124,7 @@ export function CampaignCard({
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent  >
         <CardDescription className={isActive ? "opacity-100" : "opacity-50"}>
           {description}
         </CardDescription>

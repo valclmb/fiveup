@@ -1,7 +1,7 @@
 import type { ShopifyOrder } from "@/app/api/shopify/webhooks/route";
+import { ORDER_REVIEW_REQUEST_SLUG } from "@/lib/campaigns";
 import { prisma } from "@/lib/prisma";
 import { scheduleReviewMessage } from "@/lib/qstash";
-import { ORDER_REVIEW_REQUEST_SLUG } from "@/lib/campaigns";
 import { getScheduledAt, ORDER_REVIEW_STATUS } from "@/lib/review-request";
 
 interface WebhookContext {
@@ -32,6 +32,18 @@ export function getOrderEmail(order: ShopifyOrder): string | null {
   return trimmed || null;
 }
 
+/** Gets the customer first name for message personalization (order, billing, shipping). */
+export function getOrderCustomerFirstName(order: ShopifyOrder): string | null {
+  const raw =
+    order.customer?.first_name ??
+    order.billing_address?.first_name ??
+    order.shipping_address?.first_name ??
+    null;
+  console.log("raw", raw);
+  const trimmed = typeof raw === "string" ? raw.trim() : "";
+  return trimmed || null;
+}
+
 /**
  * Called on each new order (orders/create).
  * Checks if an active UserCampaign exists for this store, otherwise skips.
@@ -41,6 +53,7 @@ export function getOrderEmail(order: ShopifyOrder): string | null {
 export async function onNewOrder({ order, store }: WebhookContext) {
   const phone = getOrderPhone(order);
   const email = getOrderEmail(order);
+  const customerFirstName = getOrderCustomerFirstName(order);
 
   console.log(`🛒 New order ${order.name} on ${store.shop}`);
 
@@ -55,11 +68,13 @@ export async function onNewOrder({ order, store }: WebhookContext) {
   });
 
   if (!userCampaign) {
-    console.log(`⏭️ No active "order_review_request" campaign for ${store.shop}, skip`);
+    console.log(
+      `⏭️ No active "order_review_request" campaign for ${store.shop}, skip`,
+    );
     return;
   }
 
-  const { delayHours, channel } = userCampaign;
+  const { delayHours, channel, triggerType } = userCampaign;
 
   // Validate channel vs available contact
   if (channel === "email" && !email) {
@@ -77,6 +92,10 @@ export async function onNewOrder({ order, store }: WebhookContext) {
     console.log("📱 No phone number in this order");
   }
 
+  // Use configured delay and trigger from campaign
+  console.log(
+    `📋 Campaign config: trigger=${triggerType}, delay=${delayHours}h, channel=${channel}`,
+  );
   const scheduledAt = getScheduledAt(delayHours);
 
   const reviewRequest = await prisma.orderReviewRequest.upsert({
@@ -91,6 +110,7 @@ export async function onNewOrder({ order, store }: WebhookContext) {
       shopifyOrderId: String(order.id),
       customerPhone: phone ?? undefined,
       customerEmail: email ?? undefined,
+      customerFirstName: customerFirstName ?? undefined,
       channel,
       scheduledAt,
       status: ORDER_REVIEW_STATUS.PENDING,
@@ -98,6 +118,7 @@ export async function onNewOrder({ order, store }: WebhookContext) {
     update: {
       customerPhone: phone ?? undefined,
       customerEmail: email ?? undefined,
+      customerFirstName: customerFirstName ?? undefined,
       channel,
       scheduledAt,
       status: ORDER_REVIEW_STATUS.PENDING,
@@ -108,23 +129,26 @@ export async function onNewOrder({ order, store }: WebhookContext) {
     `📋 OrderReviewRequest saved: id=${reviewRequest.id}, channel=${channel}, scheduledAt=${scheduledAt.toISOString()}, status=${reviewRequest.status}`,
   );
 
-  const delay =
-    process.env.QSTASH_DEV_DELAY ?? `${delayHours}h`;
+  const delay = process.env.QSTASH_DEV_DELAY ?? `${delayHours}h`;
   const messageId = await scheduleReviewMessage(reviewRequest.id, delay);
   if (messageId) {
-    console.log(`⏰ QStash job scheduled: messageId=${messageId}, delay=${delay}`);
+    console.log(
+      `⏰ QStash job scheduled: messageId=${messageId}, delay=${delay}`,
+    );
   } else {
-    console.warn("⏰ QStash: job not scheduled (token or URL missing)");
+    console.warn(
+      "⏰ QStash: job not scheduled (check logs above for token/URL or connection errors)",
+    );
   }
 
   console.log(order);
 }
 
-
 /** Same logic as onNewOrder but for shipment/receipt triggers (orders/fulfilled). */
 export async function onOrderFulfilled({ order, store }: WebhookContext) {
   const phone = getOrderPhone(order);
   const email = getOrderEmail(order);
+  const customerFirstName = getOrderCustomerFirstName(order);
 
   console.log(`📦 Order shipped/fulfilled ${order.name} on ${store.shop}`);
 
@@ -140,12 +164,12 @@ export async function onOrderFulfilled({ order, store }: WebhookContext) {
 
   if (!userCampaign) {
     console.log(
-      `⏭️ No active "order_review_request" (shipment/receipt) campaign for ${store.shop}, skip`
+      `⏭️ No active "order_review_request" (shipment/receipt) campaign for ${store.shop}, skip`,
     );
     return;
   }
 
-  const { delayHours, channel } = userCampaign;
+  const { delayHours, channel, triggerType } = userCampaign;
 
   if (channel === "email" && !email) {
     console.log(`⏭️ Email channel selected but no customer email, skip`);
@@ -156,6 +180,10 @@ export async function onOrderFulfilled({ order, store }: WebhookContext) {
     return;
   }
 
+  // Use configured delay and trigger from campaign
+  console.log(
+    `📋 Campaign config: trigger=${triggerType}, delay=${delayHours}h, channel=${channel}`,
+  );
   const scheduledAt = getScheduledAt(delayHours);
 
   const reviewRequest = await prisma.orderReviewRequest.upsert({
@@ -170,6 +198,7 @@ export async function onOrderFulfilled({ order, store }: WebhookContext) {
       shopifyOrderId: String(order.id),
       customerPhone: phone ?? undefined,
       customerEmail: email ?? undefined,
+      customerFirstName: customerFirstName ?? undefined,
       channel,
       scheduledAt,
       status: ORDER_REVIEW_STATUS.PENDING,
@@ -177,6 +206,7 @@ export async function onOrderFulfilled({ order, store }: WebhookContext) {
     update: {
       customerPhone: phone ?? undefined,
       customerEmail: email ?? undefined,
+      customerFirstName: customerFirstName ?? undefined,
       channel,
       scheduledAt,
       status: ORDER_REVIEW_STATUS.PENDING,
@@ -184,15 +214,18 @@ export async function onOrderFulfilled({ order, store }: WebhookContext) {
   });
 
   console.log(
-    `📋 OrderReviewRequest (fulfilled): id=${reviewRequest.id}, channel=${channel}, scheduledAt=${scheduledAt.toISOString()}`
+    `📋 OrderReviewRequest (fulfilled): id=${reviewRequest.id}, channel=${channel}, scheduledAt=${scheduledAt.toISOString()}`,
   );
 
-  const delay =
-    process.env.QSTASH_DEV_DELAY ?? `${delayHours}h`;
+  const delay = process.env.QSTASH_DEV_DELAY ?? `${delayHours}h`;
   const messageId = await scheduleReviewMessage(reviewRequest.id, delay);
   if (messageId) {
-    console.log(`⏰ QStash job scheduled: messageId=${messageId}, delay=${delay}`);
+    console.log(
+      `⏰ QStash job scheduled: messageId=${messageId}, delay=${delay}`,
+    );
   } else {
-    console.warn(`⏰ QStash: job not scheduled (token or URL missing)`);
+    console.warn(
+      "⏰ QStash: job not scheduled (check logs above for token/URL or connection errors)",
+    );
   }
 }

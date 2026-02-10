@@ -1,5 +1,8 @@
-import { shopifyWebhookOrderSchema, type ShopifyWebhookOrder } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
+import {
+  shopifyWebhookOrderSchema,
+  type ShopifyWebhookOrder,
+} from "@/lib/schemas";
 import { onNewOrder, onOrderFulfilled } from "@/lib/shopify-hooks";
 import crypto from "crypto";
 import { NextRequest } from "next/server";
@@ -46,11 +49,17 @@ export async function POST(request: NextRequest) {
     let parsedBody: unknown;
     try {
       parsedBody = JSON.parse(body);
-    } catch {
+    } catch (e) {
+      console.error("Webhook invalid JSON body", { topic, shop, error: e });
       return Response.json({ error: "Invalid JSON body" }, { status: 400 });
     }
     const parsed = shopifyWebhookOrderSchema.safeParse(parsedBody);
     if (!parsed.success) {
+      console.error("Webhook payload validation failed", {
+        topic,
+        shop,
+        details: parsed.error.flatten(),
+      });
       return Response.json(
         { error: "Invalid webhook payload", details: parsed.error.flatten() },
         { status: 400 },
@@ -60,7 +69,9 @@ export async function POST(request: NextRequest) {
   }
 
   const isComplianceWebhook =
-    topic === "customers/redact" || topic === "shop/redact" || topic === "customers/data_request";
+    topic === "customers/redact" ||
+    topic === "shop/redact" ||
+    topic === "customers/data_request";
 
   try {
     const store = await prisma.shopifyStore.findUnique({
@@ -75,11 +86,13 @@ export async function POST(request: NextRequest) {
 
     switch (topic) {
       case "orders/create":
-        if (order && store) await onNewOrder({ order: order as ShopifyOrder, store });
+        if (order && store)
+          await onNewOrder({ order: order as ShopifyOrder, store });
         break;
 
       case "orders/fulfilled":
-        if (order && store) await onOrderFulfilled({ order: order as ShopifyOrder, store });
+        if (order && store)
+          await onOrderFulfilled({ order: order as ShopifyOrder, store });
         break;
 
       case "app/uninstalled":
@@ -117,7 +130,12 @@ export async function POST(request: NextRequest) {
                 where: {
                   storeId: storeForRedact.id,
                   ...(customerEmail && customerPhone
-                    ? { OR: [{ customerEmail: customerEmail }, { customerPhone: customerPhone }] }
+                    ? {
+                        OR: [
+                          { customerEmail: customerEmail },
+                          { customerPhone: customerPhone },
+                        ],
+                      }
                     : customerEmail
                       ? { customerEmail: customerEmail }
                       : { customerPhone: customerPhone }),

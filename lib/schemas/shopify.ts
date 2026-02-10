@@ -8,7 +8,9 @@ export const shopifyDisconnectPostSchema = z.object({
   storeId: z.string().min(1, "Store ID is required"),
 });
 
-export type ShopifyDisconnectPostBody = z.infer<typeof shopifyDisconnectPostSchema>;
+export type ShopifyDisconnectPostBody = z.infer<
+  typeof shopifyDisconnectPostSchema
+>;
 
 /** Minimal shape for Shopify order webhook (orders/create, orders/fulfilled). Validates only fields we use. */
 const shopifyAddressSchema = z
@@ -20,6 +22,7 @@ const shopifyAddressSchema = z
     country: z.string().nullable().optional(),
     phone: z.string().nullable().optional(),
   })
+  .nullable()
   .optional();
 
 const shopifyCustomerSchema = z
