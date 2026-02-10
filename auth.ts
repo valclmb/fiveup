@@ -1,3 +1,8 @@
+import {
+  ensurePlanUpgradeBonus,
+  ensureSignupBonus,
+  getBalance,
+} from "@/lib/tokens";
 import { getActivePlanForUser } from "@/lib/subscription";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@better-auth/stripe";
@@ -85,8 +90,11 @@ export const auth = betterAuth({
   plugins: [
     customSession(async ({ user, session }) => {
       const plan = await getActivePlanForUser(user.id);
+      await ensureSignupBonus(user.id);
+      await ensurePlanUpgradeBonus(user.id, plan);
+      const tokenBalance = await getBalance(user.id);
       return {
-        user: { ...user, plan },
+        user: { ...user, plan, tokenBalance },
         session,
       };
     }),

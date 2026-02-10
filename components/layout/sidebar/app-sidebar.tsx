@@ -5,15 +5,17 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuItem
+  SidebarMenuItem,
+  SidebarSeparator,
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
-import { LayoutDashboard, Link, Megaphone, Paintbrush, Split, Star } from "lucide-react"
+import { LayoutDashboard, Link as LinkIcon, Megaphone, Paintbrush, Split, Star } from "lucide-react"
 import { useTheme } from "next-themes"
 import Image from "next/image"
 import * as React from "react"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
+import { SidebarTokensCta } from "./sidebar-tokens-cta"
 import { UpgradeCta } from "./upgrade-cta"
 
 const data = {
@@ -51,7 +53,7 @@ const data = {
     {
       title: "Connections",
       url: "/connections",
-      icon: Link,
+      icon: LinkIcon,
     },
   ],
 
@@ -90,6 +92,8 @@ export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarFooter>
+        <SidebarTokensCta />
+        <SidebarSeparator className="mx-0" />
         {isFreePlan && <UpgradeCta />}
         <NavUser user={user} isPending={isPending} />
       </SidebarFooter>

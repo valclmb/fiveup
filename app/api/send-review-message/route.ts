@@ -5,6 +5,13 @@ import {
 import { prisma } from "@/lib/prisma";
 import { ORDER_REVIEW_STATUS } from "@/lib/review-request";
 import { sendReviewMessageBodySchema } from "@/lib/schemas";
+import {
+  deductTokens,
+  getBalance,
+  getCost,
+  TOKEN_TRANSACTION_REASON,
+} from "@/lib/tokens";
+import type { TokenChannel } from "@/lib/tokens";
 import { sendSms } from "@/lib/twilio";
 import { Receiver } from "@upstash/qstash";
 import { NextRequest } from "next/server";
@@ -106,6 +113,26 @@ export async function POST(request: NextRequest) {
 
   const { channel, customerEmail, customerPhone, customerFirstName } =
     reviewRequest;
+  const userId = reviewRequest.store.userId;
+  const cost = getCost(channel as TokenChannel);
+  const balance = await getBalance(userId);
+
+  if (balance < cost) {
+    await prisma.userCampaign.updateMany({
+      where: {
+        storeId: reviewRequest.storeId,
+        campaignSlug: ORDER_REVIEW_REQUEST_SLUG,
+      },
+      data: { status: "inactive" },
+    });
+    console.log(
+      `send-review-message: insufficient tokens (balance=${balance}, cost=${cost}), campaign deactivated for store=${reviewRequest.store.shop}`,
+    );
+    return Response.json(
+      { error: "Insufficient tokens", campaignDeactivated: true },
+      { status: 402 },
+    );
+  }
 
   try {
     // Use campaign config for message body (delay & trigger were used at schedule time in webhooks)
@@ -151,20 +178,19 @@ export async function POST(request: NextRequest) {
           { status: 400 },
         );
       }
-      try {
-        await sendSms(customerPhone, body);
-        console.log(
-          `send-review-message: SMS sent for orderReviewRequestId=${orderReviewRequestId}, store=${reviewRequest.store.shop}`,
-        );
-      } catch (smsErr: unknown) {
-        const msg = smsErr instanceof Error ? smsErr.message : String(smsErr);
-        console.error(`send-review-message: SMS failed (To may be unsupported for your Twilio From number): ${msg}`);
-        throw smsErr;
-      }
+      await sendSms(customerPhone, body);
+      // Deduct only after provider success (no throw)
+      await deductTokens(userId, cost, TOKEN_TRANSACTION_REASON.CONSUMED_SMS, {
+        orderReviewRequestId,
+      });
+      console.log(
+        `send-review-message: SMS sent for orderReviewRequestId=${orderReviewRequestId}, store=${reviewRequest.store.shop}, tokens deducted=${cost}`,
+      );
     } else if (channel === "email" || channel === "whatsapp") {
       console.log(
         `send-review-message: channel=${channel} not implemented yet for id=${orderReviewRequestId}, marking as SENT (no-op)`,
       );
+      // When email/whatsapp sending is implemented, deduct here after successful send
     }
 
     await prisma.orderReviewRequest.update({

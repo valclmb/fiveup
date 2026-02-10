@@ -16,6 +16,7 @@ model User {
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
   stripeCustomerId      String?
+  tokenBalance          Int                    @default(0)
   sessions              Session[]
   accounts              Account[]
   shopifyStores         ShopifyStore[]
@@ -28,8 +29,25 @@ model User {
   redirectionPageCustomization RedirectionPageCustomization?
   feedbackPageCustomization   FeedbackPageCustomization?
   userCampaigns         UserCampaign[]
+  tokenTransactions     TokenTransaction[]
 
   @@map("user")
+}
+
+/** Token balance changes: signup bonus, plan upgrade, purchase, consumed per channel. */
+model TokenTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int      // positive = credit, negative = debit
+  reason    String   // signup_bonus | plan_upgrade | purchase | consumed_sms | consumed_email | consumed_whatsapp
+  metadata  Json?    // e.g. { orderReviewRequestId, packId, plan }
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([reason])
+  @@map("token_transaction")
 }
 
 model GlobalStyles {
