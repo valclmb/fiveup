@@ -97,11 +97,11 @@ export async function scheduleReviewMessage(
     return messageId ?? null;
   } catch (err) {
     const cause = err instanceof Error ? err.cause : undefined;
+    const causeWithAddress = cause as NodeJS.ErrnoException & { address?: string };
     const isRefused =
       cause instanceof Error &&
-      "code" in cause &&
-      (cause as NodeJS.ErrnoException).code === "ECONNREFUSED" &&
-      String((cause as NodeJS.ErrnoException).address).startsWith("127.0.0.1");
+      causeWithAddress.code === "ECONNREFUSED" &&
+      String(causeWithAddress.address ?? "").startsWith("127.0.0.1");
     console.error("QStash schedule error:", err);
     if (isRefused) {
       console.warn(
