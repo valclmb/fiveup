@@ -9,26 +9,33 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Slider } from "@/components/ui/slider";
 import Typography from "@/components/ui/typography";
 import { authClient } from "@/lib/auth-client";
 import { post } from "@/lib/fetch";
 import {
+  CUSTOM_AMOUNT_MAX,
+  CUSTOM_AMOUNT_MIN,
+  getCustomAmountPriceEur,
   TOKEN_COST_EMAIL,
   TOKEN_COST_SMS,
   TOKEN_COST_WHATSAPP,
-  TOKEN_PACKS,
 } from "@/lib/token-packs";
 import { useMutation } from "@tanstack/react-query";
 import { Coins, Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 type CreateCheckoutSessionResponse = { url?: string; error?: string };
 
+/** Preset amounts (tokens) for quick selection. */
+const AMOUNT_PRESETS = [250, 500, 1000, 2500, 5000, 7500, 10000] as const;
+
 export default function BuyTokensPage() {
   const { data: session } = authClient.useSession();
   const searchParams = useSearchParams();
+  const [customAmount, setCustomAmount] = useState(100);
 
   const balance =
     typeof (session?.user as { tokenBalance?: number } | undefined)
@@ -39,8 +46,13 @@ export default function BuyTokensPage() {
   useEffect(() => {
     const success = searchParams.get("success");
     const canceled = searchParams.get("canceled");
+    const tokensParam = searchParams.get("tokens");
     if (success === "1") {
-      toast.success("Tokens added to your account.");
+      const count = tokensParam ? parseInt(tokensParam, 10) : NaN;
+      const message = Number.isFinite(count) && count > 0
+        ? `${count.toLocaleString()} token${count === 1 ? "" : "s"} added to your balance.`
+        : "Tokens added to your account.";
+      toast.success(message);
       window.history.replaceState({}, "", "/buy-tokens");
     }
     if (canceled === "1") {
@@ -50,8 +62,8 @@ export default function BuyTokensPage() {
   }, [searchParams]);
 
   const createCheckoutMutation = useMutation({
-    mutationFn: async (packId: string) => {
-      const res = await post("tokens/create-checkout-session", { packId });
+    mutationFn: async (amount: number) => {
+      const res = await post("tokens/create-checkout-session", { amount });
       return res as CreateCheckoutSessionResponse;
     },
     onSuccess: (data) => {
@@ -63,8 +75,8 @@ export default function BuyTokensPage() {
     },
   });
 
-  const handleBuy = (packId: string) => {
-    createCheckoutMutation.mutate(packId);
+  const handleBuy = () => {
+    createCheckoutMutation.mutate(customAmount);
   };
 
   return (
@@ -97,43 +109,64 @@ export default function BuyTokensPage() {
         </CardContent>
       </Card>
 
-      <div>
-        <Typography variant="h2" className="text-xl font-semibold mb-4">
-          Token packs
-        </Typography>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {TOKEN_PACKS.map((pack) => (
-            <Card key={pack.id} className="flex flex-col">
-              <CardHeader className="pb-2">
-                <p className="text-2xl font-bold mt-2">
-                  {pack.priceEur} €
-                </p>
-                <CardTitle className="text-lg">{pack.label}</CardTitle>
-                <CardDescription>
-                  One-time purchase — tokens never expire.
-                </CardDescription>
-              </CardHeader>
-              <CardFooter className="mt-auto pt-4">
-                <Button
-                  className="w-full"
-                  onClick={() => handleBuy(pack.id)}
-                  disabled={createCheckoutMutation.isPending}
-                >
-                  {createCheckoutMutation.isPending &&
-                    createCheckoutMutation.variables === pack.id ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Redirecting...
-                    </>
-                  ) : (
-                    "Buy tokens"
-                  )}
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Choose your amount</CardTitle>
+          <CardDescription>
+            Select any number of tokens between {CUSTOM_AMOUNT_MIN} and{" "}
+            {CUSTOM_AMOUNT_MAX.toLocaleString()}.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="space-y-4">
+            <div className="flex justify-between text-sm">
+              <span className="font-medium tabular-nums">
+                {customAmount.toLocaleString()} tokens
+              </span>
+              <span className="text-muted-foreground tabular-nums">
+                {getCustomAmountPriceEur(customAmount).toFixed(2)} €
+              </span>
+            </div>
+            <Slider
+              min={CUSTOM_AMOUNT_MIN}
+              max={CUSTOM_AMOUNT_MAX}
+              step={10}
+              value={[customAmount]}
+              onValueChange={([v]) => setCustomAmount(v ?? CUSTOM_AMOUNT_MIN)}
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {AMOUNT_PRESETS.map((amount) => (
+              <Button
+                key={amount}
+                variant={customAmount === amount ? "default" : "outline"}
+                size="sm"
+                onClick={() => setCustomAmount(amount)}
+
+              >
+                {amount.toLocaleString()}
+              </Button>
+            ))}
+          </div>
+        </CardContent>
+        <CardFooter>
+          <Button
+            className="w-full hover:scale-none"
+            onClick={handleBuy}
+            disabled={createCheckoutMutation.isPending}
+
+          >
+            {createCheckoutMutation.isPending ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Redirecting...
+              </>
+            ) : (
+              `Buy ${customAmount.toLocaleString()} tokens`
+            )}
+          </Button>
+        </CardFooter>
+      </Card>
 
       <Typography variant="description" className="text-sm text-muted-foreground block">
         Cost per message: {TOKEN_COST_EMAIL} token (email), {TOKEN_COST_SMS} (SMS), {TOKEN_COST_WHATSAPP} (WhatsApp).
