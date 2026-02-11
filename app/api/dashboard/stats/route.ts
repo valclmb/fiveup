@@ -43,7 +43,7 @@ function getSampleRecentReviews() {
 }
 
 /**
- * GET /api/stats
+ * GET /api/dashboard/stats
  * Returns monthly review counts for the chart + 5 most recent reviews.
  * For free plan: chart and recent reviews are sample data (nothing real in network).
  * statsBySource stays real so the Sources card (only unlocked card) shows real data.
@@ -159,7 +159,7 @@ export async function GET() {
     const data = buildMonthlyData(monthMap);
     return NextResponse.json({ data, recentReviews, statsBySource });
   } catch (error) {
-    console.error("Stats API error:", error);
+    console.error("Dashboard stats API error:", error);
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Internal server error" },
       { status: 500 }

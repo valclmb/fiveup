@@ -28,7 +28,7 @@ export function DashboardOverview() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
-      const res = await getAll<StatsResponse | { error: string }>("stats");
+      const res = await getAll<StatsResponse | { error: string }>("dashboard/stats");
       if (res && "error" in res && res.error) {
         throw new Error(res.error);
       }

@@ -35,14 +35,14 @@ function replaceMessageVariables(
     .replace(/\{\{review_link\}\}/g, opts.reviewLink ?? "");
 }
 
-/** Vérifie la signature QStash et exécute la logique d'envoi de la demande d'avis. */
+/** Verifies QStash signature and runs the review request send logic. */
 export async function POST(request: NextRequest) {
   const currentKey = process.env.QSTASH_CURRENT_SIGNING_KEY;
   const nextKey = process.env.QSTASH_NEXT_SIGNING_KEY;
 
   if (!currentKey || !nextKey) {
     console.error(
-      "send-review-message: QSTASH_CURRENT_SIGNING_KEY ou QSTASH_NEXT_SIGNING_KEY manquant",
+      "send-review-message: QSTASH_CURRENT_SIGNING_KEY or QSTASH_NEXT_SIGNING_KEY missing",
     );
     return Response.json({ error: "Server misconfiguration" }, { status: 500 });
   }
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
   const baseUrl =
     process.env.BETTER_AUTH_URL?.replace(/\/+$/, "") ??
     (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "");
-  const url = `${baseUrl}/api/send-review-message`;
+  const url = `${baseUrl}/api/campaigns/send-review-message`;
 
   const isValid = await receiver.verify({
     body: rawBody,
@@ -106,7 +106,7 @@ export async function POST(request: NextRequest) {
 
   if (reviewRequest.status !== ORDER_REVIEW_STATUS.PENDING) {
     console.log(
-      `send-review-message: id=${orderReviewRequestId} déjà traité (status=${reviewRequest.status}), skip`,
+      `send-review-message: id=${orderReviewRequestId} already processed (status=${reviewRequest.status}), skip`,
     );
     return Response.json({ ok: true, skipped: true });
   }

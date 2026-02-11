@@ -109,7 +109,7 @@ La configuration Prisma lit cette variable via `prisma.config.ts` (et éventuell
 | `QSTASH_NEXT_SIGNING_KEY`   | Clé de signature suivante (rotation)                       |
 | `QSTASH_DEV_DELAY`          | (Optionnel) Délai en dev, ex. `1m` ou `0s`                |
 
-Les endpoints protégés par signature : `/api/send-review-message`, `/api/reviews/sync-scheduled`, `/api/reviews/sync-catchup`, `/api/cron/plan-bonus-monthly`.
+Endpoints protégés par signature QStash : `/api/campaigns/send-review-message`, `/api/reviews/sync-scheduled`, `/api/reviews/sync-catchup`, `/api/cron/plan-bonus-monthly`.
 
 ### Shopify
 
@@ -236,7 +236,20 @@ Configurer l’app Shopify avec les URLs de redirection et le webhook commandes/
 ## Structure du projet (résumé)
 
 - `app/` — Routes Next.js (dashboard, landing, auth, API)
-- `app/api/` — Routes API (auth, Stripe, Shopify, reviews, tokens, cron, etc.)
+- `app/api/` — Routes API :
+  - `auth/` — Better Auth (catch-all)
+  - `campaigns/` — Campagne order-review (config + `send-review-message` pour QStash)
+  - `cron/` — Jobs planifiés (ex. `plan-bonus-monthly`)
+  - `customization/` — Personnalisation (global-styles, review-page, redirection-page, feedback-page)
+  - `dashboard/stats` — Stats du dashboard (graphique + derniers avis)
+  - `feedback` — Envoi de feedback produit (POST)
+  - `google-business/` — OAuth + compte Google Business (modèle dédié)
+  - `profile/` — Avatar, token-transactions
+  - `reviews/` — Liste avis, stats par source, sync (scheduled, catchup), Trustpilot & Google (account, connect, status)
+  - `shopify/` — OAuth, stores, webhooks
+  - `stripe/` — Portail facturation
+  - `tokens/` — Création session checkout achat de tokens
+  - `webhooks/` — Webhooks externes (ex. `stripe-tokens`)
 - `components/` — Composants React (dont features : campagnes, personnalisation, profil)
 - `lib/` — Logique métier (auth, tokens, campagnes, reviews, Shopify, QStash, email, etc.)
 - `prisma/` — Schéma et migrations

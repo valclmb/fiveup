@@ -61,7 +61,7 @@ export async function scheduleNextReviewSync(
 }
 
 /**
- * Programme un job QStash pour appeler /api/send-review-message à la date/heure prévue.
+ * Schedules a QStash job to call /api/campaigns/send-review-message at the scheduled time.
  * Étape D : après avoir sauvegardé la commande en BDD, on enregistre le job chez QStash.
  *
  * @param orderReviewRequestId - id de l'OrderReviewRequest en BDD
@@ -84,7 +84,7 @@ export async function scheduleReviewMessage(
     return null;
   }
 
-  const url = `${baseUrl}/api/send-review-message`;
+  const url = `${baseUrl}/api/campaigns/send-review-message`;
 
   try {
     const res = await client.publishJSON({
