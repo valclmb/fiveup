@@ -8,9 +8,45 @@ const MONTH_LABELS = [
   "Jul", "Aou", "Sep", "Oct", "Nov", "Dec",
 ];
 
+/** Sample monthly data for free users (no real data leaked in network). */
+function getSampleMonthlyData() {
+  const now = new Date();
+  return Array.from({ length: 12 }, (_, i) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - 11 + i, 1);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+    const monthIndex = d.getMonth();
+    const avis = 8 + Math.floor(Math.sin(monthIndex * 0.7) * 12) + (monthIndex % 3) * 4;
+    return {
+      month: formatMonthYear(d),
+      avis: Math.max(0, avis),
+      fullMonth: key,
+      bySource: {
+        trustpilot: Math.floor(avis * 0.6),
+        google: Math.floor(avis * 0.4),
+      },
+    };
+  });
+}
+
+/** Sample recent reviews for free users (fake names, no real data). */
+function getSampleRecentReviews() {
+  const names = ["Alex M.", "Sarah K.", "Jean D.", "Marie L.", "Thomas B."];
+  const sources: Array<"TRUSTPILOT" | "GOOGLE"> = ["TRUSTPILOT", "GOOGLE"];
+  return names.map((authorName, i) => ({
+    id: `sample-${i + 1}`,
+    authorName,
+    authorImageUrl: null,
+    rating: 4 + (i % 2),
+    source: sources[i % 2],
+    reviewUrl: sources[i % 2] === "TRUSTPILOT" ? "https://www.trustpilot.com/reviews/sample" : null,
+  }));
+}
+
 /**
  * GET /api/stats
- * Returns monthly review counts for the chart + 5 most recent reviews
+ * Returns monthly review counts for the chart + 5 most recent reviews.
+ * For free plan: chart and recent reviews are sample data (nothing real in network).
+ * statsBySource stays real so the Sources card (only unlocked card) shows real data.
  */
 export async function GET() {
   try {
@@ -18,6 +54,9 @@ export async function GET() {
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
+
+    const plan = (session.user as { plan?: string }).plan ?? "free";
+    const isFree = plan === "free";
 
     const accounts = await prisma.reviewAccount.findMany({
       where: {
@@ -39,6 +78,15 @@ export async function GET() {
       },
     });
     const accountIds = accounts.map((a) => a.id);
+    const statsBySource = buildStatsBySource(accounts);
+
+    if (isFree) {
+      return NextResponse.json({
+        data: getSampleMonthlyData(),
+        recentReviews: getSampleRecentReviews(),
+        statsBySource,
+      });
+    }
 
     if (accountIds.length === 0) {
       return NextResponse.json({
@@ -108,7 +156,6 @@ export async function GET() {
       reviewUrl: r.source === "TRUSTPILOT" ? `https://www.trustpilot.com/reviews/${r.sourceId}` : null,
     }));
 
-    const statsBySource = buildStatsBySource(accounts);
     const data = buildMonthlyData(monthMap);
     return NextResponse.json({ data, recentReviews, statsBySource });
   } catch (error) {
