@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/drawer";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import Typography from "@/components/ui/typography";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 
@@ -143,9 +142,9 @@ export function CampaignCard({
           <DrawerContent className="min-w-xl p-8">
             <DrawerHeader className="p-0">
               <DrawerTitle>
-                <Typography variant="h3" className="font-semibold">
+                <span className="scroll-m-20 text-[clamp(1rem,3vw,1.5rem)] font-semibold tracking-tight">
                   {drawerTitle}
-                </Typography>
+                </span>
               </DrawerTitle>
             </DrawerHeader>
             <Separator className="my-6" />

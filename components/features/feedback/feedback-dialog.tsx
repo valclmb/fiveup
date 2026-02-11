@@ -76,7 +76,7 @@ export function FeedbackDialog() {
 
   return (
     <Popover >
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-9 gap-1.5 text-muted-foreground hover:text-foreground">
           <MessageCircleMore className="size-4" />
           Feedback
