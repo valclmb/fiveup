@@ -5,17 +5,26 @@ import {
   RedirectionPageForm,
   useRedirectionPageForm,
 } from "@/components/features/customization/redirection/redirection-page-form";
-import { PreviewLayout } from "@/components/features/customization/preview-layout";
 import { RedirectionPagePreview } from "@/components/features/customization/redirection/redirection-page-preview";
+import {
+  UpgradeProDialog,
+  useProGateSave,
+} from "@/components/features/customization/upgrade-pro-dialog";
+import { PreviewLayout } from "@/components/features/customization/preview-layout";
 
 export default function RedirectionPage() {
   const { form, saveMutation } = useRedirectionPageForm();
+  const gate = useProGateSave(saveMutation);
 
   return (
-    <CustomizationPageLayout
-      content={
-        <RedirectionPageForm form={form} saveMutation={saveMutation} />
-      }
+    <>
+      <CustomizationPageLayout
+        content={
+          <RedirectionPageForm
+            form={form}
+            saveMutation={{ mutate: gate.mutate, isPending: gate.isPending }}
+          />
+        }
       preview={
         <PreviewLayout
           previewMode="fixed"
@@ -28,5 +37,10 @@ export default function RedirectionPage() {
         </PreviewLayout>
       }
     />
+      <UpgradeProDialog
+        open={gate.upgradeDialogOpen}
+        onOpenChange={gate.setUpgradeDialogOpen}
+      />
+    </>
   );
 }

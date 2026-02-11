@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { requireProPlanForWrite } from "@/lib/require-pro-plan";
 import { feedbackPagePatchSchema } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
@@ -86,6 +87,8 @@ export async function PATCH(request: Request) {
   if (!session?.user) {
     return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
   }
+  const forbidden = requireProPlanForWrite(session);
+  if (forbidden) return forbidden;
 
   let body: unknown;
   try {

@@ -24,6 +24,13 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { authClient } from "@/lib/auth-client";
+import {
   DEFAULT_ORDER_REVIEW_MESSAGE,
   DELAY_UNITS,
   DELAY_VALUES,
@@ -99,6 +106,9 @@ export function CampaignConfigForm({
   isSaving,
 }: CampaignConfigFormProps) {
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const { data: session } = authClient.useSession();
+  const plan = (session?.user as { plan?: string } | undefined)?.plan ?? "free";
+  const isFree = plan === "free";
 
   const form = useForm<CampaignConfigFormValues>({
     resolver: zodResolver(campaignConfigSchema),
@@ -111,6 +121,13 @@ export function CampaignConfigForm({
   useEffect(() => {
     form.reset(getDefaultValues(userCampaign));
   }, [userCampaign, form]);
+
+  // Free users can only use "On purchase" trigger; force it if they had another
+  useEffect(() => {
+    if (isFree && form.getValues("triggerType") !== "purchase") {
+      form.setValue("triggerType", "purchase");
+    }
+  }, [isFree, form]);
 
   const accordionValues = ["time", "channel", "message", "thanks-message"] as const;
 
@@ -141,14 +158,14 @@ export function CampaignConfigForm({
       collapsible
       className="gap-6"
     >
-      <AccordionItem value="time">
+      <AccordionItem value="time" >
         <AccordionTrigger className="flex items-center gap-2">
           <div className="flex size-8 items-center justify-center rounded-full bg-accent text-accent-foreground text-lg font-bold">
             1
           </div>
           When will the message be sent?
         </AccordionTrigger>
-        <AccordionContent className="space-y-6 pt-2">
+        <AccordionContent className="space-y-6 h-full">
           <FieldGroup>
             <Controller
               name="triggerType"
@@ -160,14 +177,19 @@ export function CampaignConfigForm({
                     {TRIGGER_TYPES.map((t) => {
                       const Icon = TRIGGER_ICONS[t.value];
                       const isSelected = field.value === t.value;
-                      return (
+                      const isLocked = isFree && t.value !== "purchase";
+                      const card = (
                         <button
-                          key={t.value}
                           type="button"
-                          onClick={() => field.onChange(t.value)}
+                          onClick={() => {
+                            if (isLocked) return;
+                            field.onChange(t.value);
+                          }}
+                          disabled={isLocked}
                           className={cn(
-                            "relative flex flex-col items-center gap-2 rounded-lg border-2 p-4 transition-colors",
-                            "hover:border-primary/50 hover:bg-muted/50",
+                            "relative flex h-full min-h-[140px] w-full flex-col items-center justify-center gap-2 rounded-lg border-2 p-4 transition-colors",
+                            !isLocked && "hover:border-primary/50 hover:bg-muted/50",
+                            isLocked && "cursor-not-allowed opacity-60",
                             isSelected
                               ? "border-primary bg-primary/5"
                               : "border-border bg-card"
@@ -195,6 +217,23 @@ export function CampaignConfigForm({
                           </span>
                         </button>
                       );
+                      const wrapper = (
+                        <div key={t.value} className="h-full min-h-[140px]">
+                          {isLocked ? (
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild className="block h-full">
+                                  {card}
+                                </TooltipTrigger>
+                                <TooltipContent>Pro feature</TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+                          ) : (
+                            card
+                          )}
+                        </div>
+                      );
+                      return wrapper;
                     })}
                   </div>
                 </Field>

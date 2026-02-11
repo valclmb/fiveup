@@ -74,6 +74,18 @@ export async function PATCH(request: Request) {
   }
 
   const data = parsed.data;
+  const plan = (session.user as { plan?: string }).plan ?? "free";
+  if (
+    plan === "free" &&
+    data.triggerType !== undefined &&
+    data.triggerType !== "purchase"
+  ) {
+    return NextResponse.json(
+      { error: "Upgrade to Pro to use this trigger" },
+      { status: 403 },
+    );
+  }
+
   const userCampaign = await prisma.userCampaign.upsert({
     where: {
       storeId_campaignSlug: {
