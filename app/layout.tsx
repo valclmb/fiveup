@@ -18,7 +18,7 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="fr" className={`${inter.variable} dark`}>
+    <html lang="fr" className={`${inter.variable} dark`} suppressHydrationWarning>
       <head>
         <Script
           async
