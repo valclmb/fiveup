@@ -113,6 +113,7 @@ export async function scheduleReviewMessage(
 }
 
 const REVIEW_SYNC_CATCHUP_SCHEDULE_ID = "reviews-sync-catchup";
+const PLAN_BONUS_MONTHLY_SCHEDULE_ID = "plan-bonus-monthly";
 
 /**
  * Creates the daily QStash schedule for the sync-catchup endpoint.
@@ -138,6 +139,33 @@ export async function ensureReviewSyncCatchupSchedule(): Promise<boolean> {
     return true;
   } catch (err) {
     console.error("QStash ensureReviewSyncCatchupSchedule error:", err);
+    return false;
+  }
+}
+
+/**
+ * Creates the monthly QStash schedule for plan bonus (tokens granted to active subscribers).
+ * Call once after deploy. Runs on the 1st of each month at 4 AM UTC.
+ */
+export async function ensurePlanBonusMonthlySchedule(): Promise<boolean> {
+  const client = getQStashClient();
+  if (!client) return false;
+
+  const baseUrl = getBaseUrl();
+  if (!baseUrl) return false;
+
+  const url = `${baseUrl}/api/cron/plan-bonus-monthly`;
+
+  try {
+    await client.schedules.create({
+      scheduleId: PLAN_BONUS_MONTHLY_SCHEDULE_ID,
+      destination: url,
+      cron: "0 4 1 * *", // 1st of each month at 4 AM UTC
+    });
+    console.log("[QStash] Plan bonus monthly schedule created");
+    return true;
+  } catch (err) {
+    console.error("QStash ensurePlanBonusMonthlySchedule error:", err);
     return false;
   }
 }

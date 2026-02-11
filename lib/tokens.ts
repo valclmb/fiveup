@@ -23,15 +23,16 @@ export function getCost(channel: TokenChannel): number {
 /** Tokens granted on first signup. */
 export const SIGNUP_BONUS_TOKENS = 50;
 
-/** Tokens granted when user upgrades to a plan (one-time per upgrade). */
-export const PLAN_UPGRADE_TOKENS: Record<string, number> = {
+/** Tokens granted per plan (on upgrade and each month while subscribed). */
+export const PLAN_BONUS_TOKENS: Record<string, number> = {
   pro: 100,
   ultra: 250,
 };
 
 export const TOKEN_TRANSACTION_REASON = {
   SIGNUP_BONUS: "signup_bonus",
-  PLAN_UPGRADE: "plan_upgrade",
+  PLAN_UPGRADE: "plan_upgrade", // legacy; new entries use plan_bonus
+  PLAN_BONUS: "plan_bonus",
   PURCHASE: "purchase",
   CONSUMED_SMS: "consumed_sms",
   CONSUMED_EMAIL: "consumed_email",
@@ -125,25 +126,65 @@ export async function ensureSignupBonus(userId: string): Promise<void> {
 
 export type PlanName = "free" | "pro" | "ultra";
 
+/** Returns current month as YYYY-MM for plan_bonus period. */
+export function getCurrentMonthPeriod(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, "0");
+  return `${y}-${m}`;
+}
+
 /**
- * Grants plan upgrade tokens once per plan (idempotent). Call from customSession when plan is pro/ultra.
+ * Grants plan bonus for a given period (idempotent). Used for first-time upgrade (current month)
+ * and by the monthly cron. Same reason "plan_bonus" and amount per plan.
+ */
+export async function ensurePlanBonusForPeriod(
+  userId: string,
+  plan: PlanName,
+  period: string,
+): Promise<boolean> {
+  if (plan === "free") return false;
+  const amount = PLAN_BONUS_TOKENS[plan];
+  if (!amount) return false;
+  const existingList = await prisma.tokenTransaction.findMany({
+    where: {
+      userId,
+      reason: TOKEN_TRANSACTION_REASON.PLAN_BONUS,
+    },
+    select: { metadata: true },
+  });
+  const alreadyGranted = existingList.some((t) => {
+    const m = t.metadata as { plan?: string; period?: string } | null;
+    return m?.plan === plan && m?.period === period;
+  });
+  if (alreadyGranted) return false;
+  // Legacy: if they have plan_upgrade for this plan, don't double-grant for current month (migration)
+  const currentPeriod = getCurrentMonthPeriod();
+  if (period === currentPeriod) {
+    const hasLegacy = await prisma.tokenTransaction.findFirst({
+      where: {
+        userId,
+        reason: TOKEN_TRANSACTION_REASON.PLAN_UPGRADE,
+        metadata: { path: ["plan"], equals: plan },
+      },
+      select: { id: true },
+    });
+    if (hasLegacy) return false;
+  }
+  await addTokens(userId, amount, TOKEN_TRANSACTION_REASON.PLAN_BONUS, {
+    plan,
+    period,
+  });
+  return true;
+}
+
+/**
+ * Ensures user has received plan bonus for the current month (e.g. on first login after upgrade).
+ * Call from customSession when plan is pro/ultra.
  */
 export async function ensurePlanUpgradeBonus(
   userId: string,
   plan: PlanName,
 ): Promise<void> {
-  if (plan === "free") return;
-  const amount = PLAN_UPGRADE_TOKENS[plan];
-  if (!amount) return;
-  const existingList = await prisma.tokenTransaction.findMany({
-    where: { userId, reason: TOKEN_TRANSACTION_REASON.PLAN_UPGRADE },
-    select: { metadata: true },
-  });
-  const alreadyGranted = existingList.some(
-    (t) => (t.metadata as { plan?: string } | null)?.plan === plan,
-  );
-  if (alreadyGranted) return;
-  await addTokens(userId, amount, TOKEN_TRANSACTION_REASON.PLAN_UPGRADE, {
-    plan,
-  });
+  await ensurePlanBonusForPeriod(userId, plan, getCurrentMonthPeriod());
 }
