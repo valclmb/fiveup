@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 import { Providers } from "./providers";
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
+
+const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: Metadata = {
   title: "Five Up Review",
@@ -18,7 +19,7 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="fr" className={`${inter.variable} dark`} suppressHydrationWarning>
+    <html lang="fr" className={`${geist.variable} font-medium dark`} suppressHydrationWarning>
       <head>
         <Script
           async
