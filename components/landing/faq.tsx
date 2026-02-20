@@ -33,7 +33,7 @@ const faqItems = [
 export const Faq = () => {
   return (
     <LandingBlock className=" gap-24 ">
-      <div className="flex  gap-24 max-w-7xl mx-auto min-h-[500px]">
+      <div className="flex  gap-24 max-w-7xl mx-auto min-h-[540px]">
         <div className="flex flex-col gap-6 w-1/2">
           <LandingBlock.Title className="max-w-full text-left mb-0">Frequently asked questions</LandingBlock.Title>
           <Typography variant="p" affects="mutedDescription"  >If you don’t find your answer here, our team is ready to help you set up FiveUp, connect your tools, and start getting more 5 star reviews.</Typography>
