@@ -56,7 +56,7 @@ type LandingContentProps = React.HTMLAttributes<HTMLDivElement>;
 const LandingContent = ({ className, children, ...props }: LandingContentProps) => {
   return (
     <div
-      className={cn(" w-full max-w-6xl mt-6 space-y-6 md:space-y-8", className)}
+      className={cn(" w-full lg:max-w-6xl xl:max-w-7xl mt-6 space-y-6 md:space-y-8", className)}
       {...props}
     >
       {children}
@@ -69,8 +69,8 @@ type LandingOrbProps = React.HTMLAttributes<HTMLDivElement> & { icon?: boolean }
 
 const LandingOrb = ({ className, icon = false, ...props }: LandingOrbProps) => {
   return (
-    <div className="absolute  top-20 -right-32">
-      <div className="absolute w-md h-20 rounded-[50%] bg-primary/30 blur-[100px]" />
+    <div className={cn("absolute  ", className)}>
+      <div className="absolute  w-md h-20 rounded-[50%] bg-primary/30 blur-[100px]" />
 
       {icon && (
         <Image

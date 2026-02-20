@@ -1,12 +1,21 @@
 import { Benefits } from "@/components/landing/benefits";
+import { Features } from "@/components/landing/bento";
+import { Cta } from "@/components/landing/cta";
+import { Faq } from "@/components/landing/faq";
 import { Hero } from "@/components/landing/hero";
+import { Pricing } from "@/components/landing/pricing";
+import { Reviews } from "@/components/landing/reviews";
 
 export default function LandingPage() {
   return (
     <>
       <Hero />
       <Benefits />
-
+      <Features />
+      <Reviews />
+      <Pricing />
+      <Faq />
+      <Cta />
 
       {/* <Hero />
 

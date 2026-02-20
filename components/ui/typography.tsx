@@ -9,7 +9,7 @@ export const typographyVariants = cva(`text-xl `, {
       h2: "scroll-m-20 pb-2 text-[clamp(2rem,5vw,3rem)] leading-[clamp(2.5rem,5vw,4rem)] leading-[120%] mt-6 mb-10  tracking-tight first:mt-0 ",
       h3: "scroll-m-20 text-[clamp(1rem,3vw,1.15rem)]   tracking-tight",
       h4: "scroll-m-20 text-xl tracking-tight",
-      p: `text-base leading-7 `,
+      p: `text-base leading-7`,
       blockquote: `text-base leading-7`,
       // [&:not(:first-child)]:mt-6
       // list: "my-6 ml-6 list-disc [&>li]:mt-2",
@@ -20,7 +20,7 @@ export const typographyVariants = cva(`text-xl `, {
       large: "text-lg font-semibold",
       small: "text-sm font-medium leading-none",
       muted: "text-muted-foreground",
-      mutedDescription: "text-muted-foreground text-sm",
+      mutedDescription: "text-muted-foreground/60 text-sm leading-7",
       removePMargin: "[&:not(:first-child)]:mt-0",
     },
   },

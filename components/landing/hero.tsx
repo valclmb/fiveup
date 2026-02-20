@@ -80,7 +80,7 @@ export const Hero = () => {
 
 const RatingBadge = () => (
   <div className="flex items-center gap-2 bg-secondary text-sm max-w-max px-1.5 py-1 backdrop-blur-[50px] rounded-full ">
-    <div className="flex items-center gap-1 bg-primary px-2 py-0.5 rounded-full border border-primary shadow-[inset_0_2.37px_3.56px_1.19px_#A2FFDD,inset_0_-1.19px_3.56px_1.19px_#7CFFCF]">
+    <div className="flex items-center gap-0.5 bg-primary px-2 py-0.5 rounded-full border border-primary shadow-[inset_0_2.37px_3.56px_1.19px_#A2FFDD,inset_0_-1.19px_3.56px_1.19px_#7CFFCF]">
       {Array.from({ length: 5 }).map((_, index) => (
         <Star key={index} size={11} className="text-background fill-background" />
       ))}

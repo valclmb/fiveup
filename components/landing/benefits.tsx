@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { Pills } from "../custom-ui/pills"
 import Typography from "../ui/typography"
 import { LandingBlock } from "./landing-block"
 
@@ -30,23 +31,14 @@ export const Benefits = () => {
 
         {items.map(item => (
           <div className="flex flex-col items-center justify-start text-center w-78 gap-6">
-
-
-            <div className="p-[5px] bg-pill-background rounded-2xl">
-              <div className="border border-secondary 
-              bg-[radial-gradient(72.15%_68.18%_at_50%_14.2%,var(--pill-gradient)_0%,var(--pill)_100%)] 
-              size-[60px] flex items-center justify-center rounded-lg
-              shadow-[0_6px_12px_rgba(0,0,0,0.8)]">
-                <Image
-                  width={25}
-                  height={25}
-                  src={item.icon}
-                  alt="icon"
-                />
-              </div>
-
-
-            </div>
+            <Pills variant="button">
+              <Image
+                width={25}
+                height={25}
+                src={item.icon}
+                alt="icon"
+              />
+            </Pills>
             <div className="flex flex-col gap-3">
               <Typography variant="h3">
                 {item.title}
