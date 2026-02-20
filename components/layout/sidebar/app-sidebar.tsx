@@ -5,62 +5,26 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuItem
+  SidebarMenuItem,
+  SidebarSeparator,
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
-import { LayoutDashboard, Link, Megaphone, Paintbrush, Split, Star } from "lucide-react"
 import { useTheme } from "next-themes"
 import Image from "next/image"
 import * as React from "react"
+import { navMain } from "./nav-config"
 import { NavMain } from "./nav-main"
 import { NavUser } from "./nav-user"
-
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      title: "Reviews",
-      url: "/reviews",
-      icon: Star,
-    },
-    {
-      title: "Campaigns",
-      url: "#",
-      icon: Megaphone,
-    },
-    {
-      title: "Rules",
-      url: "/rules",
-      icon: Split
-    },
-    {
-      title: "Customization",
-      url: "/customization",
-      icon: Paintbrush,
-    },
-    {
-      title: "Connections",
-      url: "/connections",
-      icon: Link,
-    },
-  ],
-
-}
+import { SidebarTokensCta } from "./sidebar-tokens-cta"
+import { UpgradeCta } from "./upgrade-cta"
 
 export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
   const [mounted, setMounted] = React.useState(false)
   React.useEffect(() => setMounted(true), [])
   const { data: session, isPending } = authClient.useSession()
   const user = session?.user
+  const plan = user?.plan ?? "free"
+  const isFreePlan = !isPending && plan === "free"
 
   const { resolvedTheme } = useTheme()
   const logoSrc = mounted && resolvedTheme === "dark"
@@ -84,12 +48,12 @@ export const AppSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) =
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        {/* <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+        <NavMain items={navMain} />
       </SidebarContent>
       <SidebarFooter>
+        <SidebarTokensCta />
+        <SidebarSeparator className="mx-0" />
+        {isFreePlan && <UpgradeCta />}
         <NavUser user={user} isPending={isPending} />
       </SidebarFooter>
     </Sidebar>

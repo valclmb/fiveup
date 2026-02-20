@@ -36,6 +36,7 @@ import {
   type TrustpilotStatusResponse,
 } from "@/lib/reviews/trustpilot";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
 import { Clock, Star, Unplug } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
@@ -238,6 +239,11 @@ export function ConnectTrustpilot() {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Spinner className="size-3" />
                         <span>Syncing...</span>
+                      </div>
+                    )}
+                    {!isSyncing && account?.lastSyncAt && (
+                      <div className="text-sm text-muted-foreground">
+                        Last sync {formatDistanceToNow(new Date(account.lastSyncAt), { addSuffix: true })}
                       </div>
                     )}
                   </div>

@@ -1,5 +1,12 @@
+import {
+  ensurePlanUpgradeBonus,
+  ensureSignupBonus,
+  getBalance,
+} from "@/lib/tokens";
+import { getActivePlanForUser } from "@/lib/subscription";
 import { prisma } from "@/lib/prisma";
 import { stripe } from "@better-auth/stripe";
+import { customSession } from "better-auth/plugins";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import Stripe from "stripe";
@@ -81,6 +88,16 @@ export const auth = betterAuth({
     // Les OAuth comme Google vérifient automatiquement l'email via SSO
   },
   plugins: [
+    customSession(async ({ user, session }) => {
+      const plan = await getActivePlanForUser(user.id);
+      await ensureSignupBonus(user.id);
+      await ensurePlanUpgradeBonus(user.id, plan);
+      const tokenBalance = await getBalance(user.id);
+      return {
+        user: { ...user, plan, tokenBalance },
+        session,
+      };
+    }),
     stripe({
       stripeClient,
       stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET!,

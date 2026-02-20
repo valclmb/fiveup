@@ -1,4 +1,5 @@
 import { auth } from "@/auth";
+import { reviewsQuerySchema } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -16,19 +17,26 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get("page") ?? "1", 10);
-    const limit = Math.min(parseInt(searchParams.get("limit") ?? "20", 10), 100);
-    const sourceParam = searchParams.get("source"); // "trustpilot" | "google"
-    const rating = searchParams.get("rating");
-    const status = searchParams.get("status");
-    const countryParam = searchParams.get("country");
-    const search = searchParams.get("search")?.trim();
-    const sortByParam = searchParams.get("sortBy");
-    const sortBy =
-      sortByParam === "rating" || sortByParam === "publishedAt"
-        ? sortByParam
-        : "publishedAt";
-    const sortOrder = searchParams.get("sortOrder") === "asc" ? "asc" : "desc";
+    const rawQuery = {
+      page: searchParams.get("page") ?? undefined,
+      limit: searchParams.get("limit") ?? undefined,
+      source: searchParams.get("source") ?? undefined,
+      rating: searchParams.get("rating") ?? undefined,
+      status: searchParams.get("status") ?? undefined,
+      country: searchParams.get("country") ?? undefined,
+      search: searchParams.get("search") ?? undefined,
+      sortBy: searchParams.get("sortBy") ?? undefined,
+      sortOrder: searchParams.get("sortOrder") ?? undefined,
+    };
+    const parsed = reviewsQuerySchema.safeParse(rawQuery);
+    if (!parsed.success) {
+      return NextResponse.json(
+        { error: "Invalid query params", details: parsed.error.flatten() },
+        { status: 400 },
+      );
+    }
+    const { page, limit, source: sourceParam, rating, status, search, sortBy, sortOrder } = parsed.data;
+    const countryParam = parsed.data.country;
 
     // Get connected accounts
     const accountsWhere: { userId: string; isConnected?: object } = {
@@ -83,10 +91,7 @@ export async function GET(request: NextRequest) {
       accountId: { in: accountIds },
     };
 
-    if (rating) {
-      const ratingNum = parseInt(rating, 10);
-      if (ratingNum >= 1 && ratingNum <= 5) where.rating = ratingNum;
-    }
+    if (rating !== undefined) where.rating = rating;
     if (status === "answered") where.replyText = { not: null };
     else if (status === "pending") where.replyText = null;
 

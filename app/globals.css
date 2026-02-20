@@ -54,6 +54,8 @@ body {
   --radius-4xl: calc(var(--radius) + 16px);
   --animate-marquee: marquee var(--duration) infinite linear;
   --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  /* Sweep 800ms, then wait 2s, repeat (total cycle 2.8s) */
+  --animate-shimmer: shimmer 2s linear infinite;
 }
 
 @keyframes marquee {
@@ -83,6 +85,20 @@ body {
   }
   to {
     background-position: 0% 0%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  28.57% {
+    /* 800ms / 2.8s ≈ 28.57% — end of sweep */
+    transform: translateX(200%);
+  }
+  100% {
+    /* hold 2s then loop */
+    transform: translateX(200%);
   }
 }
 
@@ -178,20 +194,6 @@ body {
 }
 
 @layer utilities {
-  .border-dashed-long-left {
-    border-style: none;
-    background-image: repeating-linear-gradient(
-      to bottom,
-      #50545b 0,
-      #50545b 8px,
-      transparent 8px,
-      transparent 13px
-    );
-    background-size: 1px 100%;
-    background-position: left;
-    background-repeat: repeat-y;
-  }
-
   .border-dashed-long-left {
     border-style: none;
     background-image: repeating-linear-gradient(

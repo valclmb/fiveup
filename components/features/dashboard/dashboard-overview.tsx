@@ -1,8 +1,10 @@
 "use client";
 
+import { authClient } from "@/lib/auth-client";
 import { getAll } from "@/lib/fetch";
 import { useQuery } from "@tanstack/react-query";
 import type { RecentReview } from "./recent-reviews";
+import { ProLockedCard } from "./pro-locked-card";
 import { RecentReviews } from "./recent-reviews";
 import { ReviewsChart } from "./reviews-chart";
 import { Sources } from "./sources";
@@ -19,10 +21,14 @@ type StatsResponse = {
 };
 
 export function DashboardOverview() {
+  const { data: session } = authClient.useSession();
+  const plan = (session?.user as { plan?: string } | undefined)?.plan ?? "free";
+  const isPro = plan !== "free";
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["dashboard-stats"],
     queryFn: async () => {
-      const res = await getAll<StatsResponse | { error: string }>("stats");
+      const res = await getAll<StatsResponse | { error: string }>("dashboard/stats");
       if (res && "error" in res && res.error) {
         throw new Error(res.error);
       }
@@ -43,19 +49,21 @@ export function DashboardOverview() {
 
   return (
     <div className="grid grid-cols-1 min-[1200px]:grid-cols-[2fr_1fr] min-[1200px]:grid-rows-[1fr_1fr] gap-6 min-[1200px]:min-h-[600px]">
-      <div className="min-h-0 flex flex-col min-[1200px]:[&>div]:flex-1">
+      <ProLockedCard locked={!isPro}>
         <ReviewsChart
           data={data?.data ?? null}
           error={error?.message ?? null}
         />
-      </div>
+      </ProLockedCard>
       <div className="min-h-0 flex flex-col min-[1200px]:[&>div]:flex-1">
         <Sources statsBySource={data?.statsBySource ?? {}} />
       </div>
-      <div className="min-h-0 flex flex-col min-[1200px]:[&>div]:flex-1">
+      <ProLockedCard locked={!isPro}>
         <RecentReviews reviews={data?.recentReviews ?? []} />
-      </div>
-      <div className="min-h-0 rounded-lg border border-dashed border-muted-foreground/30 bg-muted/20" />
+      </ProLockedCard>
+      <ProLockedCard locked={!isPro}>
+        <div className="min-h-0 rounded-lg border border-dashed border-muted-foreground/30 bg-muted/20" />
+      </ProLockedCard>
     </div>
   );
 }
