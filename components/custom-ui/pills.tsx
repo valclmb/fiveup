@@ -6,6 +6,7 @@ const pillContainerVariants = cva("p-[5px] bg-pill-background", {
     variant: {
       default: "rounded-full w-max",
       button: "rounded-2xl",
+      buttonRounded: "rounded-full p-2",
     },
 
   },
@@ -19,8 +20,9 @@ const pillInnerVariants = cva(
   {
     variants: {
       variant: {
-        default: "rounded-full ",
-        button: "rounded-2xl size-[60px]",
+        default: "rounded-full",
+        button: "rounded-xl  size-[60px]",
+        buttonRounded: "rounded-full aspect-square",
       },
       size: {
         default: "py-2 px-3",
@@ -40,17 +42,19 @@ export type PillsVariant = VariantProps<typeof pillContainerVariants>["variant"]
 export const Pills = ({
   children,
   className,
+  innerClassName,
   variant = "default",
   size = "default",
 }: {
   children: React.ReactNode
   className?: string
+  innerClassName?: string
   variant?: PillsVariant
   size?: "default" | "lg"
 }) => {
   return (
     <div className={cn(pillContainerVariants({ variant }), className)}>
-      <div className={pillInnerVariants({ variant, size })}>{children}</div>
+      <div className={cn(pillInnerVariants({ variant, size }), innerClassName)}>{children}</div>
     </div>
   )
 }

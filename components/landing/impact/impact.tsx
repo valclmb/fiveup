@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button"
+import { ChevronRight } from "lucide-react"
 import Typography from "../../ui/typography"
 import { LandingBlock } from "../landing-block"
 import { ImpactAutomatedFix, ImpactRatingInsights, ImpactReviewToChat } from "./impact-blocks"
@@ -23,8 +25,10 @@ export const Impact = () => {
       </LandingBlock.Title>
       <LandingBlock.Content className="grid grid-cols-3 gap-12.5">
         {items.map((item) => (
-          <div key={item.title} className="flex flex-col gap-12.5">
-            {item.content}
+          <div key={item.title} className="flex flex-col gap-5 ">
+            <div className="h-[320px] flex flex-col justify-end ">
+              {item.content}
+            </div>
             <div className="flex flex-col gap-3">
               <Typography variant="h3">{item.title}</Typography>
               <Typography variant="p" affects="mutedDescription">{item.description}</Typography>
@@ -32,6 +36,8 @@ export const Impact = () => {
           </div>
         ))}
       </LandingBlock.Content>
+      <Button variant="landing" className="mx-auto mt-16 w-fit">Get more reviews  <ChevronRight data-icon="inline-end" /></Button>
+
     </LandingBlock>
   )
 }

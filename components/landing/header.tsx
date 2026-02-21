@@ -48,9 +48,9 @@ export const LandingHeader = () => {
         <Button variant="secondary">
           Sign in
         </Button>
-        <Button variant="landing">
+        <Button variant="landing" >
           Get more reviews
-          <ChevronRight />
+          <ChevronRight data-icon="inline-end" />
         </Button>
       </div>
 

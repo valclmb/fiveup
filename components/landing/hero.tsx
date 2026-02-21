@@ -29,7 +29,7 @@ export const Hero = () => {
         {/* CTA buttons */}
         <div className="flex items-center gap-3">
           <Button variant="landing">
-            Get more reviews <ChevronRight size={14} />
+            Get more reviews <ChevronRight data-icon="inline-end" size={14} />
           </Button>
           <Button variant="secondary">
             Discover features
