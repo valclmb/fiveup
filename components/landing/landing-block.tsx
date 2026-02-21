@@ -56,7 +56,7 @@ type LandingContentProps = React.HTMLAttributes<HTMLDivElement>;
 const LandingContent = ({ className, children, ...props }: LandingContentProps) => {
   return (
     <div
-      className={cn(" w-full lg:max-w-6xl xl:max-w-7xl mt-6 space-y-6 md:space-y-8", className)}
+      className={cn(" w-full lg:max-w-6xl xl:max-w-7xl mt-6", className)}
       {...props}
     >
       {children}

@@ -4,9 +4,10 @@ import { cva, type VariantProps } from "class-variance-authority"
 const pillContainerVariants = cva("p-[5px] bg-pill-background", {
   variants: {
     variant: {
-      default: "rounded-full",
+      default: "rounded-full w-max",
       button: "rounded-2xl",
     },
+
   },
   defaultVariants: {
     variant: "default",
@@ -18,13 +19,19 @@ const pillInnerVariants = cva(
   {
     variants: {
       variant: {
-        default: "rounded-full py-2 px-3",
+        default: "rounded-full ",
         button: "rounded-2xl size-[60px]",
       },
+      size: {
+        default: "py-2 px-3",
+        lg: "py-4 px-5"
+      }
     },
     defaultVariants: {
       variant: "default",
+      size: "default",
     },
+
   }
 )
 
@@ -34,14 +41,16 @@ export const Pills = ({
   children,
   className,
   variant = "default",
+  size = "default",
 }: {
   children: React.ReactNode
   className?: string
   variant?: PillsVariant
+  size?: "default" | "lg"
 }) => {
   return (
     <div className={cn(pillContainerVariants({ variant }), className)}>
-      <div className={pillInnerVariants({ variant })}>{children}</div>
+      <div className={pillInnerVariants({ variant, size })}>{children}</div>
     </div>
   )
 }

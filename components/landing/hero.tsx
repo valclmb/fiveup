@@ -5,7 +5,6 @@ import { AnimatedGridPattern } from "../ui/animated-grid-pattern";
 import { Button } from "../ui/button";
 import Typography from "../ui/typography";
 
-
 export const Hero = () => {
   return (
     <section className="relative overflow-hidden rounded-4xl mt-20 ">
@@ -46,6 +45,7 @@ export const Hero = () => {
 
         <div className={cn("relative bg-linear-to-b from-white/5 to-background/10 border border-foreground/10 border-b-0 mt-12 w-[861px] h-[482px] p-3 pb-0 rounded-t-[40px] backdrop-blur-[50px]",
           "after:absolute after:content-[''] after:h-10 after:w-54 after:bg-primary after:top-0 after:left-1/2 after:-translate-x-1/2 after:blur-3xl after:rounded-full",
+          // Top border
           "before:content-[''] before:absolute before:inset-0 before:w-1/2 before:translate-x-1/2 before:h-[1.5px] before:bg-[linear-gradient(to_right,transparent,white,transparent)]"
         )}>
           {/* Orbs */}

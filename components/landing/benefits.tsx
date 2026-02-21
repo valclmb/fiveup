@@ -1,20 +1,21 @@
-import Image from "next/image"
+import Dollar from "@/public/landing/benefits-dollars.svg"
+import Shop from "@/public/landing/benefits-shop.svg"
+import Star from "@/public/landing/benefits-stars.svg"
 import { Pills } from "../custom-ui/pills"
 import Typography from "../ui/typography"
 import { LandingBlock } from "./landing-block"
-
 const items = [{
-  icon: "/landing/benefits-shop.svg",
+  icon: Shop,
   title: "Setup in minutes",
   description: "Connect Shopify, WooCommerce, or Wix in a few clicks. FiveUp imports orders and sends review requests automatically, no developer needed."
 },
 {
-  icon: "/landing/benefits-stars.svg",
+  icon: Star,
   title: "Turn feedback into reviews",
   description: "FiveUp makes it easy for customers to share their experience on Google or Trustpilot, or contact your team via email or WhatsApp, all in one seamless flow."
 },
 {
-  icon: "/landing/benefits-dollars.svg",
+  icon: Dollar,
   title: "Turn reputation into revenue",
   description: "Higher scores and new reviews boost conversions on product pages, landing pages, and ads. FiveUp turns your reviews into a growth engine."
 }]
@@ -29,15 +30,11 @@ export const Benefits = () => {
       </LandingBlock.Title>
       <LandingBlock.Content className="flex justify-between">
 
-        {items.map(item => (
-          <div className="flex flex-col items-center justify-start text-center w-78 gap-6">
+        {items.map((item, index) => (
+          <div key={index} className="flex flex-col items-center justify-start text-center w-78 gap-6">
             <Pills variant="button">
-              <Image
-                width={25}
-                height={25}
-                src={item.icon}
-                alt="icon"
-              />
+              <item.icon className="fill-foreground size-6" />
+
             </Pills>
             <div className="flex flex-col gap-3">
               <Typography variant="h3">
