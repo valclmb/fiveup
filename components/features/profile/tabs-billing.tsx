@@ -103,7 +103,7 @@ export default function TabsBilling() {
         <Typography variant="h3" className="mb-4">
           Billing
         </Typography>
-        <Typography variant="description" className="text-destructive">
+        <Typography variant="p" affects="muted" className="text-destructive">
           Impossible de charger les informations d&apos;abonnement.
         </Typography>
         <Link
@@ -152,7 +152,7 @@ export default function TabsBilling() {
                 <div className="flex items-center gap-2">
                   <Calendar className="size-4 text-muted-foreground" />
                   <div>
-                    <Typography variant="description" className="text-muted-foreground">
+                    <Typography variant="p" affects="muted" className="text-muted-foreground">
                       Prochain paiement
                     </Typography>
                     <Typography variant="p" className="font-medium">
@@ -163,7 +163,7 @@ export default function TabsBilling() {
                   </div>
                 </div>
                 <div>
-                  <Typography variant="description" className="text-muted-foreground">
+                  <Typography variant="p" affects="muted" className="text-muted-foreground">
                     Billing
                   </Typography>
                   <Typography variant="p" className="font-medium">
@@ -183,7 +183,7 @@ export default function TabsBilling() {
                     <Typography variant="p" className="text-sm font-medium text-amber-800 dark:text-amber-200">
                       Cancellation scheduled
                     </Typography>
-                    <Typography variant="description" className="text-sm text-amber-700 dark:text-amber-300">
+                    <Typography variant="p" affects="muted" className="text-sm text-amber-700 dark:text-amber-300">
                       Your access remains active until{" "}
                       <strong>{formatDate(subscription.periodEnd)}</strong>. You can reactivate your subscription from the Stripe portal.
                     </Typography>
@@ -209,7 +209,7 @@ export default function TabsBilling() {
               <Typography variant="p" className="font-medium">
                 Plan actuel : Gratuit
               </Typography>
-              <Typography variant="description" className="mt-1 text-muted-foreground">
+              <Typography variant="p" affects="muted" className="mt-1 text-muted-foreground">
                 You don&apos;t have an active subscription. Upgrade to Pro or Ultra to unlock all features.
               </Typography>
             </CardContent>

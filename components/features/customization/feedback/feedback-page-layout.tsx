@@ -68,12 +68,12 @@ export function FeedbackPageLayout({ styles, content }: FeedbackPageLayoutProps)
           color={starsColor}
         />
         {showHelpText && content?.helpText && (
-          <Typography variant="description" className="flex min-w-0 items-center gap-2" style={{ fontFamily: font }}>
+          <Typography variant="p" affects="muted" className="flex min-w-0 items-center gap-2" style={{ fontFamily: font }}>
             <Info size={18} /> {content.helpText.content}
           </Typography>
         )}
         {!content && (
-          <Typography variant="description" className="flex min-w-0 items-center gap-2" style={{ fontFamily: font }}>
+          <Typography variant="p" affects="muted" className="flex min-w-0 items-center gap-2" style={{ fontFamily: font }}>
             <Info size={18} /> Lorem ipsum dollores dollores dollores
           </Typography>
         )}

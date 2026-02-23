@@ -89,7 +89,7 @@ export default function BuyTokensPage() {
           <Typography variant="h1" className="text-2xl md:text-3xl font-bold">
             Buy tokens
           </Typography>
-          <Typography variant="description" className="text-muted-foreground">
+          <Typography variant="p" affects="muted" className="text-muted-foreground">
             Use tokens to send review requests by SMS, email, or WhatsApp.
           </Typography>
         </div>
@@ -168,7 +168,7 @@ export default function BuyTokensPage() {
         </CardFooter>
       </Card>
 
-      <Typography variant="description" className="text-sm text-muted-foreground block">
+      <Typography variant="p" affects="muted" className="text-sm text-muted-foreground block">
         Cost per message: {TOKEN_COST_EMAIL} token (email), {TOKEN_COST_SMS} (SMS), {TOKEN_COST_WHATSAPP} (WhatsApp).
         If your balance is too low when a message is due, the campaign is automatically paused.
       </Typography>

@@ -1,7 +1,5 @@
 "use client";
 
-import { getAll } from "@/lib/fetch";
-import { TabsContent } from "@/components/ui/tabs";
 import {
   Table,
   TableBody,
@@ -10,7 +8,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { TabsContent } from "@/components/ui/tabs";
 import Typography from "@/components/ui/typography";
+import { getAll } from "@/lib/fetch";
 import { useQuery } from "@tanstack/react-query";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -94,7 +94,7 @@ export default function TabsTokenTransactions() {
           </Table>
         </div>
       ) : error ? (
-        <Typography variant="description" className="text-destructive">
+        <Typography variant="p" affects="muted" className="text-destructive">
           Failed to load transactions.
         </Typography>
       ) : transactions.length === 0 ? (
@@ -136,9 +136,8 @@ export default function TabsTokenTransactions() {
                     })()}
                   </TableCell>
                   <TableCell
-                    className={`text-right tabular-nums font-medium ${
-                      t.amount >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
-                    }`}
+                    className={`text-right tabular-nums font-medium ${t.amount >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"
+                      }`}
                   >
                     {t.amount >= 0 ? "+" : ""}
                     {t.amount}

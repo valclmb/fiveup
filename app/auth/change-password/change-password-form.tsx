@@ -8,9 +8,9 @@ import Typography from "@/components/ui/typography";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useSearchParams, useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v3";
 
@@ -89,7 +89,7 @@ const ChangePasswordForm = () => {
   if (!token && !error) {
     return (
       <AnimatedFade as="section">
-        <Typography variant="description" className="text-center text-muted-foreground">
+        <Typography variant="p" affects="muted" className="text-center text-muted-foreground">
           No token provided. Please request a password reset.
         </Typography>
         <Button

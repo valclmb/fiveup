@@ -168,7 +168,7 @@ export function ReviewsList({ hasTrustpilot, hasGoogle }: ReviewsListProps) {
                 <Typography variant="h3" className="mb-2">
                   No review account connected
                 </Typography>
-                <Typography variant="description" className="mb-4">
+                <Typography variant="p" affects="muted" className="mb-4">
                   Connect your Trustpilot or Google Maps account in the
                   Connections page to import your reviews.
                 </Typography>
@@ -388,7 +388,7 @@ export function ReviewsList({ hasTrustpilot, hasGoogle }: ReviewsListProps) {
                     <Typography variant="h3" className="mb-2">
                       No reviews yet
                     </Typography>
-                    <Typography variant="description">
+                    <Typography variant="p" affects="muted">
                       {ratingFilter !== "all" ||
                         statusFilter !== "all" ||
                         sourceFilter !== "all" ||

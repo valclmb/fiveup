@@ -14,7 +14,7 @@ export default function SignUpPage() {
       )}
       <SignUpForm onSignupSuccess={setSignupSuccess} />
       {!signupSuccess && (
-        <Typography variant="description" className="absolute bottom-0 text-sm text-center text-muted-foreground">
+        <Typography variant="p" affects="mutedDescription" className="absolute bottom-0 text-sm text-center text-muted-foreground">
           By signing up to create an account I accept Company's <Link href="/terms-of-use" className="text-foreground hover:underline">Terms of use</Link> & <Link href="/privacy-policy" className="text-foreground hover:underline">Privacy Policy</Link>.
         </Typography>
       )}

@@ -1,6 +1,6 @@
 "use client"
 import { AnimatedFade } from "@/components/custom-ui/animated-fade";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
@@ -10,11 +10,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
 import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v3";
-import { buttonVariants } from "@/components/ui/button";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -42,19 +41,19 @@ const ResetPasswordForm = () => {
 
   const sendResetInstructions = useMutation({
     mutationFn: async (data: FormSchema) => {
-      const redirectTo = typeof window !== "undefined" 
+      const redirectTo = typeof window !== "undefined"
         ? `${window.location.origin}/auth/change-password`
         : "/auth/change-password";
-        
+
       const result = await authClient.requestPasswordReset({
         email: data.email,
         redirectTo,
       });
-      
+
       if (result.error) {
         throw new Error(result.error.message || "Failed to send reset instructions");
       }
-      
+
       return result;
     },
     onSuccess: () => {
@@ -117,7 +116,7 @@ const ResetPasswordForm = () => {
         </Field>
       </form>
 
-      <Typography variant="description" className="text-center mt-6">
+      <Typography variant="p" affects="muted" className="text-center mt-6">
         Remember your password?{" "}
         <Link
           href="/auth/signin"

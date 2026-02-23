@@ -308,7 +308,7 @@ export function ConnectTrustpilot() {
                       </div>
                     )}
                     {canChangeDomain && (
-                      <Typography variant="description" className="text-xs">
+                      <Typography variant="p" affects="muted" className="text-xs">
                         You can enter just the domain (example.com) or the full Trustpilot URL.
                       </Typography>
                     )}

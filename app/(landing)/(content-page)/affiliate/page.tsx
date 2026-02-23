@@ -1,11 +1,10 @@
 'use client'
+import { ContentPageTemplate } from "@/components/landing/content-page-template";
 import { buttonVariants } from "@/components/ui/button";
 import { LayoutTextFlip } from "@/components/ui/layout-text-flip";
 import { Slider } from "@/components/ui/slider";
-import Typography, { headingFontClassName } from "@/components/ui/typography";
-import { cn } from "@/lib/utils";
+import Typography from "@/components/ui/typography";
 import { useState } from "react";
-import { ContentPageTemplate } from "../../components/content-page-template";
 
 export default function AffiliatePage() {
   const [value, setValue] = useState([50]);
@@ -22,7 +21,7 @@ export default function AffiliatePage() {
           <LayoutTextFlip
             words={["Get paid for referring customers.", "Earn money for every sale.", "Start earning today."]}
             interval={3500}
-            className={cn(headingFontClassName, "text-4xl md:text-5xl font-bold tracking-tight")}
+            className="text-4xl md:text-5xl font-bold tracking-tight"
           />
           <a
             href="https://fiveup.affonso.io"

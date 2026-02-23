@@ -151,7 +151,7 @@ const SignInForm = () => {
         {loginGoogle.isPending ? <Spinner /> : 'Continuer avec Google'}
       </Button>
 
-      <Typography variant="description" className="text-right">New to FiveUp ?
+      <Typography variant="p" affects="mutedDescription" className="text-right">New to FiveUp ?
         <Link href="signup" className={buttonVariants({ variant: "link", className: "px-2!" })}>Join now</Link>
       </Typography>
     </AnimatedFade>

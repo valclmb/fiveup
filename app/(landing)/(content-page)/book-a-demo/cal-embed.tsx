@@ -85,7 +85,7 @@ export function CalEmbed({
       <div className="w-full max-w-md mx-auto py-12 text-center space-y-4">
         <div className="text-6xl">📅</div>
         <Typography variant="h3">Calendar unavailable</Typography>
-        <Typography variant="description" className="text-muted-foreground">
+        <Typography variant="p" affects="muted" className="text-muted-foreground">
           {error || "Configuration missing"}
         </Typography>
       </div>

@@ -1,5 +1,5 @@
-import Cta from "../components/cta";
-import Faq from "../components/faq";
+import { Cta } from "@/components/landing/cta";
+import { Faq } from "@/components/landing/faq";
 
 /**
  * Layout shared by content pages (book-a-demo, affiliate, etc.)
