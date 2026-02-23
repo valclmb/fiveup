@@ -80,7 +80,7 @@ const HeroDiagramCard = ({ type }: HeroDiagramCardProps) => (
           <Star key={index} size={11} className={cn("text-white/20 ring-white/2O fill-white/20", (index > 0 && type === "alert-stars") && "opacity-30")} />
         ))}
       </div>
-      <div className="h-3 w-12 bg-white/10 rounded-[4px]" />
+      <div className="h-2.5 w-14 bg-white/10 rounded-[4px]" />
     </div>
   </div>
 )
