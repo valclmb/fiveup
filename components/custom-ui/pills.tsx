@@ -39,6 +39,15 @@ const pillInnerVariants = cva(
 
 export type PillsVariant = VariantProps<typeof pillContainerVariants>["variant"]
 
+export const PillsBlured = ({ children, className }: { children: React.ReactNode, className?: string }) => {
+  return (
+    <div className={cn("p-1.5 rounded-full bg-background/2 backdrop-blur-xl border-[0.3px] border-white/10 [box-shadow:0_10.602px_3.313px_0_rgba(0,0,0,0),0_7.289px_2.651px_0_rgba(0,0,0,0.01),0_3.976px_2.651px_0_rgba(0,0,0,0.05),0_1.988px_1.988px_0_rgba(0,0,0,0.09),0_0.663px_0.663px_0_rgba(0,0,0,0.1)]", className)}
+    >
+      {children}
+    </div>
+  )
+}
+
 export const Pills = ({
   children,
   className,

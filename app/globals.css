@@ -166,7 +166,7 @@ body {
   --accent: oklch(0.3219 0.0127 272.99);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --border: oklch(1 0 0 / 5%);
   --input: oklch(1 0 0 / 15%);
   --input-border: oklch(1 0 0 / 25%);
   --ring: oklch(0.556 0 0);
@@ -202,6 +202,17 @@ body {
 }
 
 @layer utilities {
+  .shield-blur-layer {
+    mask-image: url("/landing/shield-mask.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-image: url("/landing/shield-mask.svg");
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+  }
+
   .border-dashed-long-left {
     border-style: none;
     background-image: repeating-linear-gradient(
