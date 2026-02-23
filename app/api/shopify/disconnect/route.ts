@@ -1,25 +1,34 @@
 import { auth } from "@/auth";
+import { shopifyDisconnectPostSchema } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
 
 export async function POST(request: NextRequest) {
-  // Vérifier que l'utilisateur est connecté
   const session = await auth.api.getSession({ headers: await headers() });
-  
+
   if (!session?.user) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    const body = await request.json();
-    const { storeId } = body;
-
-    if (!storeId) {
-      return Response.json({ error: "Store ID is required" }, { status: 400 });
+    let body: unknown;
+    try {
+      body = await request.json();
+    } catch {
+      return Response.json({ error: "Invalid JSON body" }, { status: 400 });
     }
 
-    // Supprimer la boutique (seulement si elle appartient à l'utilisateur)
+    const parsed = shopifyDisconnectPostSchema.safeParse(body);
+    if (!parsed.success) {
+      return Response.json(
+        { error: "Invalid request data", details: parsed.error.flatten() },
+        { status: 400 },
+      );
+    }
+    const { storeId } = parsed.data;
+
+    // Delete store only if it belongs to the user
     const result = await prisma.shopifyStore.deleteMany({
       where: {
         id: storeId,

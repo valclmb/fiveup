@@ -38,7 +38,15 @@ const formSchema = z.object({
 
 export type GlobalStylesFormValues = z.infer<typeof formSchema>;
 
-export type GlobalStylesFormProps = ReturnType<typeof useGlobalStylesForm>;
+/** Minimal type so the form accepts either raw useMutation or useProGateSave wrapper. */
+export type GlobalStylesSaveMutation = {
+  mutate: (data: GlobalStylesFormValues, options?: { onSuccess?: () => void }) => void;
+  isPending: boolean;
+};
+
+export type GlobalStylesFormProps = Omit<ReturnType<typeof useGlobalStylesForm>, "saveMutation"> & {
+  saveMutation: GlobalStylesSaveMutation;
+};
 
 /**
  * Formulaire Global Styles (champs + actions). À utiliser dans CustomizationPageLayout avec useGlobalStylesForm().

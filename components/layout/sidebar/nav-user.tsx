@@ -1,11 +1,11 @@
 "use client"
 
 import {
-  ChevronsUpDown,
+  ChevronRight,
   CreditCard,
   LogOut,
   Sparkles,
-  UserIcon,
+  UserIcon
 } from "lucide-react"
 
 import {
@@ -28,8 +28,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useUserAvatarUrl } from "@/hooks/use-user-avatar-url"
 import { authClient } from "@/lib/auth-client"
 import type { User } from "better-auth"
 import { useRouter } from "next/navigation"
@@ -87,7 +87,7 @@ export function NavUser({ user, isPending }: { user: User | undefined; isPending
                 <span className="truncate font-medium">{user?.name || ''}</span>
                 <span className="truncate text-xs">{user?.email || ''}</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <ChevronRight className="ml-auto size-4" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent

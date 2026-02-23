@@ -1,4 +1,6 @@
 import { auth } from "@/auth";
+import { requireProPlanForWrite } from "@/lib/require-pro-plan";
+import { globalStylesPatchSchema } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
@@ -54,20 +56,36 @@ export async function PATCH(request: Request) {
   if (!session?.user) {
     return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
   }
+  const forbidden = requireProPlanForWrite(session);
+  if (forbidden) return forbidden;
 
-  const body = await request.json();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
 
+  const parsed = globalStylesPatchSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid request data", details: parsed.error.flatten() },
+      { status: 400 },
+    );
+  }
+
+  const d = parsed.data;
   const data = {
-    font: body.font ?? undefined,
-    cornerRoundness: body.cornerRoundness ?? undefined,
-    buttonCornerRoundness: body.buttonCornerRoundness ?? undefined,
-    borderColor: body.borderColor ?? undefined,
-    buttonBgColor: body.buttonBgColor ?? undefined,
-    buttonTextColor: body.buttonTextColor ?? undefined,
-    starsColor: body.starsColor ?? undefined,
-    bgColor: body.bgColor ?? undefined,
-    textColor: body.textColor ?? undefined,
-    cardColor: body.cardColor ?? undefined,
+    ...(d.font !== undefined && { font: d.font }),
+    ...(d.cornerRoundness !== undefined && { cornerRoundness: d.cornerRoundness }),
+    ...(d.buttonCornerRoundness !== undefined && { buttonCornerRoundness: d.buttonCornerRoundness }),
+    ...(d.borderColor !== undefined && { borderColor: d.borderColor }),
+    ...(d.buttonBgColor !== undefined && { buttonBgColor: d.buttonBgColor }),
+    ...(d.buttonTextColor !== undefined && { buttonTextColor: d.buttonTextColor }),
+    ...(d.starsColor !== undefined && { starsColor: d.starsColor }),
+    ...(d.bgColor !== undefined && { bgColor: d.bgColor }),
+    ...(d.textColor !== undefined && { textColor: d.textColor }),
+    ...(d.cardColor !== undefined && { cardColor: d.cardColor }),
   };
 
   const updated = await prisma.globalStyles.upsert({

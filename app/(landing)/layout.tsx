@@ -1,22 +1,16 @@
-import ConditionalAnimatedBackground from "./components/conditional-animated-background";
-import Footer from "./components/footer";
-import Header from "./components/header/header";
+import Footer from "@/components/landing/footer";
+import { LandingHeader } from "@/components/landing/header";
 
 export default function LandingLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (<>
-    <ConditionalAnimatedBackground />
-    <div className="flex flex-col min-h-screen items-center justify-center bg-background font-sans">
-      <Header />
-
-      <main className="overflow-hidden md:overflow-visible flex min-h-screen w-full max-w-7xl flex-col items-center space-y-8 md:space-y-36 p-4 mt-10 md:mt-24 md:p-4 sm:items-start">
-        {children}
-      </main>
+  return (
+    <div className="min-h-screen bg-background p-18 pt-4 flex flex-col overflow-hidden">
+      <LandingHeader />
+      {children}
       <Footer />
     </div>
-  </>
   );
 }

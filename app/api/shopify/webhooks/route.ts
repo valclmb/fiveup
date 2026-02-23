@@ -1,4 +1,8 @@
 import { prisma } from "@/lib/prisma";
+import {
+  shopifyWebhookOrderSchema,
+  type ShopifyWebhookOrder,
+} from "@/lib/schemas";
 import { onNewOrder, onOrderFulfilled } from "@/lib/shopify-hooks";
 import crypto from "crypto";
 import { NextRequest } from "next/server";
@@ -40,33 +44,136 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Missing shop header" }, { status: 400 });
   }
 
-  const order: ShopifyOrder = JSON.parse(body);
+  let order: ShopifyWebhookOrder | null = null;
+  if (topic === "orders/create" || topic === "orders/fulfilled") {
+    let parsedBody: unknown;
+    try {
+      parsedBody = JSON.parse(body);
+    } catch (e) {
+      console.error("Webhook invalid JSON body", { topic, shop, error: e });
+      return Response.json({ error: "Invalid JSON body" }, { status: 400 });
+    }
+    const parsed = shopifyWebhookOrderSchema.safeParse(parsedBody);
+    if (!parsed.success) {
+      console.error("Webhook payload validation failed", {
+        topic,
+        shop,
+        details: parsed.error.flatten(),
+      });
+      return Response.json(
+        { error: "Invalid webhook payload", details: parsed.error.flatten() },
+        { status: 400 },
+      );
+    }
+    order = parsed.data;
+  }
+
+  const isComplianceWebhook =
+    topic === "customers/redact" ||
+    topic === "shop/redact" ||
+    topic === "customers/data_request";
 
   try {
-    // Trouver le store associé pour avoir le userId
     const store = await prisma.shopifyStore.findUnique({
       where: { shop },
       select: { id: true, userId: true, shop: true },
     });
 
-    if (!store) {
+    if (!store && !isComplianceWebhook) {
       console.error(`Store not found: ${shop}`);
       return Response.json({ error: "Store not found" }, { status: 404 });
     }
 
-    // Gérer les différents types de webhooks
     switch (topic) {
       case "orders/create":
-        await onNewOrder({ order, store });
+        if (order && store)
+          await onNewOrder({ order: order as ShopifyOrder, store });
         break;
 
       case "orders/fulfilled":
-        await onOrderFulfilled({ order, store });
+        if (order && store)
+          await onOrderFulfilled({ order: order as ShopifyOrder, store });
         break;
 
       case "app/uninstalled":
-        await prisma.shopifyStore.delete({ where: { shop } });
+        if (store) await prisma.shopifyStore.delete({ where: { shop } });
         console.log(`App uninstalled from ${shop}`);
+        break;
+
+      case "customers/redact": {
+        // GDPR: store owner requested deletion of customer data. Payload: shop_id, shop_domain, customer { id, email, phone }, orders_to_redact
+        try {
+          const payload = JSON.parse(body) as {
+            shop_domain?: string;
+            customer?: { id?: number; email?: string; phone?: string };
+            orders_to_redact?: number[];
+          };
+          const shopDomain = payload.shop_domain ?? shop;
+          const storeForRedact = await prisma.shopifyStore.findUnique({
+            where: { shop: shopDomain },
+            select: { id: true },
+          });
+          if (storeForRedact) {
+            const orderIds = (payload.orders_to_redact ?? []).map(String);
+            const customerEmail = payload.customer?.email;
+            const customerPhone = payload.customer?.phone;
+            if (orderIds.length > 0) {
+              await prisma.orderReviewRequest.updateMany({
+                where: {
+                  storeId: storeForRedact.id,
+                  shopifyOrderId: { in: orderIds },
+                },
+                data: { customerEmail: null, customerPhone: null },
+              });
+            } else if (customerEmail || customerPhone) {
+              await prisma.orderReviewRequest.updateMany({
+                where: {
+                  storeId: storeForRedact.id,
+                  ...(customerEmail && customerPhone
+                    ? {
+                        OR: [
+                          { customerEmail: customerEmail },
+                          { customerPhone: customerPhone },
+                        ],
+                      }
+                    : customerEmail
+                      ? { customerEmail: customerEmail }
+                      : { customerPhone: customerPhone }),
+                },
+                data: { customerEmail: null, customerPhone: null },
+              });
+            }
+          }
+        } catch (e) {
+          console.error("customers/redact handling error:", e);
+        }
+        break;
+      }
+
+      case "shop/redact": {
+        // GDPR: 48h after uninstall. Payload: shop_id, shop_domain – erase all shop data
+        try {
+          const payload = JSON.parse(body) as { shop_domain?: string };
+          const shopDomain = payload.shop_domain ?? shop;
+          const storeForRedact = await prisma.shopifyStore.findUnique({
+            where: { shop: shopDomain },
+            select: { id: true },
+          });
+          if (storeForRedact) {
+            await prisma.orderReviewRequest.updateMany({
+              where: { storeId: storeForRedact.id },
+              data: { customerEmail: null, customerPhone: null },
+            });
+          }
+        } catch (e) {
+          console.error("shop/redact handling error:", e);
+        }
+        break;
+      }
+
+      case "customers/data_request":
+        // GDPR: customer requested to view their data. Payload: shop_id, shop_domain, customer, orders_requested, data_request.id
+        // We store only order review request PII; no separate export flow – acknowledge receipt with 200
         break;
 
       default:

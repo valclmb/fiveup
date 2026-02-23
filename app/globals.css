@@ -28,6 +28,7 @@ body {
   --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
+  --color-input-border: var(--input-border);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
@@ -39,10 +40,14 @@ body {
   --color-primary-foreground: var(--primary-foreground);
   --color-primary: var(--primary);
   --color-primary-gradient: var(--primary-gradient);
+  --color-pill: var(--pill);
+  --color-pill-gradient: var(--pill-gradient);
+  --color-pill-background: var(--pill-background);
   --color-popover-foreground: var(--popover-foreground);
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-card-gradient: var(--card-gradient);
   --color-tertiary: var(--tertiary);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -53,6 +58,8 @@ body {
   --radius-4xl: calc(var(--radius) + 16px);
   --animate-marquee: marquee var(--duration) infinite linear;
   --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  /* Sweep 800ms, then wait 2s, repeat (total cycle 2.8s) */
+  --animate-shimmer: shimmer 2s linear infinite;
 }
 
 @keyframes marquee {
@@ -85,44 +92,61 @@ body {
   }
 }
 
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  28.57% {
+    /* 800ms / 2.8s ≈ 28.57% — end of sweep */
+    transform: translateX(200%);
+  }
+  100% {
+    /* hold 2s then loop */
+    transform: translateX(200%);
+  }
+}
+
 :root {
-  --background: oklch(1 0 0);
+  /* Card = sidebar (0.985), other elements adjusted for visibility */
+  --background: oklch(0.99 0 0);
   --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
+  --card: #20262f;
+  --card-gradient: #1b232c;
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.8684 0.1795 166.31);
   --primary-foreground: oklch(0.1679 0.047 261.14);
-  --secondary: oklch(0.967 0.001 286.375);
+  --secondary: oklch(0.83 0.0272 17.71 / 0.08);
   --secondary-foreground: oklch(0.21 0.006 285.885);
   --tertiary: oklch(0.2904 0.0484 188.37);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: #f8f9fa;
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: rgba(255, 255, 255, 0.5);
+  --accent: oklch(0.97 0 0);
   --accent-foreground: oklch(0.205 0 0);
   --destructive: oklch(0.58 0.22 27);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: #e2e8f0;
+  --border: oklch(1 0 0, 0.5);
+  --input: oklch(1 0 0);
+  --input-border: oklch(0.91 0 0);
+  --ring: oklch(0.88 0 0);
   --chart-1: oklch(0.85 0.13 165);
   --chart-2: oklch(0.77 0.15 163);
   --chart-3: oklch(0.7 0.15 162);
   --chart-4: oklch(0.6 0.13 163);
   --chart-5: oklch(0.51 0.1 166);
-  --radius: 0.6rem;
+  --radius: 0.8rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.77 0.15 163);
   --sidebar-primary-foreground: oklch(0.98 0.02 166);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-border: oklch(0.88 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 }
 
 .dark {
-  --background: #151821;
+  --background: oklch(0.2088 0.0214 263.94);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.1924 0.0145 272.49);
   --card-foreground: oklch(0.985 0 0);
@@ -131,16 +155,20 @@ body {
   --primary: oklch(0.8684 0.1795 166.31);
   --primary-gradient: #95ffd6;
   --primary-foreground: oklch(0.1679 0.047 261.14);
-  --secondary: #1d1f26;
+  --secondary: oklch(1 0 0 / 0.08);
   --secondary-foreground: oklch(0.985 0 0);
   --tertiary: oklch(0.2904 0.0484 188.37);
+  --pill-background: white;
+  --pill: #131822;
+  --pill-gradient: #393d44;
   --muted: oklch(0.26 0.012 272);
-  --muted-foreground: oklch(0.708 0 0);
+  --muted-foreground: oklch(1 0 none / 0.7);
   --accent: oklch(0.3219 0.0127 272.99);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --border: oklch(1 0 0 / 5%);
   --input: oklch(1 0 0 / 15%);
+  --input-border: oklch(1 0 0 / 25%);
   --ring: oklch(0.556 0 0);
   --chart-1: oklch(0.85 0.13 165);
   --chart-2: oklch(0.77 0.15 163);
@@ -174,18 +202,75 @@ body {
 }
 
 @layer utilities {
-  .border-dashed-long-left {
-    border-style: none;
-    background-image: repeating-linear-gradient(
+  /* Vertical fade only: center visible, top/bottom fade */
+  .mask-fade-vertical {
+    mask-image: linear-gradient(
       to bottom,
-      #50545b 0,
-      #50545b 8px,
-      transparent 8px,
-      transparent 13px
+      transparent 0%,
+      black 45%,
+      black 55%,
+      transparent 100%
     );
-    background-size: 1px 100%;
-    background-position: left;
-    background-repeat: repeat-y;
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 45%,
+      black 55%,
+      transparent 100%
+    );
+    -webkit-mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+  }
+
+  /* Hero diagram grid: to right + to bottom, center visible, edges fade */
+  .mask-fade-hero-grid {
+    mask-image: linear-gradient(
+      to right,
+      transparent 27%,
+      black 47%,
+      black 53%,
+      transparent 73%
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 5%,
+      black 20%,
+      black 70%,
+      transparent 95%
+    );
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+    mask-composite: intersect;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 27%,
+      black 47%,
+      black 53%,
+      transparent 73%
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 5%,
+      black 20%,
+      black 70%,
+      transparent 95%
+    );
+    -webkit-mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-composite: source-in;
+  }
+
+  .shield-blur-layer {
+    mask-image: url("/landing/shield-mask.svg");
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-image: url("/landing/shield-mask.svg");
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
   }
 
   .border-dashed-long-left {

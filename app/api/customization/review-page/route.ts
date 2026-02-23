@@ -1,4 +1,6 @@
 import { auth } from "@/auth";
+import { requireProPlanForWrite } from "@/lib/require-pro-plan";
+import { reviewPagePatchSchema } from "@/lib/schemas";
 import { prisma } from "@/lib/prisma";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
@@ -39,13 +41,29 @@ export async function PATCH(request: Request) {
   if (!session?.user) {
     return NextResponse.json({ detail: "Unauthorized" }, { status: 401 });
   }
+  const forbidden = requireProPlanForWrite(session);
+  if (forbidden) return forbidden;
 
-  const body = await request.json();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+  }
 
+  const parsed = reviewPagePatchSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: "Invalid request data", details: parsed.error.flatten() },
+      { status: 400 },
+    );
+  }
+
+  const d = parsed.data;
   const data = {
-    title: body.title ?? undefined,
-    ratingTemplate: body.ratingTemplate ?? undefined,
-    buttonText: body.buttonText ?? undefined,
+    ...(d.title !== undefined && { title: d.title }),
+    ...(d.ratingTemplate !== undefined && { ratingTemplate: d.ratingTemplate }),
+    ...(d.buttonText !== undefined && { buttonText: d.buttonText }),
   };
 
   const updated = await prisma.reviewPageCustomization.upsert({

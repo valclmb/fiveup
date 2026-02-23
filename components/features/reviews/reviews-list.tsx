@@ -26,6 +26,7 @@ import Typography from "@/components/ui/typography";
 import { getAll } from "@/lib/fetch";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Filter, Search } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { CountryDropdown } from "@/components/ui/country-dropdown";
@@ -78,8 +79,15 @@ interface ReviewsListProps {
 }
 
 export function ReviewsList({ hasTrustpilot, hasGoogle }: ReviewsListProps) {
+  const searchParams = useSearchParams();
+  const sourceFromUrl = searchParams.get("source");
+  const initialSource =
+    sourceFromUrl === "trustpilot" || sourceFromUrl === "google"
+      ? sourceFromUrl
+      : "all";
+
   const [page, setPage] = useState(1);
-  const [sourceFilter, setSourceFilter] = useState<ReviewSourceFilter>("all");
+  const [sourceFilter, setSourceFilter] = useState<ReviewSourceFilter>(initialSource);
   const [ratingFilter, setRatingFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [countryFilter, setCountryFilter] = useState<string[]>([]);
@@ -375,7 +383,7 @@ export function ReviewsList({ hasTrustpilot, hasGoogle }: ReviewsListProps) {
                   )}
                 </>
               ) : !data.reviews?.length ? (
-                <Card className="border-dashed">
+                <Card>
                   <CardContent className="flex flex-col items-center justify-center py-12">
                     <Typography variant="h3" className="mb-2">
                       No reviews yet

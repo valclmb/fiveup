@@ -22,10 +22,15 @@ async function registerWebhooks(shop: string, accessToken: string) {
 
   const webhookUrl = `${baseUrl}/api/shopify/webhooks`;
 
+  // Mandatory compliance webhooks (GDPR/CPRA): https://shopify.dev/docs/apps/build/compliance/privacy-law-compliance
+  // If using Shopify CLI, also add in shopify.app.toml: [webhooks] → subscriptions with compliance_topics
   const webhooksToRegister = [
     { topic: "orders/create", address: webhookUrl },
     { topic: "orders/fulfilled", address: webhookUrl },
     { topic: "app/uninstalled", address: webhookUrl },
+    { topic: "customers/redact", address: webhookUrl },
+    { topic: "shop/redact", address: webhookUrl },
+    { topic: "customers/data_request", address: webhookUrl },
   ];
 
   for (const webhook of webhooksToRegister) {
@@ -159,6 +164,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Stocker ou mettre à jour la boutique en BDD
+  // On met à jour userId lors d'une reconnexion pour réassigner la boutique à l'utilisateur actuel
   await prisma.shopifyStore.upsert({
     where: { shop },
     create: {
@@ -168,6 +174,7 @@ export async function GET(request: NextRequest) {
       scope: scope || "",
     },
     update: {
+      userId: session.user.id,
       accessToken: access_token,
       scope: scope || "",
       updatedAt: new Date(),

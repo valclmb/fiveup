@@ -16,6 +16,7 @@ model User {
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
   stripeCustomerId      String?
+  tokenBalance          Int                    @default(0)
   sessions              Session[]
   accounts              Account[]
   shopifyStores         ShopifyStore[]
@@ -27,8 +28,26 @@ model User {
   reviewPageCustomization     ReviewPageCustomization?
   redirectionPageCustomization RedirectionPageCustomization?
   feedbackPageCustomization   FeedbackPageCustomization?
+  userCampaigns         UserCampaign[]
+  tokenTransactions     TokenTransaction[]
 
   @@map("user")
+}
+
+/** Token balance changes: signup bonus, plan upgrade, purchase, consumed per channel. */
+model TokenTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  amount    Int      // positive = credit, negative = debit
+  reason    String   // signup_bonus | plan_upgrade | purchase | consumed_sms | consumed_email | consumed_whatsapp
+  metadata  Json?    // e.g. { orderReviewRequestId, packId, plan }
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([reason])
+  @@map("token_transaction")
 }
 
 model GlobalStyles {
@@ -179,11 +198,40 @@ model ShopifyStore {
   accessToken          String               // Token d'accès Shopify
   scope                String               // Scopes accordés
   orderReviewRequests  OrderReviewRequest[]
+  userCampaigns        UserCampaign[]
   createdAt            DateTime             @default(now())
   updatedAt            DateTime             @updatedAt
 
   @@index([userId])
   @@map("shopify_store")
+}
+
+// ============ CAMPAIGNS ============
+// Campaigns are defined in code (lib/campaigns.ts). UserCampaign stores user config per store.
+
+/** Activation + config par utilisateur, par store. */
+model UserCampaign {
+  id            String         @id @default(cuid())
+  userId        String
+  campaignSlug  String         // "order_review_request" - from campaigns config in code
+  storeId       String         // Campaign activated per store
+  status        String         @default("active") // active | inactive
+  triggerType   String         @default("purchase") // purchase | shipment | receipt
+  delayHours    Int            @default(24)
+  channel       String         // "whatsapp" | "sms" | "email"
+  messageContent       String?  // WhatsApp/SMS template content, personalization
+  thanksMessageEnabled Boolean  @default(true) // Show thank-you message after customer leaves review
+  thanksMessageContent String?   // Custom message shown after review submission
+  activatedAt          DateTime @default(now())
+
+  user     User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  store    ShopifyStore  @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@unique([storeId, campaignSlug])
+  @@index([userId])
+  @@index([campaignSlug])
+  @@index([storeId])
+  @@map("user_campaign")
 }
 
 model RateLimit {
@@ -232,7 +280,9 @@ model OrderReviewRequest {
   shopifyOrderId  String        // ID Shopify de la commande (pour retrouver la commande)
   customerPhone   String?
   customerEmail   String?
-  scheduledAt     DateTime      // Heure à laquelle QStash doit appeler /api/send-review-message
+  customerFirstName String?     // For {{customer_first_name}} in message template (from order)
+  channel         String        @default("email") // "whatsapp" | "sms" | "email" - from UserCampaign
+  scheduledAt     DateTime      // When QStash should call /api/campaigns/send-review-message
   status          String        @default("pending") // pending | sent | failed
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt

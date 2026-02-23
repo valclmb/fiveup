@@ -1,0 +1,25 @@
+# Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
+
+client_id = "a88608e7935863d9a1c263f5268eb677"
+name = "fiveup"
+application_url = "https://karlyn-festal-tanisha.ngrok-free.dev"
+embedded = false
+
+[webhooks]
+api_version = "2024-01"
+
+[[webhooks.subscriptions]]
+topics = ["app/uninstalled"]
+compliance_topics = ["customers/redact", "customers/data_request", "shop/redact"]
+uri = "https://karlyn-festal-tanisha.ngrok-free.dev/api/shopify/webhooks"
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,read_orders"
+optional_scopes = [ ]
+use_legacy_install_flow = false
+
+[auth]
+redirect_urls = [
+  "https://karlyn-festal-tanisha.ngrok-free.dev/api/shopify/callback"
+]

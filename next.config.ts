@@ -4,20 +4,17 @@ const nextConfig: NextConfig = {
   devIndicators: {
     position: "bottom-right",
   },
+  turbopack: {
+    rules: {
+      "*.svg": {
+        loaders: ["@svgr/webpack"],
+        as: "*.js",
+      },
+    },
+  },
   images: {
     remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com", // Le domaine de Google pour les avatars
-        port: "",
-        pathname: "/**",
-      },
-      {
-        protocol: "https",
-        hostname: "avatar.vercel.sh",
-        port: "",
-        pathname: "/**",
-      },
+      // ... reste inchangé
     ],
   },
 };

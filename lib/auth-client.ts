@@ -1,3 +1,5 @@
+import type { auth } from "@/auth";
+import { customSessionClient } from "better-auth/client/plugins";
 import { stripeClient } from "@better-auth/stripe/client";
 import { createAuthClient } from "better-auth/react";
 
@@ -22,8 +24,9 @@ export const authClient = createAuthClient({
     },
   },
   plugins: [
+    customSessionClient<typeof auth>(),
     stripeClient({
       subscription: true,
     }),
   ],
-})
+});

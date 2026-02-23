@@ -31,6 +31,7 @@ import Typography from "@/components/ui/typography";
 import { getAll } from "@/lib/fetch";
 import { GOOGLE_CONSTANTS } from "@/lib/reviews/google/constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
 import { Clock, MapPin, Star, Unplug } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
@@ -49,6 +50,7 @@ interface GoogleAccountResponse {
     reviewsStored: number;
     canChangeDomain: boolean;
     daysUntilDomainChange: number;
+    lastSyncAt?: string | null;
     stats?: { total?: number | null };
   };
   latestSync?: {
@@ -263,6 +265,11 @@ export function ConnectGoogleMaps() {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Spinner className="size-3" />
                         <span>Syncing...</span>
+                      </div>
+                    )}
+                    {!isSyncing && account?.lastSyncAt && (
+                      <div className="text-sm text-muted-foreground">
+                        Last sync {formatDistanceToNow(new Date(account.lastSyncAt), { addSuffix: true })}
                       </div>
                     )}
                   </div>

@@ -3,11 +3,13 @@
 import { StarIcon } from "@/app/(landing)/components/star-icon";
 import { Card, CardContent } from "@/components/ui/card";
 import Typography from "@/components/ui/typography";
+import { formatDistanceToNow } from "date-fns";
 
 export interface SourceStats {
   total: number;
   trustScore: number | null;
   distribution: Record<number, number>;
+  lastSyncAt?: string | null;
 }
 
 const DEFAULT_DISTRIBUTION: Record<number, number> = {
@@ -96,6 +98,11 @@ export function SourceStatsCard({
                 </div>
               </div>
             </div>
+            {stats.lastSyncAt && (
+              <Typography variant="description" className="text-muted-foreground text-sm mt-2">
+                Last sync {formatDistanceToNow(new Date(stats.lastSyncAt), { addSuffix: true })}
+              </Typography>
+            )}
           </div>
           <div className="flex-shrink-0 sm:pl-6 pt-4 sm:pt-0 min-w-[140px]">
             <DistributionBar distribution={distribution} total={stats.total} />

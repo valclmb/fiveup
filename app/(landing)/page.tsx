@@ -1,26 +1,34 @@
-import Benefits from "./components/benefits";
-import Cta from "./components/cta";
-import Faq from "./components/faq";
-import { Features } from "./components/features/features";
-import Hero from "./components/hero/hero";
-import Impact from "./components/impact";
-import { LandingBlock } from "./components/landing-block";
-import Results from "./components/results";
-import Reviews from "./components/reviews";
-import { VideoPreview } from "./components/video-preview";
+import { Benefits } from "@/components/landing/benefits";
+import { Features } from "@/components/landing/bento/bento";
+import { Cta } from "@/components/landing/cta";
+import { Faq } from "@/components/landing/faq";
+import { Hero } from "@/components/landing/hero/hero";
+import { Impact } from "@/components/landing/impact/impact";
+import { Pricing } from "@/components/landing/pricing";
+import { Results } from "@/components/landing/results";
+import { Reviews } from "@/components/landing/reviews";
 
 export default function LandingPage() {
   return (
     <>
-
       <Hero />
+      <Benefits />
+      <Features />
+      <Impact />
+      <Results />
+      <Reviews />
+      <Pricing />
+      <Faq />
+      <Cta />
 
-      {/* Presentation video */}
+      {/* <Hero />
+
+     
       <VideoPreview />
 
       <Benefits />
       <Features />
-      {/* <DashboardPreview /> */}
+
       <Impact />
       <Results />
       <LandingBlock title="Simple and transparent pricing" badge="Pricing">
@@ -28,7 +36,7 @@ export default function LandingPage() {
       </LandingBlock>
       <Reviews />
       <Faq />
-      <Cta />
+      <Cta /> */}
     </>
   );
 }

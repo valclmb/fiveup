@@ -4,13 +4,24 @@ import { CustomizationPageLayout } from "@/components/features/customization/cus
 import { PreviewLayout } from "@/components/features/customization/preview-layout";
 import { ReviewPageForm, useReviewPageForm } from "@/components/features/customization/review/review-page-form";
 import { ReviewPagePreview } from "@/components/features/customization/review/review-page-preview";
+import {
+  UpgradeProDialog,
+  useProGateSave,
+} from "@/components/features/customization/upgrade-pro-dialog";
 
 export default function ReviewPage() {
   const { form, saveMutation } = useReviewPageForm();
+  const gate = useProGateSave(saveMutation);
 
   return (
-    <CustomizationPageLayout
-      content={<ReviewPageForm form={form} saveMutation={saveMutation} />}
+    <>
+      <CustomizationPageLayout
+        content={
+          <ReviewPageForm
+            form={form}
+            saveMutation={{ mutate: gate.mutate, isPending: gate.isPending }}
+          />
+        }
       preview={
         <PreviewLayout
           previewMode="fixed"
@@ -21,5 +32,10 @@ export default function ReviewPage() {
         </PreviewLayout>
       }
     />
+      <UpgradeProDialog
+        open={gate.upgradeDialogOpen}
+        onOpenChange={gate.setUpgradeDialogOpen}
+      />
+    </>
   );
 }
