@@ -61,7 +61,7 @@ const BentoSetupCard = ({ children, className, orientation = "left" }: { childre
     <div className={cn(" p-px  border-t-[0.5px] border-primary/30 rounded-2xl overflow-hidden",
       orientation === "left" ? "-rotate-[8deg] border-l-[0.5px]" : "rotate-[8deg] border-r-[0.5px]",
       "bg-primary/5 rounded-2xl backdrop-blur-2xl size-30 flex items-center justify-center",
-      "[box-shadow:0_2px_8px_0_rgba(255,255,255,0.1)_inset] [filter:drop-shadow(0_0.816px_0.816px_rgba(0,0,0,0.1))_drop-shadow(0_2.449px_2.449px_rgba(0,0,0,0.09))_drop-shadow(0_4.898px_3.265px_rgba(0,0,0,0.05))_drop-shadow(0_8.98px_3.265px_rgba(0,0,0,0.01))_drop-shadow(0_13.061px_4.082px_rgba(0,0,0,0))]",
+      "[box-shadow:inset_0_2px_8px_rgba(255,255,255,0.08)] [filter:drop-shadow(0_4px_12px_rgba(0,0,0,0.15))]",
       className
     )}>
       {children}
@@ -92,7 +92,7 @@ export const BentoSetup = () => {
 
           </div>
           <div className="relative min-w-22">
-            <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-[2px] bg-white/10 w-[135%] " />
+            <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-[2px] bg-white/10 w-[1%] " />
             <Pills variant="buttonRounded" className="relative p-1 w-fit mx-auto" innerClassName="p-2" >
               <ArrowRight strokeWidth={2.5} size={16} className=" text-primary" />
             </Pills>

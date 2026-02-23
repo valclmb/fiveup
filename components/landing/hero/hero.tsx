@@ -1,9 +1,10 @@
 import { cn } from "@/lib/utils";
 import { ChevronRight, Star } from "lucide-react";
 import Image from "next/image";
-import { AnimatedGridPattern } from "../ui/animated-grid-pattern";
-import { Button } from "../ui/button";
-import Typography from "../ui/typography";
+import { AnimatedGridPattern } from "../../ui/animated-grid-pattern";
+import { Button } from "../../ui/button";
+import Typography from "../../ui/typography";
+import { HeroDiagram } from "./hero-diagram";
 
 export const Hero = () => {
   return (
@@ -43,36 +44,8 @@ export const Hero = () => {
           <Image src="/landing/google-white.svg" alt="Google" width={71} height={28} className="translate-y-1 filter grayscale brightness-200 contrast-100" />
         </div>
 
-        <div className={cn("relative bg-linear-to-b from-white/5 to-background/10 border border-foreground/10 border-b-0 mt-12 w-[861px] h-[482px] p-3 pb-0 rounded-t-[40px] backdrop-blur-[50px]",
-          "after:absolute after:content-[''] after:h-10 after:w-54 after:bg-primary after:top-0 after:left-1/2 after:-translate-x-1/2 after:blur-3xl after:rounded-full",
-          // Top border
-          "before:content-[''] before:absolute before:inset-0 before:w-1/2 before:translate-x-1/2 before:h-[1.5px] before:bg-[linear-gradient(to_right,transparent,white,transparent)]"
-        )}>
-          {/* Orbs */}
-          <div className="absolute -top-9 left-1/2 -translate-x-1/2 w-42  h-12">
-            <div className="absolute bottom-1.5 size-[3px] bg-white rounded-full blur-[0.5px]" />
-            <div className="absolute left-6 top-0 size-[3px] bg-white rounded-full blur-[0.5px]" />
-            <div className="absolute left-12 top-4 size-[2px] bg-white rounded-full blur-[0.5px]" />
-            <div className="absolute left-1/2 bottom-5 size-[3px] bg-white rounded-full blur-[0.5px]" />
-            <div className="absolute right-14 top-0 size-[3px] bg-white rounded-full blur-[0.5px]" />
-            <div className="absolute right-12 bottom-4 size-[3px] bg-white rounded-full blur-[0.5px]" />
-            <div className="absolute right-2 size-[2px] bg-white rounded-full blur-[0.5px]" />
-            <div className="absolute right-0 bottom-6 size-[3px] bg-white rounded-full blur-[0.5px]" />
 
-          </div>
-          {/* Left and right borders */}
-          <div
-            className="pointer-events-none absolute inset-y-0 -right-[1px] w-[1px] h-3/4 top-1/2 -translate-y-1/2 bg-[linear-gradient(to_bottom,transparent,#ffffff80,transparent)]"
-          />
-          <div
-            className="pointer-events-none absolute inset-y-0 -left-[1px] w-[1px] h-3/4 top-1/2 -translate-y-1/2 bg-[linear-gradient(to_bottom,transparent,#ffffff80,transparent)]"
-          />
-          {/* Left and right borders */}
-          <div className="bg-background w-full h-full rounded-t-[30px] p-10">
-            test
-          </div>
-        </div>
-
+        <HeroDiagram />
       </div>
     </section >
   );
