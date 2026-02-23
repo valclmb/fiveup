@@ -24,17 +24,12 @@ const PLACEHOLDER_CARDS: HeroDiagramCardProps[] = [
 ]
 
 export const HeroDiagramGrid = () => {
-  const maskImage =
-    "linear-gradient(to right, transparent 27%, black 47%, black 53%, transparent 73%), linear-gradient(to bottom, transparent 5%, black 20%, black 70%, transparent 95%)"
   return (
     <div
       className={cn(
-        "grid grid-cols-3 gap-4 grid-auto-rows-[56px] content-start min-w-[782px] min-h-[424px] rounded-2xl",
-        "[&>*:nth-child(3n+1)]:translate-y-6 [&>*:nth-child(3n+3)]:translate-y-6",
-        "[mask-image:var(--hero-grid-mask)] [mask-size:100%_100%] [mask-repeat:no-repeat] [mask-composite:intersect]",
-        "[-webkit-mask-image:var(--hero-grid-mask)] [-webkit-mask-size:100%_100%] [-webkit-mask-repeat:no-repeat] [-webkit-mask-composite:source-in]"
+        "mask-fade-hero-grid grid grid-cols-3 gap-4 grid-auto-rows-[56px] content-start min-w-[782px] min-h-[424px] rounded-2xl",
+        "[&>*:nth-child(3n+1)]:translate-y-6 [&>*:nth-child(3n+3)]:translate-y-6"
       )}
-      style={{ ["--hero-grid-mask" as string]: maskImage }}
     >
       {PLACEHOLDER_CARDS.map((card, i) => (
         <HeroDiagramCard key={i} type={card.type} />

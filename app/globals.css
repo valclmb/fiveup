@@ -202,6 +202,66 @@ body {
 }
 
 @layer utilities {
+  /* Vertical fade only: center visible, top/bottom fade */
+  .mask-fade-vertical {
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 45%,
+      black 55%,
+      transparent 100%
+    );
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0%,
+      black 45%,
+      black 55%,
+      transparent 100%
+    );
+    -webkit-mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+  }
+
+  /* Hero diagram grid: to right + to bottom, center visible, edges fade */
+  .mask-fade-hero-grid {
+    mask-image: linear-gradient(
+      to right,
+      transparent 27%,
+      black 47%,
+      black 53%,
+      transparent 73%
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 5%,
+      black 20%,
+      black 70%,
+      transparent 95%
+    );
+    mask-size: 100% 100%;
+    mask-repeat: no-repeat;
+    mask-composite: intersect;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 27%,
+      black 47%,
+      black 53%,
+      transparent 73%
+    ),
+    linear-gradient(
+      to bottom,
+      transparent 5%,
+      black 20%,
+      black 70%,
+      transparent 95%
+    );
+    -webkit-mask-size: 100% 100%;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-composite: source-in;
+  }
+
   .shield-blur-layer {
     mask-image: url("/landing/shield-mask.svg");
     mask-size: contain;

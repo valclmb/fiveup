@@ -30,7 +30,7 @@ export const HeroDiagram = () => {
       <div className="pointer-events-none absolute inset-y-0 -left-[1px] w-[1px] h-3/4 top-1/2 -translate-y-1/2 bg-[linear-gradient(to_bottom,transparent,#ffffff80,transparent)]" />
       <div className="relative bg-background w-full h-full rounded-t-[30px] px-6 overflow-hidden flex items-center justify-between">
         <p className="text-[8px] -rotate-90 text-white/50  tracking-[2.7px]">CONNECTED</p>
-        <div className="flex flex-col items-center gap-10">
+        <div className="flex flex-col items-center gap-10 mask-fade-vertical">
           <Pills>
             <GoogleLogo width={55} />
           </Pills>
@@ -58,7 +58,7 @@ export const HeroDiagram = () => {
             </div>
           </>
         </div>
-        <div className="flex flex-col items-center gap-10 text-[9px]">
+        <div className={cn("flex flex-col items-center gap-10 text-[9px]", "mask-fade-vertical")}>
           <Pills innerClassName="flex items-center gap-1">
             <ProgressCircle size={10} className="text-foreground" />
             Request Sent
