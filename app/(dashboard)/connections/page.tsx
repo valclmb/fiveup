@@ -28,7 +28,7 @@ export default function Page() {
       <CardContent className="space-y-6">
         <div>
           <Typography variant="p">Your store</Typography>
-          <Typography variant="description" className="text-muted-foreground">
+          <Typography variant="p" affects="muted" className="text-muted-foreground">
             Connect to your Google Business, Trustpilot, verified reviews, Shopify and Wix accounts
           </Typography>
         </div>

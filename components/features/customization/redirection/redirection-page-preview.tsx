@@ -45,7 +45,7 @@ export function RedirectionPagePreview({
       </Typography>
       {showDescription && (
         <Typography
-          variant="description"
+          variant="p"
           affects="muted"
           style={{ fontFamily: font }}
           className="break-words"

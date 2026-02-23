@@ -1,6 +1,6 @@
 "use client";
 
-import { StarIcon } from "@/app/(landing)/components/star-icon";
+import { StarIcon } from "@/components/custom-ui/star-icons";
 import { Check, Pointer } from "lucide-react";
 import { motion } from "motion/react";
 import { useState } from "react";

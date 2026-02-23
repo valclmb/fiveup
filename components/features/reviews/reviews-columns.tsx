@@ -1,6 +1,6 @@
 "use client";
 
-import { StarIcon } from "@/app/(landing)/components/star-icon";
+import { StarIcon } from "@/components/custom-ui/star-icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

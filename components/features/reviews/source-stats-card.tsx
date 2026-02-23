@@ -1,6 +1,6 @@
 "use client";
 
-import { StarIcon } from "@/app/(landing)/components/star-icon";
+import { StarIcon } from "@/components/custom-ui/star-icons";
 import { Card, CardContent } from "@/components/ui/card";
 import Typography from "@/components/ui/typography";
 import { formatDistanceToNow } from "date-fns";
@@ -83,13 +83,13 @@ export function SourceStatsCard({
             <div className="flex items-center gap-2 mb-4">{logo}</div>
             <div className="flex gap-6">
               <div>
-                <Typography variant="description" className="text-muted-foreground">
+                <Typography variant="p" affects="muted" className="text-muted-foreground">
                   Nombre d&apos;avis
                 </Typography>
                 <span className="text-2xl font-bold">{stats.total}</span>
               </div>
               <div>
-                <Typography variant="description" className="text-muted-foreground">
+                <Typography variant="p" affects="muted" className="text-muted-foreground">
                   Note moyenne
                 </Typography>
                 <div className="flex items-center gap-1">
@@ -99,7 +99,7 @@ export function SourceStatsCard({
               </div>
             </div>
             {stats.lastSyncAt && (
-              <Typography variant="description" className="text-muted-foreground text-sm mt-2">
+              <Typography variant="p" affects="muted" className="text-muted-foreground text-sm mt-2">
                 Last sync {formatDistanceToNow(new Date(stats.lastSyncAt), { addSuffix: true })}
               </Typography>
             )}

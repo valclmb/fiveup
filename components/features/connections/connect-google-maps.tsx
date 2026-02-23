@@ -335,7 +335,7 @@ export function ConnectGoogleMaps() {
                       </div>
                     )}
                     {canChangeDomain && (
-                      <Typography variant="description" className="text-xs">
+                      <Typography variant="p" affects="muted" className="text-xs">
                         One place ID per line, or comma-separated.
                       </Typography>
                     )}

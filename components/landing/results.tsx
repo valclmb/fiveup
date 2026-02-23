@@ -42,7 +42,7 @@ export const Results = () => {
         Reviews that build trust for you
       </LandingBlock.Title>
       <LandingBlock.Content className="grid grid-cols-3 gap-6 space-y-0 gap-y-18">
-        <Card className="relative overflow-hidden ring-transparent rounded-4xl col-span-3">
+        <Card variant="landing" className="relative overflow-hidden ring-transparent rounded-4xl col-span-3">
           <DotPattern
             glow
             width={10}
@@ -69,7 +69,7 @@ export const Results = () => {
           </CardContent>
         </Card>
         {testimonials.map((testimonial) => (
-          <Card key={testimonial.name} className="relative overflow-hidden col-span-1 p-7.5">
+          <Card variant="landing" key={testimonial.name} className="relative overflow-hidden col-span-1 p-7.5">
             <div
               className="pointer-events-none absolute inset-0 rounded-2xl blur-xl bg-[radial-gradient(ellipse_100%_100%_at_50%_0%,color-mix(in_oklch,var(--primary)_25%,transparent)_0%,transparent_60%)]"
               aria-hidden

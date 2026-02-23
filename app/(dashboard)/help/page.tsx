@@ -111,7 +111,7 @@ export default function HelpPage() {
           <Typography variant="h2" className="text-xl font-bold leading-tight mt-0 mb-0">
             Contact Support
           </Typography>
-          <Typography variant="description" className="text-muted-foreground leading-snug">
+          <Typography variant="p" affects="muted" className="text-muted-foreground leading-snug">
             Contact Support for any questions or issues you may have.
           </Typography>
         </CardHeader>
@@ -169,7 +169,7 @@ export default function HelpPage() {
                     </span>
                     .
                   </label>
-                  <Typography variant="description" className="mt-2 text-xs text-muted-foreground">
+                  <Typography variant="p" affects="mutedDescription" className="mt-2 text-xs text-muted-foreground">
                     Upload up to {MAX_FILES} files, Max: {MAX_FILE_SIZE_MB}MB; JPEG, PNG, GIF, WebP, PDF.
                   </Typography>
                   {files.length > 0 && (

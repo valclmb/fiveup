@@ -46,8 +46,8 @@ export const Pricing = () => {
       <LandingBlock.Title className="max-w-lg">Simple transparent pricing that works</LandingBlock.Title>
       <LandingBlock.Content className="flex items-start gap-5">
         {pricingItems.map((item) => (
-          <Card key={item.title} className="w-1/3 p-3 rounded-4xl">
-            <Card className="relative overflow-hidden rounded-2xl space-y-4">
+          <Card variant="landing" key={item.title} className="w-1/3 p-3 rounded-4xl">
+            <Card variant="landing" className="relative overflow-hidden rounded-2xl space-y-4">
               {/* Background glow for Most Popular */}
               {item.isPopular && (
                 <div

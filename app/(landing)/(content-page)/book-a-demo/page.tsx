@@ -1,6 +1,5 @@
-import Typography, { headingFontClassName } from "@/components/ui/typography";
-import { cn } from "@/lib/utils";
-import { ContentPageTemplate } from "../../components/content-page-template";
+import { ContentPageTemplate } from "@/components/landing/content-page-template";
+import Typography from "@/components/ui/typography";
 import { CalEmbed } from "./cal-embed";
 import { CallAgenda } from "./call-agenda";
 import { HighlightedTextFlip } from "./highlighted-text-flip";
@@ -19,10 +18,7 @@ export default function MeetPage() {
           <HighlightedTextFlip
             words={["Get more reviews.", "Build more trust.", "Sell more."]}
             interval={3500}
-            className={cn(
-              headingFontClassName,
-              "text-4xl md:text-5xl font-bold tracking-tight"
-            )}
+            className="text-4xl md:text-5xl font-bold tracking-tight"
             highlighterAction="underline"
             highlighterColor="var(--primary)"
           />

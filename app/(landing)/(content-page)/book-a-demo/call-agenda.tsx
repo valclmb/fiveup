@@ -1,8 +1,16 @@
 import Typography from "@/components/ui/typography";
 import {
-  Target, BarChart3, ShoppingBag, MessageSquare,
-  Zap, Link, MessageCircle, Palette, PieChart,
-  DollarSign, Rocket, Handshake, CheckCircle,
+  BarChart3,
+  CheckCircle,
+  DollarSign,
+  Handshake,
+  Link, MessageCircle,
+  MessageSquare,
+  Palette, PieChart,
+  Rocket,
+  ShoppingBag,
+  Target,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 
@@ -43,7 +51,7 @@ function Item({ icon: Icon, text }: Item) {
   return (
     <div className="flex items-start gap-3 group">
       <Icon className="w-5 h-5 shrink-0 mt-0.5 text-primary group-hover:scale-110 transition-transform" />
-      <Typography variant="description" className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+      <Typography variant="p" affects="muted" className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
         {text}
       </Typography>
     </div>

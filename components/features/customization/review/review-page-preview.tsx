@@ -1,6 +1,6 @@
 "use client";
 
-import { StarIcons } from "@/app/(landing)/components/star-icon";
+import { StarIcons } from "@/components/custom-ui/star-icons";
 import { Button } from "@/components/ui/button";
 import Typography from "@/components/ui/typography";
 import { CORNER_ROUNDNESS_PX, DEFAULT_CORNER_ROUNDNESS } from "@/lib/corner-roundness";

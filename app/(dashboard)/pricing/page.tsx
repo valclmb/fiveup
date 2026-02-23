@@ -83,7 +83,7 @@ export default function PricingPage() {
         <Typography variant="h1" className="text-3xl md:text-4xl font-bold">
           Choose your plan
         </Typography>
-        <Typography variant="description" className="text-muted-foreground">
+        <Typography variant="p" affects="muted" className="text-muted-foreground">
           Pro or Ultra — upgrade or change your plan anytime via the Billing portal.
         </Typography>
       </div>
@@ -131,12 +131,12 @@ export default function PricingPage() {
                     ? PLANS.pro.yearly.price
                     : PLANS.pro.monthly.price}
                 </Typography>
-                <Typography variant="description" className="text-muted-foreground text-lg">
+                <Typography variant="p" affects="muted" className="text-muted-foreground text-lg">
                   /{isYearly ? "year" : "month"}
                 </Typography>
               </div>
               {isYearly && (
-                <Typography variant="description" className="text-sm text-muted-foreground mt-2">
+                <Typography variant="p" affects="muted" className="text-sm text-muted-foreground mt-2">
                   ${Math.round(PLANS.pro.yearly.price / 12)}/month billed annually
                 </Typography>
               )}
@@ -169,7 +169,7 @@ export default function PricingPage() {
                     <div className="mt-0.5 shrink-0">
                       <Check className="size-5 text-primary" />
                     </div>
-                    <Typography variant="description" className="text-sm">
+                    <Typography variant="p" affects="muted" className="text-sm">
                       {feature}
                     </Typography>
                   </li>
@@ -178,7 +178,7 @@ export default function PricingPage() {
             </div>
           </CardContent>
           <CardFooter className="flex-col items-start gap-4 pt-6 border-t">
-            <Typography variant="description" className="text-xs text-muted-foreground">
+            <Typography variant="p" affects="muted" className="text-xs text-muted-foreground">
               Change plan or billing later in Profile → Billing.
             </Typography>
           </CardFooter>
@@ -203,12 +203,12 @@ export default function PricingPage() {
                     ? PLANS.ultra.yearly.price
                     : PLANS.ultra.monthly.price}
                 </Typography>
-                <Typography variant="description" className="text-muted-foreground text-lg">
+                <Typography variant="p" affects="muted" className="text-muted-foreground text-lg">
                   /{isYearly ? "year" : "month"}
                 </Typography>
               </div>
               {isYearly && (
-                <Typography variant="description" className="text-sm text-muted-foreground mt-2">
+                <Typography variant="p" affects="muted" className="text-sm text-muted-foreground mt-2">
                   ${Math.round(PLANS.ultra.yearly.price / 12)}/month billed annually
                 </Typography>
               )}
@@ -241,7 +241,7 @@ export default function PricingPage() {
                     <div className="mt-0.5 shrink-0">
                       <Check className="size-5 text-primary" />
                     </div>
-                    <Typography variant="description" className="text-sm">
+                    <Typography variant="p" affects="muted" className="text-sm">
                       {feature}
                     </Typography>
                   </li>
@@ -250,7 +250,7 @@ export default function PricingPage() {
             </div>
           </CardContent>
           <CardFooter className="flex-col items-start gap-4 pt-6 border-t">
-            <Typography variant="description" className="text-xs text-muted-foreground">
+            <Typography variant="p" affects="muted" className="text-xs text-muted-foreground">
               Upgrade, switch to annual, or cancel in Profile → Billing.
             </Typography>
           </CardFooter>

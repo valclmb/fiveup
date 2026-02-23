@@ -10,13 +10,13 @@ import Typography from "@/components/ui/typography";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { Mail } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { Mail } from "lucide-react";
 import { z } from "zod/v3";
 
 const formSchema = z.object({
@@ -39,7 +39,7 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard'
   const selectedPlan = searchParams.get('plan') || 'pro' // Plan choisi depuis /pricing
-  
+
   const [signupSuccess, setSignupSuccess] = useState(false);
   const [userEmail, setUserEmail] = useState<string>('');
 
@@ -62,7 +62,7 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
     }),
     onSuccess: async (data) => {
       console.log('Signup response:', data);
-      
+
       if (data.error) {
         toast.error(data.error.message || 'An error occurred while creating the account');
         return;
@@ -73,7 +73,7 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
       setUserEmail(email);
       setSignupSuccess(true);
       onSignupSuccess?.(true); // Informer la page parent
-      
+
       toast.success('Account created!', {
         description: 'A verification email has been sent.',
         duration: 3000,
@@ -110,7 +110,7 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
             <Typography variant="h2" className="text-2xl md:text-3xl text-center">
               Confirm your email
             </Typography>
-            <Typography variant="description" className="text-base">
+            <Typography variant="p" affects="muted" className="text-base">
               We just sent you an email to
             </Typography>
             {userEmail && (
@@ -118,7 +118,7 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
                 {userEmail}
               </Typography>
             )}
-            <Typography variant="description" className="text-sm">
+            <Typography variant="p" affects="muted" className="text-sm">
               Click the link in the email to activate your account.
             </Typography>
           </div>
@@ -139,7 +139,7 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
 
           {/* Message d'aide */}
           <div className="pt-4 border-t border-border">
-            <Typography variant="description" className="text-xs">
+            <Typography variant="p" affects="muted" className="text-xs">
               Didn't receive the email? Check your spam folder or{' '}
               <Link href="/auth/signin" className="text-primary hover:underline font-medium">
                 sign in
@@ -265,7 +265,7 @@ const SignUpForm = ({ onSignupSuccess }: SignUpFormProps = {}) => {
         {signupGoogle.isPending ? <Spinner /> : 'Continuer avec Google'}
       </Button>
 
-      <Typography variant="description" className="text-right">Already have an account?
+      <Typography variant="p" affects="mutedDescription" className="text-right">Already have an account?
         <Link href="/auth/signin" className={buttonVariants({ variant: "link", className: "px-2!" })}>Sign in</Link>
       </Typography>
     </AnimatedFade>
