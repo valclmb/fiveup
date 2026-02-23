@@ -9,11 +9,15 @@ import GoogleLogo from "@/public/images/google-logo.svg"
 import ShopifyLogo from "@/public/images/shopify-logo.svg"
 import TrustpilotLogo from "@/public/images/trustpilot-logo.svg"
 import WhatsappLogo from "@/public/images/whatsapp-logo.svg"
+import ShoppingBag from "@/public/landing/benefits-shop.svg"
+import StarIcon from "@/public/landing/benefits-stars.svg"
 import MouseGrab from "@/public/landing/mouse-grab.svg"
 import ProgressCircle from "@/public/landing/progress-circle.svg"
 import SafeguardEllipse from "@/public/landing/safeguard-ellipse.svg"
 import Shield from "@/public/landing/shield.svg"
-import { ArrowRight, Plus, ShoppingBag, Star } from "lucide-react"
+import { ArrowRight, Plus, Star } from "lucide-react"
+import Image from "next/image"
+
 const TopDotted = () => {
   return (
     <>
@@ -52,48 +56,59 @@ export const TopRightDotted = () => {
   )
 }
 
+const BentoSetupCard = ({ children, className, orientation = "left" }: { children?: React.ReactNode, className?: string, orientation?: "left" | "right" }) => {
+  return (
+    <div className={cn(" p-px  border-t-[0.5px] border-primary/30 rounded-2xl overflow-hidden",
+      orientation === "left" ? "-rotate-[8deg] border-l-[0.5px]" : "rotate-[8deg] border-r-[0.5px]",
+      "bg-primary/5 rounded-2xl backdrop-blur-2xl size-30 flex items-center justify-center",
+      "[box-shadow:0_2px_8px_0_rgba(255,255,255,0.1)_inset] [filter:drop-shadow(0_0.816px_0.816px_rgba(0,0,0,0.1))_drop-shadow(0_2.449px_2.449px_rgba(0,0,0,0.09))_drop-shadow(0_4.898px_3.265px_rgba(0,0,0,0.05))_drop-shadow(0_8.98px_3.265px_rgba(0,0,0,0.01))_drop-shadow(0_13.061px_4.082px_rgba(0,0,0,0))]",
+      className
+    )}>
+      {children}
+    </div>
+
+  )
+}
+
+
+
 export const BentoSetup = () => {
   return (
-    <div className="relative flex h-full flex-col items-center">
+    <>
       <TopDotted />
-      <div className="relative z-10 flex flex-1 flex-col items-center justify-center gap-6 px-4">
+      <div className="relative z-10 flex flex-1 flex-col items-center justify-center px-4 gap-6">
         {/* Logo: five + up */}
-        <p className="text-center font-semibold tracking-tight">
-          <span className="text-foreground">five</span>
-          <span className="text-primary">up</span>
-        </p>
+        <Image src="/logos/logo-white.svg" alt="five up" width={92} height={30} />
 
         {/* Flow: Store card → Arrow → Star card */}
         <div className="flex items-center justify-center gap-4">
           {/* Left card (Store / Shopping bag) */}
           <div className="relative">
-            <div className="absolute inset-0 translate-x-1 translate-y-1 rounded-2xl bg-primary/10" aria-hidden />
-            <div className="relative flex size-16 items-center justify-center rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md">
-              <ShoppingBag className="size-8 text-primary" />
-            </div>
-          </div>
+            <BentoSetupCard className="absolute translate-y-8 -translate-x-8 opacity-15" />
+            <BentoSetupCard className="absolute translate-y-4 -translate-x-4 opacity-25" />
+            <BentoSetupCard>
+              <ShoppingBag width={42} className="fill-primary -rotate-[2deg]" />
+            </BentoSetupCard>
 
-          {/* Connector: lines + circle with arrow */}
-          <div className="flex flex-col items-center gap-0">
-            <div className="flex h-8 w-20 items-center">
-              <div className="h-px flex-1 bg-white/20" />
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-white/30 bg-background/80 backdrop-blur-sm">
-                <ArrowRight className="size-4 text-primary" />
-              </div>
-              <div className="h-px flex-1 bg-white/20" />
-            </div>
           </div>
-
-          {/* Right card (Star / Reviews) */}
+          <div className="relative min-w-22">
+            <div className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-[2px] bg-white/10 w-[135%] " />
+            <Pills variant="buttonRounded" className="relative p-1 w-fit mx-auto" innerClassName="p-2" >
+              <ArrowRight strokeWidth={2.5} size={16} className=" text-primary" />
+            </Pills>
+          </div>
           <div className="relative">
-            <div className="absolute inset-0 translate-x-1 translate-y-1 rounded-2xl bg-primary/10" aria-hidden />
-            <div className="relative flex size-16 items-center justify-center rounded-2xl border border-white/10 bg-background/50 backdrop-blur-md">
-              <Star className="size-8 fill-primary text-primary" />
-            </div>
+            <BentoSetupCard className="absolute translate-y-8 translate-x-8 opacity-15" orientation="right" />
+            <BentoSetupCard className="absolute translate-y-4 translate-x-4 opacity-25" orientation="right" />
+            <BentoSetupCard orientation="right">
+              <StarIcon width={57} className="fill-primary -rotate-[2deg]" />
+            </BentoSetupCard>
+
           </div>
         </div>
-      </div>
-    </div>
+      </div >
+
+    </>
   )
 }
 
@@ -167,7 +182,7 @@ export const BentoReplies = () => {
               ))}
             </div>
             <Separator orientation="vertical" />
-            <Typography variant="p" affects="mutedDescription">5/5 rating</Typography>
+            <Typography variant="p" affects="mutedDescription" className="text-xs">5/5 rating</Typography>
           </div>
         </div>
         <div className="space-y-2 rounded-xl self-end border w-7/12  p-3 shadow-lg bg-primary rounded-br-none">
