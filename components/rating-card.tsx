@@ -1,9 +1,9 @@
 "use client"
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Star } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
-import { StarIcons } from "../app/(landing)/components/star-icon";
 
 interface RatingCardProps {
   platform: "google" | "trustpilot";
@@ -69,7 +69,9 @@ const RatingCard = ({ platform, className = "", delay, floatOffset = 0, whiteMod
           <CardContent className="p-0 space-y-2 ">
 
             <div className="flex gap-1">
-              <StarIcons size={20} className={cn("size-4 lg:size-auto text-amber-400")} />
+              {Array.from({ length: 5 }).map((_, index) => (
+                <Star key={index} size={20} className={cn("size-4 lg:size-auto fill-amber-400 text-amber-400")} />
+              ))}
             </div>
 
 

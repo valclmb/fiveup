@@ -1,17 +1,37 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
+import { cva } from "class-variance-authority";
 
+interface CardProps {
+  className?: string;
+  size?: "default" | "sm";
+  variant?: "default" | "landing";
+}
+const cardVariants = cva(
+  "ring-border text-card-foreground gap-6 overflow-hidden rounded-xl py-6 text-sm shadow-xs ring-1 has-[>img:first-child]:pt-0 data-[size=sm]:gap-4 data-[size=sm]:py-4 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl group/card flex flex-col",
+  {
+    variants: {
+      variant: {
+        default: "bg-card",
+        landing: "relative bg-landing-card bg-gradient-to-b from-landing-card-gradient to-transparent",
+      },
+    },
+    defaultVariants: {
+      variant: "default",
+    },
+  }
+)
 function Card({
   className,
-  size = "default",
+  variant = "default",
   ...props
-}: React.ComponentProps<"div"> & { size?: "default" | "sm" }) {
+}: React.ComponentProps<"div"> & CardProps) {
   return (
     <div
       data-slot="card"
-      data-size={size}
-      className={cn("ring-border bg-linear-to-t from-card to-card-gradient backdrop-blur-[50px] text-card-foreground gap-6 overflow-hidden rounded-xl py-6 text-sm shadow-xs ring-1 has-[>img:first-child]:pt-0 data-[size=sm]:gap-4 data-[size=sm]:py-4 *:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl group/card flex flex-col", className)}
+      data-variant={variant}
+      className={cn(cardVariants({ variant }), className)}
       {...props}
     />
   )
@@ -85,5 +105,5 @@ function CardFooter({ className, ...props }: React.ComponentProps<"div">) {
 
 export {
   Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle
-}
+};
 

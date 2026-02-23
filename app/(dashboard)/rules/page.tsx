@@ -1,5 +1,5 @@
 "use client";
-import { StarIcon, StarIcons } from "@/app/(landing)/components/star-icon";
+import { StarIcon, StarIcons } from "@/components/custom-ui/star-icons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";

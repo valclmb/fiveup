@@ -1,6 +1,6 @@
 "use client";
 
-import { StarIcons } from "@/app/(landing)/components/star-icon";
+import { StarIcons } from "@/components/custom-ui/star-icons";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";

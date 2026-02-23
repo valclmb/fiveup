@@ -64,7 +64,7 @@ const ReviewCard = ({
   body: string
 }) => {
   return (
-    <Card className="max-w-96 p-6">
+    <Card variant="landing" className="max-w-96 p-6">
       <CardHeader className="flex justify-between p-0">
         <div className="flex flex-row items-center gap-3">
           <Avatar className="size-[42px]">

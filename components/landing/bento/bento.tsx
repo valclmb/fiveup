@@ -43,7 +43,7 @@ export const Features = () => {
       <LandingBlock.Title>Make reviews work for you</LandingBlock.Title>
       <LandingBlock.Content className="grid grid-cols-6 gap-4">
         {featuresItem.map((item) => (
-          <Card key={item.title} className={cn(item.className, "p-7.5")}>
+          <Card variant="landing" key={item.title} className={cn(item.className, "p-7.5")}>
             <CardContent className="p-0">
               <div className="h-60">
                 {item.content}

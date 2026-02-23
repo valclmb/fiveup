@@ -1,6 +1,6 @@
 "use client";
 
-import { StarIcon } from "@/app/(landing)/components/star-icon";
+import { StarIcon } from "@/components/custom-ui/star-icons";
 import { Card, CardContent } from "@/components/ui/card";
 import Typography from "@/components/ui/typography";
 import { formatDistanceToNow } from "date-fns";
