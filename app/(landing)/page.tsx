@@ -21,22 +21,6 @@ export default function LandingPage() {
       <Faq />
       <Cta />
 
-      {/* <Hero />
-
-     
-      <VideoPreview />
-
-      <Benefits />
-      <Features />
-
-      <Impact />
-      <Results />
-      <LandingBlock title="Simple and transparent pricing" badge="Pricing">
-        <div>Construction en cours...</div>
-      </LandingBlock>
-      <Reviews />
-      <Faq />
-      <Cta /> */}
     </>
   );
 }

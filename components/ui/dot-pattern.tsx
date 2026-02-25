@@ -1,7 +1,7 @@
 "use client"
 
-import React, { useEffect, useId, useRef, useState } from "react"
 import { motion } from "motion/react"
+import React, { useEffect, useId, useRef, useState } from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -28,6 +28,12 @@ interface DotPatternProps extends React.SVGProps<SVGSVGElement> {
   cr?: number
   className?: string
   glow?: boolean
+  /**
+   * Pause glow animation when the pattern is not visible in the viewport.
+   * N'a d'effet que si `glow` est true.
+   * @default true
+   */
+  pauseWhenOffscreen?: boolean
   [key: string]: unknown
 }
 
@@ -71,11 +77,13 @@ export function DotPattern({
   cr = 1,
   className,
   glow = false,
+  pauseWhenOffscreen = true,
   ...props
 }: DotPatternProps) {
   const id = useId()
   const containerRef = useRef<SVGSVGElement>(null)
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 })
+  const [isVisible, setIsVisible] = useState(true)
 
   useEffect(() => {
     const updateDimensions = () => {
@@ -89,6 +97,28 @@ export function DotPattern({
     window.addEventListener("resize", updateDimensions)
     return () => window.removeEventListener("resize", updateDimensions)
   }, [])
+
+  useEffect(() => {
+    if (!pauseWhenOffscreen || !glow) return
+
+    const el = containerRef.current
+    if (!el || typeof IntersectionObserver === "undefined") return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting && entry.intersectionRatio > 0)
+      },
+      {
+        threshold: 0.1,
+      }
+    )
+
+    observer.observe(el)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [pauseWhenOffscreen, glow])
 
   const dots = Array.from(
     {
@@ -133,22 +163,22 @@ export function DotPattern({
           fill={glow ? `url(#${id}-gradient)` : "currentColor"}
           initial={glow ? { opacity: 0.4, scale: 1 } : {}}
           animate={
-            glow
+            glow && isVisible
               ? {
-                  opacity: [0.4, 1, 0.4],
-                  scale: [1, 1.5, 1],
-                }
+                opacity: [0.4, 1, 0.4],
+                scale: [1, 1.5, 1],
+              }
               : {}
           }
           transition={
-            glow
+            glow && isVisible
               ? {
-                  duration: dot.duration,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  delay: dot.delay,
-                  ease: "easeInOut",
-                }
+                duration: dot.duration,
+                repeat: Infinity,
+                repeatType: "reverse",
+                delay: dot.delay,
+                ease: "easeInOut",
+              }
               : {}
           }
         />
