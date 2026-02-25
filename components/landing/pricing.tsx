@@ -63,7 +63,6 @@ export const Pricing = () => {
                   height={10}
                   opacity={item.isPopular ? 0.8 : 0.5}
                   className={cn(
-
                     item.isPopular && "text-primary/70"
                   )}
                 />

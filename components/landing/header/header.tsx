@@ -18,14 +18,14 @@ export const LANDING_NAV = [
     href: "/affiliate",
   },
   {
-    label: "FAQs",
-    href: "/faq",
+    label: "Book a demo ",
+    href: "/book-a-demo",
   },
 ]
 
 export const LandingHeader = () => {
   return (
-    <header className="flex items-center justify-between w-full max-w-5xl mx-auto p-6 pl-9">
+    <header className="sticky bg-background/80 backdrop-blur-lg border-[0.5px] border-background  rounded-3xl top-2 z-100 flex items-center justify-between w-full max-w-5xl mx-auto p-6 pl-9">
       <div className="flex items-center justify-between gap-21">
         <Link href="/">
           <Image
