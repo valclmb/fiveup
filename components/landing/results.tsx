@@ -54,7 +54,7 @@ export const Results = () => {
             className="pointer-events-none absolute inset-0 rounded-2xl blur-3xl bg-[radial-gradient(ellipse_35%_80%_at_50%_100%,color-mix(in_oklch,var(--primary)_25%,transparent)_0%,transparent_60%)]"
             aria-hidden
           />
-          <CardContent className={cn("flex justify-around text-center p-18 relative",
+          <CardContent className={cn("flex flex-col gap-17.5 lg:flex-row items-center justify-around text-center p-18 relative",
             "before:content-[''] before:-translate-y-6 before:absolute before:inset-0 before:w-1/2 before:translate-x-1/2 before:h-[0.5px] before:bg-[linear-gradient(to_right,transparent,rgba(255,255,255,0.5),transparent)]"
           )}>
             {stats.map((stat, index) => (
@@ -63,13 +63,14 @@ export const Results = () => {
                   <strong className="text-8xl font-medium bg-[linear-gradient(to_bottom_right,var(--primary),#27705D)] bg-clip-text text-transparent">{stat.value}</strong>
                   <Typography variant="p">{stat.label}</Typography>
                 </div>
-                {index < stats.length - 1 && <Separator orientation="vertical" />}
+                {index < stats.length - 1 && <Separator orientation="vertical" className="hidden lg:block" />}
+                {index < stats.length - 1 && <Separator orientation="horizontal" className="block lg:hidden" />}
               </Fragment>
             ))}
           </CardContent>
         </Card>
         {testimonials.map((testimonial) => (
-          <Card variant="landing" key={testimonial.name} className="relative overflow-hidden col-span-1 p-7.5">
+          <Card variant="landing" key={testimonial.name} className="relative overflow-hidden col-span-3 lg:col-span-1 p-7.5">
             <div
               className="pointer-events-none absolute inset-0 rounded-2xl blur-xl bg-[radial-gradient(ellipse_100%_100%_at_50%_0%,color-mix(in_oklch,var(--primary)_25%,transparent)_0%,transparent_60%)]"
               aria-hidden

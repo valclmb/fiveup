@@ -26,7 +26,9 @@ function AccordionItem({
   return (
     <AccordionPrimitive.Item
       data-slot="accordion-item"
-      className={cn("p-5 bg-linear-to-t from-card to-card-gradient backdrop-blur-[50px] ring-1 ring-foreground/10 rounded-xl ", className)}
+      className={cn("p-5 backdrop-blur-[50px] ring-1 ring-foreground/10 rounded-xl ",
+        "bg-[linear-gradient(180deg,var(--landing-card)_3.11%,var(--landing-card-gradient)_77.97%)]",
+        className)}
       {...props}
     />
   )

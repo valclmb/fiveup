@@ -1,7 +1,7 @@
 import { Benefits } from "@/components/landing/benefits";
-import { Features } from "@/components/landing/bento/bento";
 import { Cta } from "@/components/landing/cta";
 import { Faq } from "@/components/landing/faq";
+import { Features } from "@/components/landing/features/features";
 import { Hero } from "@/components/landing/hero/hero";
 import { Impact } from "@/components/landing/impact/impact";
 import { Pricing } from "@/components/landing/pricing";

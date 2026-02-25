@@ -44,10 +44,10 @@ export const Pricing = () => {
     <LandingBlock>
       <LandingBlock.Badge>Pricing</LandingBlock.Badge>
       <LandingBlock.Title className="max-w-lg">Simple transparent pricing that works</LandingBlock.Title>
-      <LandingBlock.Content className="flex items-start gap-5">
+      <LandingBlock.Content className="flex flex-col lg:flex-row items-start gap-5">
         {pricingItems.map((item) => (
-          <Card variant="landing" key={item.title} className="w-1/3 p-3 rounded-4xl">
-            <Card variant="landing" className="relative overflow-hidden rounded-2xl space-y-4">
+          <Card variant="landing" key={item.title} className="w-full max-w-[430px] mx-auto lg:w-1/3 p-3 rounded-4xl">
+            <Card variant="landing" className="bg-linear-to-b from-white/5 to-white/3  relative overflow-hidden rounded-2xl space-y-4">
               {/* Background glow for Most Popular */}
               {item.isPopular && (
                 <div
@@ -59,7 +59,7 @@ export const Pricing = () => {
                 glow
                 width={10}
                 height={10}
-                opacity={item.isPopular ? 0.7 : 0.3}
+                opacity={item.isPopular ? 0.8 : 0.5}
                 className={cn(
                   "[mask-image:linear-gradient(to_bottom,white,transparent,transparent)]",
                   item.isPopular && "text-primary/70"
