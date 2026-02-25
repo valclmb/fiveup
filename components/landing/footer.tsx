@@ -6,19 +6,19 @@ const Footer = () => {
 
   return (
 
-    <footer className="relative z-20  w-full py-10  mt-20 ">
+    <footer className="relative z-20  w-full py-10 px-4 md:px-12">
       <div >
-        <section className="flex  flex-wrap sm:flex-row justify-between gap-10 sm:gap-5 pt-10 ">
-          <div className="flex flex-col justify-between ">
-            <div>
+        <section className="relative grid grid-cols-1 justify-between md:grid-cols-3 lg:grid-cols-4 gap-15 md:gap-10 pt-10 ">
+          <div className="col-span-1 md:col-span-3 lg:col-span-1 flex flex-col justify-between ">
+            <div className="flex flex-col justify-between items-start md:flex-row lg:flex-col">
               <Image src="/logos/logo-white-baseline.svg" alt="logo" width={158} height={40} className="mb-4" />
               <Link href="mailto:contact@fiveup.com" className=" hover:underline text-primary" >contact@fiveup.com</Link>
             </div>
-            <Typography variant="p" >
+            <Typography variant="p" className="hidden lg:block " >
               © {new Date().getFullYear()} FiveUp | All rights reserved.
             </Typography>
           </div>
-          <ul className="space-y-6  text-muted-foreground min-w-32">
+          <ul className="col-span-1 md:col-span-1 space-y-6  text-muted-foreground min-w-32">
             <li className="mb-4 text-foreground text-lg">
               Company
             </li>
@@ -40,7 +40,7 @@ const Footer = () => {
               <Link href="/book-a-demo">Book a demo</Link>
             </li>
           </ul>
-          <ul className="space-y-6  text-muted-foreground min-w-32">
+          <ul className="col-span-1 md:col-span-1 space-y-6  text-muted-foreground min-w-32">
             <li className="mb-4 text-foreground text-lg ">
               Uses cases
             </li>
@@ -60,7 +60,7 @@ const Footer = () => {
               <Link className="opacity-40" href="">Coming soon - Blog</Link>
             </li>
           </ul>
-          <ul className="space-y-6  text-muted-foreground min-w-32">
+          <ul className="col-span-1 md:col-span-1  space-y-6  text-muted-foreground min-w-32">
             <li className="mb-4 text-foreground text-lg">
               Informations
             </li>
@@ -72,11 +72,14 @@ const Footer = () => {
             </li>
 
           </ul>
+          <Typography variant="p" className="mt-4 col-span-1 md:col-span-3 lg:hidden" >
+            © {new Date().getFullYear()} FiveUp | All rights reserved.
+          </Typography>
         </section>
 
       </div>
     </footer>
-    // </AnimatedFadeUp >
+
   );
 };
 

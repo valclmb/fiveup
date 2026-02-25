@@ -1,9 +1,10 @@
-import { Button } from "@/components/ui/button";
-import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { HeaderCta } from "./header-cta";
+import { HeaderDrawer } from "./header-drawer";
+import { HeaderNav } from "./header-nav";
 
-const navItems = [
+export const LANDING_NAV = [
   {
     label: "Features",
     href: "/features",
@@ -25,7 +26,7 @@ const navItems = [
 export const LandingHeader = () => {
   return (
     <header className="flex items-center justify-between w-full max-w-5xl mx-auto p-6 pl-9">
-      <nav className="flex items-center justify-between gap-21">
+      <div className="flex items-center justify-between gap-21">
         <Link href="/">
           <Image
             src="/logos/logo-white.svg"
@@ -34,24 +35,12 @@ export const LandingHeader = () => {
             height={29}
           />
         </Link>
-        <ul className="flex items-center gap-8 text-md text-muted-foreground">
-          {navItems.map((item) => (
-            <li key={item.href}>
-              <Link href={item.href}>
-                {item.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
+        <HeaderNav className="hidden lg:flex" />
+      </div>
+
       <div className="flex items-center gap-3">
-        <Button variant="secondary">
-          Sign in
-        </Button>
-        <Button variant="landing" >
-          Get more reviews
-          <ChevronRight data-icon="inline-end" />
-        </Button>
+        <HeaderCta />
+        <HeaderDrawer />
       </div>
 
     </header>

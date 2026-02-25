@@ -18,16 +18,16 @@ export const Cta = () => {
         height={60}
       />
       <div className="absolute -bottom-64 bg-primary w-full h-[320px] rounded-full blur-[100px]" />
-      <div className="max-w-[636px] mx-auto flex flex-col items-center gap-6">
+      <div className="max-w-[636px] mx-auto flex flex-col items-center gap-6 px-5 lg:px-0 ">
 
         <Typography variant="h2" className="text-center mb-0">
           Turn your reviews into a competitive advantage
         </Typography>
-        <Typography variant="p" affects="mutedDescription" className="text-center px-32">
+        <Typography variant="p" affects="mutedDescription" className="text-center px-4 lg:px-32">
           Connect FiveUp and turn every customer into social proof automatically, with no extra work for your team.
         </Typography>
 
-        <Button variant="landing">
+        <Button variant="landing" className="w-full md:w-fit">
           Try FiveUp now <ChevronRight size={14} />
         </Button>
 

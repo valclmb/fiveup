@@ -28,7 +28,7 @@ export const Benefits = () => {
       <LandingBlock.Title>
         More reviews, higher ratings, increased revenue
       </LandingBlock.Title>
-      <LandingBlock.Content className="flex justify-between">
+      <LandingBlock.Content className="flex flex-col justify-between items-center gap-21 px-9 lg:p-0 lg:gap-0 lg:flex-row">
 
         {items.map((item, index) => (
           <div key={index} className="flex flex-col items-center justify-start text-center w-78 gap-6">
