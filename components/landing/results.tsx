@@ -41,15 +41,18 @@ export const Results = () => {
       <LandingBlock.Title className="max-w-full">
         Reviews that build trust for you
       </LandingBlock.Title>
-      <LandingBlock.Content className="grid grid-cols-3 gap-6 space-y-0 gap-y-18">
-        <Card variant="landing" className="relative overflow-hidden ring-transparent rounded-4xl col-span-3">
-          <DotPattern
-            glow
-            width={10}
-            height={10}
-            opacity={0.7}
-            className="[mask-image:radial-gradient(ellipse_70%_80%_at_50%_100%,white,transparent,transparent)]"
-          />
+      <LandingBlock.Content className="relative grid grid-cols-3 gap-6 space-y-0 gap-y-18">
+        <Card variant="landing" className="py-0 ring-transparent rounded-4xl col-span-3">
+          <div className="absolute  bottom-0 left-1/2 -translate-x-1/2 h-32 w-1/2 
+          [mask-image:radial-gradient(ellipse_120%_180%_at_50%_100%,white,transparent,transparent)]">
+
+            <DotPattern
+              glow
+              width={10}
+              height={10}
+              opacity={0.7}
+            />
+          </div>
           <div
             className="pointer-events-none absolute inset-0 rounded-2xl blur-3xl bg-[radial-gradient(ellipse_35%_80%_at_50%_100%,color-mix(in_oklch,var(--primary)_25%,transparent)_0%,transparent_60%)]"
             aria-hidden
@@ -92,6 +95,6 @@ export const Results = () => {
           </Card>
         ))}
       </LandingBlock.Content>
-    </LandingBlock>
+    </LandingBlock >
   )
 }

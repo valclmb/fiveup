@@ -21,15 +21,18 @@ import Image from "next/image"
 const TopDotted = () => {
   return (
     <>
-      <DotPattern
-        glow
-        width={10}
-        height={10}
-        opacity={0.7}
-        className="[mask-image:radial-gradient(ellipse_100%_100%_at_50%_0%,white,transparent,transparent)]"
-      />
+      <div className="absolute inset-2 w-full h-50 [mask-image:radial-gradient(ellipse_100%_200%_at_50%_0%,white,transparent,transparent)]">
+        <DotPattern
+          glow
+          width={10}
+          height={10}
+          opacity={0.7}
+        />
+      </div>
+
       <div
-        className="pointer-events-none absolute inset-0 rounded-2xl blur-2xl bg-[radial-gradient(ellipse_70%_100%_at_50%_0%,color-mix(in_oklch,var(--primary)_25%,transparent)_0%,transparent_60%)]"
+        className="pointer-events-none absolute inset-0 rounded-2xl blur-2xl 
+        bg-[radial-gradient(ellipse_70%_100%_at_50%_0%,color-mix(in_oklch,var(--primary)_25%,transparent)_0%,transparent_60%)]"
         aria-hidden
       />
     </>
@@ -40,14 +43,15 @@ const TopDotted = () => {
 export const TopRightDotted = () => {
   return (
     <>
-      <DotPattern
-        glow
-        width={10}
-        height={10}
-        opacity={0.7}
-        className="[mask-image:radial-gradient(ellipse_140%_100%_at_80%_0%,white,transparent,transparent)]"
+      <div className="absolute inset-2 w-full h-26 [mask-image:radial-gradient(ellipse_150%_180%_at_80%_0%,white,transparent,transparent)]">
+        <DotPattern
+          glow
+          width={10}
+          height={10}
+          opacity={0.7}
+        />
+      </div>
 
-      />
       <div
         className="pointer-events-none absolute inset-0 rounded-2xl blur-2xl bg-[radial-gradient(ellipse_100%_80%_at_80%_0%,color-mix(in_oklch,var(--primary)_25%,transparent)_0%,transparent_60%)]"
         aria-hidden
@@ -198,13 +202,14 @@ export const BentoReplies = () => {
 export const BentoReputation = () => {
   return (
     <>
-      <BinaryPattern
-        width={30}
-        height={30}
-        fontSize={16}
-        glow
-        className="-top-5 left-2 [mask-image:radial-gradient(ellipse_100%_100%_at_50%_0%,white,transparent_70%)]"
-      />
+      <div className="absolute inset-0 -top-5 w-full h-52 [mask-image:radial-gradient(ellipse_100%_250%_at_50%_0%,white,transparent,transparent)]">
+        <BinaryPattern
+          width={30}
+          height={30}
+          fontSize={16}
+          glow
+        />
+      </div>
       <div
         className="pointer-events-none absolute inset-0 rounded-2xl blur-2xl bg-[radial-gradient(ellipse_90%_100%_at_50%_0%,color-mix(in_oklch,var(--primary)_25%,transparent)_0%,transparent_60%)]"
         aria-hidden

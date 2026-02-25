@@ -55,16 +55,19 @@ export const Pricing = () => {
                   aria-hidden
                 />
               )}
-              <DotPattern
-                glow
-                width={10}
-                height={10}
-                opacity={item.isPopular ? 0.8 : 0.5}
-                className={cn(
-                  "[mask-image:linear-gradient(to_bottom,white,transparent,transparent)]",
-                  item.isPopular && "text-primary/70"
-                )}
-              />
+              <div className="absolute inset-0 left-1 h-1/3 
+             [mask-image:radial-gradient(ellipse_100%_200%_at_50%_0%,white,transparent,transparent)]">
+                <DotPattern
+                  glow
+                  width={10}
+                  height={10}
+                  opacity={item.isPopular ? 0.8 : 0.5}
+                  className={cn(
+
+                    item.isPopular && "text-primary/70"
+                  )}
+                />
+              </div>
               <CardHeader className="space-y-6">
                 <CardTitle >
                   <Typography variant="h3" className="flex items-center gap-3">
